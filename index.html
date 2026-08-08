@@ -549,7 +549,7 @@
   <header>
     <div class="topbar">
       <div class="bolt"></div>
-      <span class="eyebrow">Iloilo · Panay · Philippines PUV Fare Guide</span>
+      <span class="eyebrow">Panay · Philippines · PUV Fare Guide</span>
     </div>
     <h1>PILA ANG <span>PAMASAHE?</span></h1>
     <p class="sub">Real GPS map tracking — start at your origin, end at your destination. The fare rate updates automatically based on the location where you are riding.</p>
@@ -699,6 +699,9 @@
         lastPos = null,
         tracking = false;
       let gpsEnabled = false;
+      let tripEnded = false;
+      let finalKm = 0;
+      let finalLocality = "";
 
       const distNum = document.getElementById('distNum');
       const odoCaption = document.getElementById('odoCaption');
@@ -766,6 +769,7 @@
       }
 
       async function setLocalityFromGeocode(lat, lon) {
+        if (tripEnded) return; // Don't change location after trip ends
         locStatus.textContent = "Detecting location...";
         const geo = await reverseGeocode(lat, lon);
         if (geo && geo.place) {
@@ -773,11 +777,12 @@
           localityInput.value = label;
           await refreshLocality(label);
         } else {
-          locStatus.textContent = "Could not detect location name — please type manually if needed.";
+          locStatus.textContent = "Could not detect location name.";
         }
       }
 
       async function refreshLocality(label) {
+        if (tripEnded) return; // Don't change location after trip ends
         currentLocalityLabel = label.trim();
         currentLocalitySlug = slugify(currentLocalityLabel);
         if (!currentLocalitySlug) { locStatus.textContent = "No location detected."; return; }
@@ -787,6 +792,7 @@
 
       // ---------- AUTO-UPDATE: Rates are loaded based on locality ----------
       async function tryLoadSavedRates(silent) {
+        if (tripEnded) return; // Don't change rates after trip ends
         if (!currentLocalitySlug) { locStatus.textContent = "Please enter a location."; return; }
         try {
           const key = 'locality:' + currentLocalitySlug;
@@ -804,54 +810,55 @@
             localityIsVerified = false;
             RATES = JSON.parse(JSON.stringify(DEFAULTS));
             locStatus.textContent =
-              `No saved rate for "${currentLocalityLabel}" — using LTFRB/Iloilo City default.`;
+              `No saved rate for "${currentLocalityLabel}" — using LTFRB default.`;
             matrixAsOf.innerHTML = "LTFRB default<br>rates as of Aug 2026";
             renderSubToggle();
             computeFare();
           }
         } catch (e) {
-          if (!silent) locStatus.textContent = "Cannot access storage — please try again.";
+          if (!silent) locStatus.textContent = "Cannot access storage.";
         }
       }
 
-      // ---------- GPS availability check ----------
-      function checkGPS() {
+      // ---------- GPS auto-center ----------
+      function goToMyLocation() {
         if (!navigator.geolocation) {
-          gpsEnabled = false;
-          gpsStatusIndicator.style.display = 'block';
-          startBtn.disabled = true;
-          gpsNote.innerHTML = '<span class="gps-warn">⚠️ GPS not available on this device/browser.</span>';
-          return false;
+          gpsNote.innerHTML = '<span class="gps-warn">GPS not supported on this browser.</span>';
+          return;
         }
-        // Test if GPS is actually enabled by trying to get a position
         navigator.geolocation.getCurrentPosition(
-          () => {
+          (pos) => {
+            const { latitude, longitude } = pos.coords;
             gpsEnabled = true;
             gpsStatusIndicator.style.display = 'none';
             startBtn.disabled = false;
+            ensureMap(latitude, longitude);
+            // Auto-detect location
+            setLocalityFromGeocode(latitude, longitude);
             gpsNote.textContent = 'GPS is enabled. Tap "START" to begin tracking.';
           },
           (err) => {
             gpsEnabled = false;
             gpsStatusIndicator.style.display = 'block';
             startBtn.disabled = true;
-            gpsNote.innerHTML = `<span class="gps-warn">⚠️ GPS is disabled or permission denied. Please enable location services.</span>`;
-          }, { enableHighAccuracy: true, timeout: 3000 }
+            gpsNote.innerHTML = `<span class="gps-warn">⚠️ GPS is disabled. Please enable location services.</span>`;
+          }, { enableHighAccuracy: true, timeout: 5000 }
         );
-        return gpsEnabled;
       }
 
-      // Check GPS on load and periodically
-      checkGPS();
-      setInterval(checkGPS, 5000);
-
       // ---------- GPS trip tracking ----------
-      function updateOdo() { distNum.textContent = totalKm.toFixed(2);
-        computeFare(); }
+      function updateOdo() {
+        if (tripEnded) {
+          distNum.textContent = finalKm.toFixed(2);
+        } else {
+          distNum.textContent = totalKm.toFixed(2);
+        }
+        computeFare();
+      }
 
       function startTrip() {
         if (!navigator.geolocation) {
-          gpsNote.innerHTML = '<span class="gps-warn">GPS not supported on this browser. Try Chrome/Safari on mobile.</span>';
+          gpsNote.innerHTML = '<span class="gps-warn">GPS not supported on this browser.</span>';
           return;
         }
 
@@ -871,6 +878,7 @@
           return;
         }
 
+        tripEnded = false;
         totalKm = 0;
         lastPos = null;
         tracking = true;
@@ -897,6 +905,7 @@
         }, () => {}, { enableHighAccuracy: true, timeout: 8000 });
 
         watchId = navigator.geolocation.watchPosition(pos => {
+          if (tripEnded) return; // Stop updating if trip ended
           const { latitude, longitude, accuracy } = pos.coords;
           statusPill.innerHTML = '<span class="dot"></span>Live';
           statusPill.className = "status-pill live";
@@ -927,14 +936,23 @@
       }
 
       function endTrip() {
-        if (watchId !== null) { navigator.geolocation.clearWatch(watchId);
-          watchId = null; }
+        if (watchId !== null) {
+          navigator.geolocation.clearWatch(watchId);
+          watchId = null;
+        }
+        // FREEZE everything — store final values
+        tripEnded = true;
+        finalKm = totalKm;
+        finalLocality = currentLocalityLabel;
+
         tracking = false;
         statusPill.textContent = "Finished";
         statusPill.className = "status-pill";
         startBtn.disabled = false;
         endBtn.disabled = true;
-        odoCaption.textContent = "Trip completed — total distance tracked";
+        odoCaption.textContent = "Trip completed — fare is final.";
+
+        // Keep the last known position and display
         if (lastPos && map) {
           if (liveMarker) map.removeLayer(liveMarker);
           endMarker = L.marker([lastPos.lat, lastPos.lon], { icon: pinIcon('🏁', '#c8571f') }).addTo(map)
@@ -942,14 +960,24 @@
           const bounds = pathLine.getBounds();
           if (bounds.isValid()) map.fitBounds(bounds, { padding: [24, 24] });
         }
+
+        // Display final fare — no more updates
         computeFare();
+
+        // Show final values in UI
+        locStatus.innerHTML = `<span class="loc-status verified">✓ Trip ended at ${finalLocality || 'unknown location'}</span>`;
+        gpsNote.textContent = `Trip ended. Total distance: ${finalKm.toFixed(2)} km. Fare is final.`;
       }
 
       function resetTrip() {
-        if (watchId !== null) { navigator.geolocation.clearWatch(watchId);
-          watchId = null; }
+        if (watchId !== null) {
+          navigator.geolocation.clearWatch(watchId);
+          watchId = null;
+        }
+        tripEnded = false;
         tracking = false;
         totalKm = 0;
+        finalKm = 0;
         lastPos = null;
         statusPill.textContent = "Ready";
         statusPill.className = "status-pill";
@@ -964,8 +992,18 @@
           endMarker = null; }
         if (liveMarker && map) { map.removeLayer(liveMarker);
           liveMarker = null; }
+        // Re-detect location
+        goToMyLocation();
         updateOdo();
-        checkGPS(); // re-check GPS status
+        // Reset locality status
+        locStatus.textContent = "No location detected yet.";
+        localityInput.value = "";
+        currentLocalityLabel = "";
+        currentLocalitySlug = "";
+        matrixAsOf.innerHTML = "LTFRB default<br>rates as of Aug 2026";
+        RATES = JSON.parse(JSON.stringify(DEFAULTS));
+        renderSubToggle();
+        computeFare();
       }
 
       startBtn.addEventListener('click', startTrip);
@@ -986,15 +1024,19 @@
           const chip = document.createElement('div');
           chip.className = "chip" + (variantKey[vehicle] === k ? " active" : "");
           chip.textContent = variants[k].name;
-          chip.addEventListener('click', () => { variantKey[vehicle] = k;
+          chip.addEventListener('click', () => {
+            if (tripEnded) return; // Can't change vehicle after trip ends
+            variantKey[vehicle] = k;
             renderSubToggle();
-            computeFare(); });
+            computeFare();
+          });
           subToggle.appendChild(chip);
         });
       }
 
       picker.querySelectorAll('.badge').forEach(b => {
         b.addEventListener('click', () => {
+          if (tripEnded) return; // Can't change vehicle after trip ends
           picker.querySelectorAll('.badge').forEach(x => x.classList.remove('active'));
           b.classList.add('active');
           vehicle = b.dataset.v;
@@ -1010,7 +1052,7 @@
       }
 
       function computeFare() {
-        const km = totalKm;
+        const km = tripEnded ? finalKm : totalKm;
         const v = RATES[vehicle];
         const r = v.variants[variantKey[vehicle]] || v.variants[Object.keys(v.variants)[0]];
 
@@ -1057,6 +1099,7 @@
             ).join(', ');
             savedPlacesEl.querySelectorAll('a').forEach(a => {
               a.addEventListener('click', async () => {
+                if (tripEnded) return;
                 const slug = a.dataset.slug;
                 const label = slug.replace(/-/g, ' ');
                 localityInput.value = label;
@@ -1072,11 +1115,11 @@
       // ---------- init ----------
       renderSubToggle();
       computeFare();
-      ensureMap(10.7202, 122.5621); // default view: Iloilo City
+      // Initialize map with default view, then go to location
+      ensureMap(10.7, 122.5);
+      // Auto-go to location on load
+      setTimeout(goToMyLocation, 500);
       loadSavedPlacesList();
-
-      // Check GPS on page load
-      setTimeout(checkGPS, 1000);
     })();
   </script>
 </body>
