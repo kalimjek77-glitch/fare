@@ -1,0 +1,2165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=yes">
+  <title>Pila ang Pamasahe? — Live GPS Fare Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js">
+  </script>
+  <style>
+    :root {
+      --jeep-green: #0e4a3a;
+      --jeep-green-dark: #0a362a;
+      --signage-yellow: #f3b807;
+      --rust: #c8571f;
+      --paper: #f2ead6;
+      --paper-dark: #e7dcbf;
+      --ink: #1b1712;
+      --chrome: #bdb8a8;
+      --chrome-dark: #8f8a7a;
+      --ok: #2f7a4f;
+      --radius: 14px;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: radial-gradient(circle at 15% 8%, rgba(243, 184, 7, 0.10), transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(200, 87, 31, 0.10), transparent 45%),
+        var(--paper);
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 0 0 60px;
+    }
+    ::selection {
+      background: var(--signage-yellow);
+      color: var(--ink);
+    }
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.035;
+      z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    header {
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(180deg, var(--jeep-green) 0%, var(--jeep-green-dark) 100%);
+      padding: 22px 20px 46px;
+      border-bottom: 8px solid var(--signage-yellow);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    }
+    .topbar {
+      max-width: 640px;
+      margin: 0 auto 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .bolt {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff8, var(--chrome-dark));
+    }
+    .eyebrow {
+      color: var(--signage-yellow);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    h1 {
+      max-width: 640px;
+      margin: 0 auto;
+      text-align: center;
+      font-family: 'Anton', sans-serif;
+      font-weight: 400;
+      color: var(--paper);
+      font-size: clamp(34px, 8vw, 52px);
+      line-height: 0.95;
+      letter-spacing: 0.01em;
+      text-shadow: 0 3px 0 rgba(0, 0, 0, 0.25);
+    }
+    h1 span {
+      color: var(--signage-yellow);
+    }
+    .sub {
+      max-width: 520px;
+      margin: 10px auto 0;
+      text-align: center;
+      color: #cfe3da;
+      font-size: 14.5px;
+      line-height: 1.5;
+    }
+    main {
+      max-width: 640px;
+      margin: -28px auto 0;
+      padding: 0 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .board {
+      background: linear-gradient(180deg, #151210, #0c0a08);
+      border-radius: var(--radius);
+      border: 3px solid var(--chrome-dark);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35), inset 0 0 0 3px rgba(255, 255, 255, 0.03);
+      padding: 20px;
+      position: relative;
+    }
+    .board::before,
+    .board::after {
+      content: "";
+      position: absolute;
+      top: 10px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #eee, #777);
+    }
+    .board::before {
+      left: 12px;
+    }
+    .board::after {
+      right: 12px;
+    }
+    .board-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .board-label {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--signage-yellow);
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .status-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cfcabb;
+    }
+    .status-pill.live {
+      color: #8be0a8;
+      border-color: #2f7a4f;
+      background: rgba(47, 122, 79, 0.15);
+    }
+    .status-pill.live .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ee08a;
+      margin-right: 6px;
+      animation: pulse 1.4s infinite;
+    }
+    @keyframes pulse {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: .3;
+      }
+    }
+    #map {
+      width: 100%;
+      height: 240px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      border: 2px solid #2a241c;
+      filter: sepia(8%) saturate(92%);
+    }
+    .leaflet-control-attribution {
+      font-size: 9px !important;
+    }
+    .odometer {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 8px;
+      padding: 4px 0 8px;
+    }
+    .odometer .num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 700;
+      font-size: clamp(44px, 13vw, 58px);
+      color: var(--signage-yellow);
+      background: #000;
+      padding: 4px 14px;
+      border-radius: 6px;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.06);
+      letter-spacing: 0.02em;
+      min-width: 3ch;
+      text-align: right;
+    }
+    .odometer .unit {
+      font-family: 'Inter', sans-serif;
+      color: #cfcabb;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .odometer-caption {
+      text-align: center;
+      color: #8f8a78;
+      font-size: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      margin-bottom: 14px;
+    }
+    .board-btns {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      flex: 1;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 10px;
+      border-radius: 10px;
+      transition: transform .08s ease, filter .15s ease;
+    }
+    .btn:active {
+      transform: scale(0.97);
+    }
+    .btn-start {
+      background: var(--signage-yellow);
+      color: #241c02;
+    }
+    .btn-start:hover {
+      filter: brightness(1.06);
+    }
+    .btn-end {
+      background: var(--rust);
+      color: #fff5ea;
+    }
+    .btn-end:hover {
+      filter: brightness(1.08);
+    }
+    .btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .btn-reset {
+      background: transparent;
+      color: #a89f8a;
+      border: 1px solid #3a352a;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 8px;
+      width: 100%;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .gps-note {
+      text-align: center;
+      color: #8f8a78;
+      font-size: 11.5px;
+      margin-top: 10px;
+      line-height: 1.5;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .gps-warn {
+      color: #e0a24e;
+    }
+    .locality {
+      margin-top: 16px;
+      background: var(--paper-dark);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .locality-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .locality-row .pin {
+      font-size: 18px;
+    }
+    .locality-row input {
+      flex: 1;
+      min-width: 140px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      border: 1.5px solid var(--chrome-dark);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      background: #fff;
+      color: var(--ink);
+    }
+    .loc-status {
+      font-size: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      color: #6b6353;
+    }
+    .loc-status.verified {
+      color: var(--ok);
+      font-weight: 700;
+    }
+    .saved-places {
+      font-size: 12px;
+      color: #6b6353;
+    }
+    .saved-places a {
+      color: var(--rust);
+      cursor: pointer;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+    section.picker {
+      margin-top: 22px;
+    }
+    .section-title {
+      font-family: 'Anton', sans-serif;
+      font-size: 20px;
+      color: var(--jeep-green-dark);
+      margin: 0 0 12px 2px;
+      letter-spacing: 0.01em;
+    }
+    .routebadges {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    @media (max-width:420px) {
+      .routebadges {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .badge {
+      background: var(--paper-dark);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 14px 8px 10px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color .15s ease, transform .1s ease, background .15s ease;
+    }
+    .badge:hover {
+      transform: translateY(-2px);
+    }
+    .badge.active {
+      background: var(--jeep-green);
+      border-color: var(--signage-yellow);
+    }
+    .badge .icon {
+      font-size: 26px;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .badge .name {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 12.5px;
+      color: var(--ink);
+    }
+    .badge.active .name {
+      color: var(--paper);
+    }
+    .subtoggle {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      padding: 7px 13px;
+      border-radius: 99px;
+      background: var(--paper-dark);
+      border: 1.5px solid var(--chrome-dark);
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .chip.active {
+      background: var(--rust);
+      border-color: var(--rust);
+      color: #fff;
+    }
+    .matrix {
+      margin-top: 24px;
+      background: var(--paper);
+      border: 2px dashed var(--chrome-dark);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+    }
+    .matrix .rivet {
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--chrome-dark);
+    }
+    .matrix .rivet.tl {
+      top: 8px;
+      left: 8px;
+    }
+    .matrix .rivet.tr {
+      top: 8px;
+      right: 8px;
+    }
+    .matrix .rivet.bl {
+      bottom: 8px;
+      left: 8px;
+    }
+    .matrix .rivet.br {
+      bottom: 8px;
+      right: 8px;
+    }
+    .matrix-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .matrix-head h3 {
+      font-family: 'Anton', sans-serif;
+      font-size: 19px;
+      margin: 0;
+      color: var(--jeep-green-dark);
+    }
+    .matrix-head .as-of {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--chrome-dark);
+      text-align: right;
+    }
+    .fare-total {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 6px;
+      background: var(--jeep-green);
+      border-radius: 10px;
+      padding: 18px 10px;
+      margin-bottom: 14px;
+    }
+    .fare-total .peso {
+      color: var(--signage-yellow);
+      font-family: 'Anton', sans-serif;
+      font-size: 30px;
+    }
+    .fare-total .amt {
+      color: var(--paper);
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 700;
+      font-size: clamp(32px, 10vw, 42px);
+    }
+    .fare-breakdown {
+      font-size: 13.5px;
+      color: #4a4234;
+      line-height: 1.9;
+    }
+    .fare-breakdown .row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dotted var(--chrome);
+      padding: 3px 0;
+    }
+    .fare-note {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--rust);
+      font-weight: 600;
+    }
+    .compare {
+      margin-top: 20px;
+    }
+    .compare-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--paper-dark);
+      border-radius: 10px;
+      padding: 11px 14px;
+      margin-bottom: 7px;
+      font-size: 13.5px;
+    }
+    .compare-row.selected {
+      background: var(--jeep-green);
+      color: var(--paper);
+      font-weight: 700;
+    }
+    .compare-row .amt {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 700;
+    }
+    footer {
+      max-width: 640px;
+      margin: 34px auto 0;
+      padding: 0 20px;
+      text-align: center;
+      color: #8a8270;
+      font-size: 11.5px;
+      font-family: 'IBM Plex Mono', monospace;
+      line-height: 1.7;
+    }
+    footer a {
+      color: var(--rust);
+    }
+    .gps-disabled-note {
+      text-align: center;
+      padding: 14px;
+      background: #f0e8d8;
+      border-radius: 10px;
+      margin-top: 14px;
+      border: 1px solid var(--chrome-dark);
+      font-size: 13px;
+      color: #6b6353;
+    }
+    .gps-disabled-note strong {
+      color: var(--rust);
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+
+  <header>
+    <div class="topbar">
+      <div class="bolt"></div>
+      <span class="eyebrow">Iloilo · Panay · Philippines PUV Fare Guide</span>
+    </div>
+    <h1>PILA ANG <span>PAMASAHE?</span></h1>
+    <p class="sub">Real GPS map tracking — start at your origin, end at your destination. The fare rate updates automatically based on the location where you are riding.</p>
+  </header>
+
+  <main>
+
+    <div class="board">
+      <div class="board-row">
+        <span class="board-label">Trip Tracker</span>
+        <span class="status-pill" id="statusPill">Ready</span>
+      </div>
+
+      <div id="map"></div>
+
+      <div class="odometer">
+        <span class="num" id="distNum">0.00</span>
+        <span class="unit">km</span>
+      </div>
+      <div class="odometer-caption" id="odoCaption">Trip not yet started</div>
+      <div class="board-btns">
+        <button class="btn btn-start" id="startBtn">▶ START</button>
+        <button class="btn btn-end" id="endBtn" disabled>■ END</button>
+      </div>
+      <button class="btn-reset" id="resetBtn">↻ Reset trip</button>
+      <div class="gps-note" id="gpsNote">Tap "START" — your browser will ask for location permission. On mobile, the GPS chip will be used for accuracy.</div>
+    </div>
+
+    <!-- GPS status indicator -->
+    <div id="gpsStatusIndicator" class="gps-disabled-note" style="display:none;">
+      <strong>⚠️ GPS is disabled</strong><br>
+      Please enable location/GPS on your device to use this app. The fare cannot be calculated without location data.
+    </div>
+
+    <div class="locality">
+      <div class="locality-row">
+        <span class="pin">📍</span>
+        <input type="text" id="localityInput" placeholder="Detected automatically when you start..." readonly />
+      </div>
+      <div class="loc-status" id="locStatus">No location detected yet.</div>
+      <div class="saved-places" id="savedPlaces"></div>
+    </div>
+
+    <section class="picker">
+      <h3 class="section-title">What vehicle?</h3>
+      <div class="routebadges" id="vehiclePicker">
+        <div class="badge active" data-v="jeep"><span class="icon">🚌</span><span class="name">Jeepney</span></div>
+        <div class="badge" data-v="tricycle"><span class="icon">🛺</span><span class="name">Tricycle</span></div>
+        <div class="badge" data-v="taxi"><span class="icon">🚕</span><span class="name">Taxi</span></div>
+        <div class="badge" data-v="van"><span class="icon">🚐</span><span class="name">Van / UV Express</span></div>
+        <div class="badge" data-v="motor"><span class="icon">🏍️</span><span class="name">Single Motor</span></div>
+      </div>
+      <div class="subtoggle" id="subToggle"></div>
+    </section>
+
+    <section class="matrix">
+      <div class="rivet tl"></div>
+      <div class="rivet tr"></div>
+      <div class="rivet bl"></div>
+      <div class="rivet br"></div>
+      <div class="matrix-head">
+        <h3 id="matrixTitle">Traditional Jeepney</h3>
+        <span class="as-of" id="matrixAsOf">LTFRB default<br>rates as of Aug 2026</span>
+      </div>
+      <div class="fare-total">
+        <span class="peso">₱</span><span class="amt" id="fareAmt">0.00</span>
+      </div>
+      <div class="fare-breakdown" id="fareBreakdown"></div>
+      <div class="fare-note" id="fareNote"></div>
+    </section>
+
+    <section class="compare">
+      <h3 class="section-title">Compare all vehicles</h3>
+      <div id="compareList"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    Map data © OpenStreetMap contributors · Location via Nominatim · No backend, no ads, no tracking beyond this device.<br>
+    Fare figures are automatically updated based on location. Always check the posted fare matrix inside the vehicle.
+  </footer>
+
+  <script>
+    (function() {
+      // ---------- Default rate data (PHP) — LTFRB / Iloilo City baseline, Aug 2026 ----------
+      const DEFAULTS = {
+        jeep: {
+          label: "Jeepney",
+          variants: {
+            traditional: { name: "Traditional", base: 14, baseKm: 4, perKm: 2.00,
+              note: "LTFRB nationwide rate, effective Mar 19 2026." },
+            modern: { name: "Modern", base: 17, baseKm: 4, perKm: 2.30,
+              note: "LTFRB nationwide rate, effective Mar 19 2026." }
+          }
+        },
+        tricycle: {
+          label: "Tricycle",
+          variants: {
+            shared: { name: "Shared", base: 15, baseKm: 2, perKm: 1.00,
+              note: "Iloilo City ordinance rate, shared/regular ride." },
+            special: { name: "Special (solo)", base: 50, baseKm: 2, perKm: 2.00,
+              note: "Special/single-passenger hire, whole tricycle." }
+          }
+        },
+        taxi: {
+          label: "Taxi",
+          variants: {
+            regular: { name: "Regular", base: 40, baseKm: 0.5, perKm: 13.50,
+              note: "Standard LTFRB flag-down + per-km meter rate." },
+            airport: { name: "Airport", base: 115, baseKm: 0.5, perKm: 13.50,
+              note: "Airport taxi flag-down, effective Mar 19 2026." }
+          }
+        },
+        van: {
+          label: "Van / UV Express",
+          variants: {
+            default: { name: "UV Express", base: 13, baseKm: 4, perKm: 1.80,
+              note: "Petition for a fare hike is pending — check the posted matrix." }
+          }
+        },
+        motor: {
+          label: "Single Motor",
+          variants: {
+            default: { name: "Habal-habal", base: 25, baseKm: 1, perKm: 10.00,
+              note: "No fixed government rate — varies ₱25–40 by area/driver. Agree on fare before boarding." }
+          }
+        }
+      };
+
+      // Live rates — updated automatically based on location
+      let RATES = JSON.parse(JSON.stringify(DEFAULTS));
+      let vehicle = "jeep";
+      let variantKey = { jeep: "traditional", tricycle: "shared", taxi: "regular", van: "default", motor: "default" };
+      let currentLocalitySlug = null;
+      let currentLocalityLabel = "";
+      let localityIsVerified = false;
+
+      // ---------- Map + GPS state ----------
+      let map = null,
+        pathLine = null,
+        startMarker = null,
+        liveMarker = null,
+        endMarker = null;
+      let watchId = null,
+        totalKm = 0,
+        lastPos = null,
+        tracking = false;
+      let gpsEnabled = false;
+
+      const distNum = document.getElementById('distNum');
+      const odoCaption = document.getElementById('odoCaption');
+      const statusPill = document.getElementById('statusPill');
+      const startBtn = document.getElementById('startBtn');
+      const endBtn = document.getElementById('endBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const gpsNote = document.getElementById('gpsNote');
+      const localityInput = document.getElementById('localityInput');
+      const locStatus = document.getElementById('locStatus');
+      const savedPlacesEl = document.getElementById('savedPlaces');
+      const matrixAsOf = document.getElementById('matrixAsOf');
+      const gpsStatusIndicator = document.getElementById('gpsStatusIndicator');
+
+      function pinIcon(emoji, bg) {
+        return L.divIcon({
+          html: `<div style="background:${bg};width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.45);border:2px solid #fff;"><span style="transform:rotate(45deg);font-size:15px;">${emoji}</span></div>`,
+          className: '',
+          iconSize: [30, 30],
+          iconAnchor: [15, 30]
+        });
+      }
+
+      function ensureMap(lat, lon) {
+        if (!map) {
+          map = L.map('map', { zoomControl: true, attributionControl: true }).setView([lat, lon], 16);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors',
+            maxZoom: 19
+          }).addTo(map);
+          pathLine = L.polyline([], { color: '#c8571f', weight: 5, opacity: 0.9 }).addTo(map);
+        } else {
+          map.setView([lat, lon], 16);
+        }
+      }
+
+      function haversineKm(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(
+          dLon / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      }
+
+      function slugify(s) {
+        return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      }
+
+      // ---------- Reverse geocoding (Nominatim, OSM) ----------
+      async function reverseGeocode(lat, lon) {
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=14&addressdetails=1`
+          );
+          if (!res.ok) throw new Error('geocode failed');
+          const data = await res.json();
+          const addr = data.address || {};
+          const place = addr.city || addr.town || addr.municipality || addr.county || addr.village || null;
+          const province = addr.state || addr.province || '';
+          return { place, province, full: data.display_name || place };
+        } catch (e) {
+          return null;
+        }
+      }
+
+      async function setLocalityFromGeocode(lat, lon) {
+        locStatus.textContent = "Detecting location...";
+        const geo = await reverseGeocode(lat, lon);
+        if (geo && geo.place) {
+          const label = geo.province ? `${geo.place}, ${geo.province}` : geo.place;
+          localityInput.value = label;
+          await refreshLocality(label);
+        } else {
+          locStatus.textContent = "Could not detect location name — please type manually if needed.";
+        }
+      }
+
+      async function refreshLocality(label) {
+        currentLocalityLabel = label.trim();
+        currentLocalitySlug = slugify(currentLocalityLabel);
+        if (!currentLocalitySlug) { locStatus.textContent = "No location detected."; return; }
+        locStatus.textContent = `📍 ${currentLocalityLabel} — checking for saved rates...`;
+        await tryLoadSavedRates(true);
+      }
+
+      // ---------- AUTO-UPDATE: Rates are loaded based on locality ----------
+      async function tryLoadSavedRates(silent) {
+        if (!currentLocalitySlug) { locStatus.textContent = "Please enter a location."; return; }
+        try {
+          const key = 'locality:' + currentLocalitySlug;
+          const raw = localStorage.getItem(key);
+          if (raw) {
+            const saved = JSON.parse(raw);
+            RATES = saved.rates;
+            localityIsVerified = true;
+            locStatus.innerHTML =
+              `<span class="loc-status verified">✓ Saved rate for ${currentLocalityLabel}</span>`;
+            matrixAsOf.innerHTML = `Community rate for<br>${currentLocalityLabel}`;
+            renderSubToggle();
+            computeFare();
+          } else {
+            localityIsVerified = false;
+            RATES = JSON.parse(JSON.stringify(DEFAULTS));
+            locStatus.textContent =
+              `No saved rate for "${currentLocalityLabel}" — using LTFRB/Iloilo City default.`;
+            matrixAsOf.innerHTML = "LTFRB default<br>rates as of Aug 2026";
+            renderSubToggle();
+            computeFare();
+          }
+        } catch (e) {
+          if (!silent) locStatus.textContent = "Cannot access storage — please try again.";
+        }
+      }
+
+      // ---------- GPS availability check ----------
+      function checkGPS() {
+        if (!navigator.geolocation) {
+          gpsEnabled = false;
+          gpsStatusIndicator.style.display = 'block';
+          startBtn.disabled = true;
+          gpsNote.innerHTML = '<span class="gps-warn">⚠️ GPS not available on this device/browser.</span>';
+          return false;
+        }
+        // Test if GPS is actually enabled by trying to get a position
+        navigator.geolocation.getCurrentPosition(
+          () => {
+            gpsEnabled = true;
+            gpsStatusIndicator.style.display = 'none';
+            startBtn.disabled = false;
+            gpsNote.textContent = 'GPS is enabled. Tap "START" to begin tracking.';
+          },
+          (err) => {
+            gpsEnabled = false;
+            gpsStatusIndicator.style.display = 'block';
+            startBtn.disabled = true;
+            gpsNote.innerHTML = `<span class="gps-warn">⚠️ GPS is disabled or permission denied. Please enable location services.</span>`;
+          }, { enableHighAccuracy: true, timeout: 3000 }
+        );
+        return gpsEnabled;
+      }
+
+      // Check GPS on load and periodically
+      checkGPS();
+      setInterval(checkGPS, 5000);
+
+      // ---------- GPS trip tracking ----------
+      function updateOdo() { distNum.textContent = totalKm.toFixed(2);
+        computeFare(); }
+
+      function startTrip() {
+        if (!navigator.geolocation) {
+          gpsNote.innerHTML = '<span class="gps-warn">GPS not supported on this browser. Try Chrome/Safari on mobile.</span>';
+          return;
+        }
+
+        // Check GPS again before starting
+        navigator.geolocation.getCurrentPosition(
+          () => { gpsEnabled = true; },
+          () => {
+            gpsEnabled = false;
+            gpsStatusIndicator.style.display = 'block';
+            gpsNote.innerHTML = '<span class="gps-warn">⚠️ GPS is disabled. Please enable location to start.</span>';
+            return;
+          }, { timeout: 2000 }
+        );
+
+        if (!gpsEnabled) {
+          gpsNote.innerHTML = '<span class="gps-warn">⚠️ Please enable GPS first.</span>';
+          return;
+        }
+
+        totalKm = 0;
+        lastPos = null;
+        tracking = true;
+        if (pathLine) pathLine.setLatLngs([]);
+        if (startMarker) { map.removeLayer(startMarker);
+          startMarker = null; }
+        if (endMarker) { map.removeLayer(endMarker);
+          endMarker = null; }
+        if (liveMarker) { map.removeLayer(liveMarker);
+          liveMarker = null; }
+        updateOdo();
+        statusPill.textContent = "Locating…";
+        statusPill.className = "status-pill";
+        startBtn.disabled = true;
+        endBtn.disabled = false;
+        odoCaption.textContent = "Tracking your trip...";
+
+        navigator.geolocation.getCurrentPosition(pos => {
+          const { latitude, longitude } = pos.coords;
+          ensureMap(latitude, longitude);
+          startMarker = L.marker([latitude, longitude], { icon: pinIcon('🟢', '#0e4a3a') }).addTo(map)
+            .bindTooltip('Start');
+          setLocalityFromGeocode(latitude, longitude);
+        }, () => {}, { enableHighAccuracy: true, timeout: 8000 });
+
+        watchId = navigator.geolocation.watchPosition(pos => {
+          const { latitude, longitude, accuracy } = pos.coords;
+          statusPill.innerHTML = '<span class="dot"></span>Live';
+          statusPill.className = "status-pill live";
+          if (!map) ensureMap(latitude, longitude);
+
+          if (lastPos) {
+            if (!accuracy || accuracy < 50) {
+              const seg = haversineKm(lastPos.lat, lastPos.lon, latitude, longitude);
+              if (seg > 0.005 && seg < 2) { totalKm += seg; }
+            }
+          }
+          lastPos = { lat: latitude, lon: longitude };
+          pathLine.addLatLng([latitude, longitude]);
+
+          if (!liveMarker) {
+            liveMarker = L.marker([latitude, longitude], { icon: pinIcon('🚕', '#c8571f') }).addTo(map);
+          } else {
+            liveMarker.setLatLng([latitude, longitude]);
+          }
+          map.panTo([latitude, longitude]);
+          updateOdo();
+        }, err => {
+          gpsNote.innerHTML =
+            '<span class="gps-warn">Cannot access location: ' + err.message +
+            '. Please check browser permission.</span>';
+          statusPill.textContent = "No signal";
+        }, { enableHighAccuracy: true, maximumAge: 1000, timeout: 15000 });
+      }
+
+      function endTrip() {
+        if (watchId !== null) { navigator.geolocation.clearWatch(watchId);
+          watchId = null; }
+        tracking = false;
+        statusPill.textContent = "Finished";
+        statusPill.className = "status-pill";
+        startBtn.disabled = false;
+        endBtn.disabled = true;
+        odoCaption.textContent = "Trip completed — total distance tracked";
+        if (lastPos && map) {
+          if (liveMarker) map.removeLayer(liveMarker);
+          endMarker = L.marker([lastPos.lat, lastPos.lon], { icon: pinIcon('🏁', '#c8571f') }).addTo(map)
+            .bindTooltip('End');
+          const bounds = pathLine.getBounds();
+          if (bounds.isValid()) map.fitBounds(bounds, { padding: [24, 24] });
+        }
+        computeFare();
+      }
+
+      function resetTrip() {
+        if (watchId !== null) { navigator.geolocation.clearWatch(watchId);
+          watchId = null; }
+        tracking = false;
+        totalKm = 0;
+        lastPos = null;
+        statusPill.textContent = "Ready";
+        statusPill.className = "status-pill";
+        startBtn.disabled = false;
+        endBtn.disabled = true;
+        odoCaption.textContent = "Trip not yet started";
+        gpsNote.textContent = 'Tap "START" — your browser will ask for location permission. On mobile, the GPS chip will be used for accuracy.';
+        if (pathLine) pathLine.setLatLngs([]);
+        if (startMarker && map) { map.removeLayer(startMarker);
+          startMarker = null; }
+        if (endMarker && map) { map.removeLayer(endMarker);
+          endMarker = null; }
+        if (liveMarker && map) { map.removeLayer(liveMarker);
+          liveMarker = null; }
+        updateOdo();
+        checkGPS(); // re-check GPS status
+      }
+
+      startBtn.addEventListener('click', startTrip);
+      endBtn.addEventListener('click', endTrip);
+      resetBtn.addEventListener('click', resetTrip);
+
+      // ---------- Vehicle picker ----------
+      const picker = document.getElementById('vehiclePicker');
+      const subToggle = document.getElementById('subToggle');
+
+      function renderSubToggle() {
+        subToggle.innerHTML = "";
+        const variants = RATES[vehicle].variants;
+        const keys = Object.keys(variants);
+        if (keys.length <= 1) { subToggle.style.display = "none"; return; }
+        subToggle.style.display = "flex";
+        keys.forEach(k => {
+          const chip = document.createElement('div');
+          chip.className = "chip" + (variantKey[vehicle] === k ? " active" : "");
+          chip.textContent = variants[k].name;
+          chip.addEventListener('click', () => { variantKey[vehicle] = k;
+            renderSubToggle();
+            computeFare(); });
+          subToggle.appendChild(chip);
+        });
+      }
+
+      picker.querySelectorAll('.badge').forEach(b => {
+        b.addEventListener('click', () => {
+          picker.querySelectorAll('.badge').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          vehicle = b.dataset.v;
+          renderSubToggle();
+          computeFare();
+        });
+      });
+
+      // ---------- Fare computation ----------
+      function fareFor(rateObj, km) {
+        if (km <= rateObj.baseKm) return rateObj.base;
+        return rateObj.base + (km - rateObj.baseKm) * rateObj.perKm;
+      }
+
+      function computeFare() {
+        const km = totalKm;
+        const v = RATES[vehicle];
+        const r = v.variants[variantKey[vehicle]] || v.variants[Object.keys(v.variants)[0]];
+
+        const total = fareFor(r, km);
+        document.getElementById('matrixTitle').textContent = v.label + " — " + r.name;
+        document.getElementById('fareAmt').textContent = total.toFixed(2);
+
+        const extraKm = Math.max(0, km - r.baseKm);
+        document.getElementById('fareBreakdown').innerHTML = `
+              <div class="row"><span>Base fare (first ${r.baseKm} km)</span><span>₱${r.base.toFixed(2)}</span></div>
+              <div class="row"><span>Extra distance (${extraKm.toFixed(2)} km × ₱${r.perKm.toFixed(2)})</span><span>₱${(extraKm*r.perKm).toFixed(2)}</span></div>
+              <div class="row"><span>Distance tracked</span><span>${km.toFixed(2)} km</span></div>
+            `;
+        document.getElementById('fareNote').textContent = r.note || "";
+        renderCompare(km);
+      }
+
+      function renderCompare(km) {
+        const list = document.getElementById('compareList');
+        list.innerHTML = "";
+        Object.keys(RATES).forEach(vk => {
+          const v = RATES[vk];
+          Object.keys(v.variants).forEach(vark => {
+            const r = v.variants[vark];
+            const total = fareFor(r, km);
+            const row = document.createElement('div');
+            const isSel = (vk === vehicle && vark === variantKey[vehicle]);
+            row.className = "compare-row" + (isSel ? " selected" : "");
+            row.innerHTML =
+              `<span>${v.label} — ${r.name}</span><span class="amt">₱${total.toFixed(2)}</span>`;
+            list.appendChild(row);
+          });
+        });
+      }
+
+      // ---------- Load saved places list ----------
+      async function loadSavedPlacesList() {
+        try {
+          const keys = Object.keys(localStorage).filter(k => k.startsWith('locality:'));
+          if (keys.length) {
+            const names = keys.slice(0, 12).map(k => k.replace('locality:', ''));
+            savedPlacesEl.innerHTML = "Saved locations: " + names.map(n =>
+              `<a data-slug="${n}">${n.replace(/-/g,' ')}</a>`
+            ).join(', ');
+            savedPlacesEl.querySelectorAll('a').forEach(a => {
+              a.addEventListener('click', async () => {
+                const slug = a.dataset.slug;
+                const label = slug.replace(/-/g, ' ');
+                localityInput.value = label;
+                await refreshLocality(label);
+              });
+            });
+          } else {
+            savedPlacesEl.textContent = "No saved locations yet — be the first!";
+          }
+        } catch (e) { /* ignore */ }
+      }
+
+      // ---------- init ----------
+      renderSubToggle();
+      computeFare();
+      ensureMap(10.7202, 122.5621); // default view: Iloilo City
+      loadSavedPlacesList();
+
+      // Check GPS on page load
+      setTimeout(checkGPS, 1000);
+    })();
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=yes">
+  <title>Pila ang Pamasahe? — Live GPS Fare Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js">
+  </script>
+  <style>
+    :root {
+      --jeep-green: #0e4a3a;
+      --jeep-green-dark: #0a362a;
+      --signage-yellow: #f3b807;
+      --rust: #c8571f;
+      --paper: #f2ead6;
+      --paper-dark: #e7dcbf;
+      --ink: #1b1712;
+      --chrome: #bdb8a8;
+      --chrome-dark: #8f8a7a;
+      --ok: #2f7a4f;
+      --radius: 14px;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: radial-gradient(circle at 15% 8%, rgba(243, 184, 7, 0.10), transparent 40%),
+        radial-gradient(circle at 90% 85%, rgba(200, 87, 31, 0.10), transparent 45%),
+        var(--paper);
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 0 0 60px;
+    }
+    ::selection {
+      background: var(--signage-yellow);
+      color: var(--ink);
+    }
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.035;
+      z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    header {
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(180deg, var(--jeep-green) 0%, var(--jeep-green-dark) 100%);
+      padding: 22px 20px 46px;
+      border-bottom: 8px solid var(--signage-yellow);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    }
+    .topbar {
+      max-width: 640px;
+      margin: 0 auto 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .bolt {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff8, var(--chrome-dark));
+    }
+    .eyebrow {
+      color: var(--signage-yellow);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    h1 {
+      max-width: 640px;
+      margin: 0 auto;
+      text-align: center;
+      font-family: 'Anton', sans-serif;
+      font-weight: 400;
+      color: var(--paper);
+      font-size: clamp(34px, 8vw, 52px);
+      line-height: 0.95;
+      letter-spacing: 0.01em;
+      text-shadow: 0 3px 0 rgba(0, 0, 0, 0.25);
+    }
+    h1 span {
+      color: var(--signage-yellow);
+    }
+    .sub {
+      max-width: 520px;
+      margin: 10px auto 0;
+      text-align: center;
+      color: #cfe3da;
+      font-size: 14.5px;
+      line-height: 1.5;
+    }
+    main {
+      max-width: 640px;
+      margin: -28px auto 0;
+      padding: 0 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .board {
+      background: linear-gradient(180deg, #151210, #0c0a08);
+      border-radius: var(--radius);
+      border: 3px solid var(--chrome-dark);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35), inset 0 0 0 3px rgba(255, 255, 255, 0.03);
+      padding: 20px;
+      position: relative;
+    }
+    .board::before,
+    .board::after {
+      content: "";
+      position: absolute;
+      top: 10px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #eee, #777);
+    }
+    .board::before {
+      left: 12px;
+    }
+    .board::after {
+      right: 12px;
+    }
+    .board-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .board-label {
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--signage-yellow);
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .status-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 99px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cfcabb;
+    }
+    .status-pill.live {
+      color: #8be0a8;
+      border-color: #2f7a4f;
+      background: rgba(47, 122, 79, 0.15);
+    }
+    .status-pill.live .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ee08a;
+      margin-right: 6px;
+      animation: pulse 1.4s infinite;
+    }
+    @keyframes pulse {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: .3;
+      }
+    }
+    #map {
+      width: 100%;
+      height: 240px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      border: 2px solid #2a241c;
+      filter: sepia(8%) saturate(92%);
+    }
+    .leaflet-control-attribution {
+      font-size: 9px !important;
+    }
+    .odometer {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 8px;
+      padding: 4px 0 8px;
+    }
+    .odometer .num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 700;
+      font-size: clamp(44px, 13vw, 58px);
+      color: var(--signage-yellow);
+      background: #000;
+      padding: 4px 14px;
+      border-radius: 6px;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.06);
+      letter-spacing: 0.02em;
+      min-width: 3ch;
+      text-align: right;
+    }
+    .odometer .unit {
+      font-family: 'Inter', sans-serif;
+      color: #cfcabb;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .odometer-caption {
+      text-align: center;
+      color: #8f8a78;
+      font-size: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      margin-bottom: 14px;
+    }
+    .board-btns {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      flex: 1;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 10px;
+      border-radius: 10px;
+      transition: transform .08s ease, filter .15s ease;
+    }
+    .btn:active {
+      transform: scale(0.97);
+    }
+    .btn-start {
+      background: var(--signage-yellow);
+      color: #241c02;
+    }
+    .btn-start:hover {
+      filter: brightness(1.06);
+    }
+    .btn-end {
+      background: var(--rust);
+      color: #fff5ea;
+    }
+    .btn-end:hover {
+      filter: brightness(1.08);
+    }
+    .btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .btn-reset {
+      background: transparent;
+      color: #a89f8a;
+      border: 1px solid #3a352a;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 8px;
+      width: 100%;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .gps-note {
+      text-align: center;
+      color: #8f8a78;
+      font-size: 11.5px;
+      margin-top: 10px;
+      line-height: 1.5;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+    .gps-warn {
+      color: #e0a24e;
+    }
+    .locality {
+      margin-top: 16px;
+      background: var(--paper-dark);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .locality-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .locality-row .pin {
+      font-size: 18px;
+    }
+    .locality-row input {
+      flex: 1;
+      min-width: 140px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      border: 1.5px solid var(--chrome-dark);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      background: #fff;
+      color: var(--ink);
+    }
+    .loc-status {
+      font-size: 12px;
+      font-family: 'IBM Plex Mono', monospace;
+      color: #6b6353;
+    }
+    .loc-status.verified {
+      color: var(--ok);
+      font-weight: 700;
+    }
+    .saved-places {
+      font-size: 12px;
+      color: #6b6353;
+    }
+    .saved-places a {
+      color: var(--rust);
+      cursor: pointer;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+    section.picker {
+      margin-top: 22px;
+    }
+    .section-title {
+      font-family: 'Anton', sans-serif;
+      font-size: 20px;
+      color: var(--jeep-green-dark);
+      margin: 0 0 12px 2px;
+      letter-spacing: 0.01em;
+    }
+    .routebadges {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    @media (max-width:420px) {
+      .routebadges {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .badge {
+      background: var(--paper-dark);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 14px 8px 10px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition: border-color .15s ease, transform .1s ease, background .15s ease;
+    }
+    .badge:hover {
+      transform: translateY(-2px);
+    }
+    .badge.active {
+      background: var(--jeep-green);
+      border-color: var(--signage-yellow);
+    }
+    .badge .icon {
+      font-size: 26px;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .badge .name {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 12.5px;
+      color: var(--ink);
+    }
+    .badge.active .name {
+      color: var(--paper);
+    }
+    .subtoggle {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      padding: 7px 13px;
+      border-radius: 99px;
+      background: var(--paper-dark);
+      border: 1.5px solid var(--chrome-dark);
+      cursor: pointer;
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .chip.active {
+      background: var(--rust);
+      border-color: var(--rust);
+      color: #fff;
+    }
+    .matrix {
+      margin-top: 24px;
+      background: var(--paper);
+      border: 2px dashed var(--chrome-dark);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+    }
+    .matrix .rivet {
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--chrome-dark);
+    }
+    .matrix .rivet.tl {
+      top: 8px;
+      left: 8px;
+    }
+    .matrix .rivet.tr {
+      top: 8px;
+      right: 8px;
+    }
+    .matrix .rivet.bl {
+      bottom: 8px;
+      left: 8px;
+    }
+    .matrix .rivet.br {
+      bottom: 8px;
+      right: 8px;
+    }
+    .matrix-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .matrix-head h3 {
+      font-family: 'Anton', sans-serif;
+      font-size: 19px;
+      margin: 0;
+      color: var(--jeep-green-dark);
+    }
+    .matrix-head .as-of {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--chrome-dark);
+      text-align: right;
+    }
+    .fare-total {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 6px;
+      background: var(--jeep-green);
+      border-radius: 10px;
+      padding: 18px 10px;
+      margin-bottom: 14px;
+    }
+    .fare-total .peso {
+      color: var(--signage-yellow);
+      font-family: 'Anton', sans-serif;
+      font-size: 30px;
+    }
+    .fare-total .amt {
+      color: var(--paper);
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 700;
+      font-size: clamp(32px, 10vw, 42px);
+    }
+    .fare-breakdown {
+      font-size: 13.5px;
+      color: #4a4234;
+      line-height: 1.9;
+    }
+    .fare-breakdown .row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dotted var(--chrome);
+      padding: 3px 0;
+    }
+    .fare-note {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--rust);
+      font-weight: 600;
+    }
+    .compare {
+      margin-top: 20px;
+    }
+    .compare-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--paper-dark);
+      border-radius: 10px;
+      padding: 11px 14px;
+      margin-bottom: 7px;
+      font-size: 13.5px;
+    }
+    .compare-row.selected {
+      background: var(--jeep-green);
+      color: var(--paper);
+      font-weight: 700;
+    }
+    .compare-row .amt {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 700;
+    }
+    footer {
+      max-width: 640px;
+      margin: 34px auto 0;
+      padding: 0 20px;
+      text-align: center;
+      color: #8a8270;
+      font-size: 11.5px;
+      font-family: 'IBM Plex Mono', monospace;
+      line-height: 1.7;
+    }
+    footer a {
+      color: var(--rust);
+    }
+    .gps-disabled-note {
+      text-align: center;
+      padding: 14px;
+      background: #f0e8d8;
+      border-radius: 10px;
+      margin-top: 14px;
+      border: 1px solid var(--chrome-dark);
+      font-size: 13px;
+      color: #6b6353;
+    }
+    .gps-disabled-note strong {
+      color: var(--rust);
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+
+  <header>
+    <div class="topbar">
+      <div class="bolt"></div>
+      <span class="eyebrow">Iloilo · Panay · Philippines PUV Fare Guide</span>
+    </div>
+    <h1>PILA ANG <span>PAMASAHE?</span></h1>
+    <p class="sub">Real GPS map tracking — start at your origin, end at your destination. The fare rate updates automatically based on the location where you are riding.</p>
+  </header>
+
+  <main>
+
+    <div class="board">
+      <div class="board-row">
+        <span class="board-label">Trip Tracker</span>
+        <span class="status-pill" id="statusPill">Ready</span>
+      </div>
+
+      <div id="map"></div>
+
+      <div class="odometer">
+        <span class="num" id="distNum">0.00</span>
+        <span class="unit">km</span>
+      </div>
+      <div class="odometer-caption" id="odoCaption">Trip not yet started</div>
+      <div class="board-btns">
+        <button class="btn btn-start" id="startBtn">▶ START</button>
+        <button class="btn btn-end" id="endBtn" disabled>■ END</button>
+      </div>
+      <button class="btn-reset" id="resetBtn">↻ Reset trip</button>
+      <div class="gps-note" id="gpsNote">Tap "START" — your browser will ask for location permission. On mobile, the GPS chip will be used for accuracy.</div>
+    </div>
+
+    <!-- GPS status indicator -->
+    <div id="gpsStatusIndicator" class="gps-disabled-note" style="display:none;">
+      <strong>⚠️ GPS is disabled</strong><br>
+      Please enable location/GPS on your device to use this app. The fare cannot be calculated without location data.
+    </div>
+
+    <div class="locality">
+      <div class="locality-row">
+        <span class="pin">📍</span>
+        <input type="text" id="localityInput" placeholder="Detected automatically when you start..." readonly />
+      </div>
+      <div class="loc-status" id="locStatus">No location detected yet.</div>
+      <div class="saved-places" id="savedPlaces"></div>
+    </div>
+
+    <section class="picker">
+      <h3 class="section-title">What vehicle?</h3>
+      <div class="routebadges" id="vehiclePicker">
+        <div class="badge active" data-v="jeep"><span class="icon">🚌</span><span class="name">Jeepney</span></div>
+        <div class="badge" data-v="tricycle"><span class="icon">🛺</span><span class="name">Tricycle</span></div>
+        <div class="badge" data-v="taxi"><span class="icon">🚕</span><span class="name">Taxi</span></div>
+        <div class="badge" data-v="van"><span class="icon">🚐</span><span class="name">Van / UV Express</span></div>
+        <div class="badge" data-v="motor"><span class="icon">🏍️</span><span class="name">Single Motor</span></div>
+      </div>
+      <div class="subtoggle" id="subToggle"></div>
+    </section>
+
+    <section class="matrix">
+      <div class="rivet tl"></div>
+      <div class="rivet tr"></div>
+      <div class="rivet bl"></div>
+      <div class="rivet br"></div>
+      <div class="matrix-head">
+        <h3 id="matrixTitle">Traditional Jeepney</h3>
+        <span class="as-of" id="matrixAsOf">LTFRB default<br>rates as of Aug 2026</span>
+      </div>
+      <div class="fare-total">
+        <span class="peso">₱</span><span class="amt" id="fareAmt">0.00</span>
+      </div>
+      <div class="fare-breakdown" id="fareBreakdown"></div>
+      <div class="fare-note" id="fareNote"></div>
+    </section>
+
+    <section class="compare">
+      <h3 class="section-title">Compare all vehicles</h3>
+      <div id="compareList"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    Map data © OpenStreetMap contributors · Location via Nominatim · No backend, no ads, no tracking beyond this device.<br>
+    Fare figures are automatically updated based on location. Always check the posted fare matrix inside the vehicle.
+  </footer>
+
+  <script>
+    (function() {
+      // ---------- Default rate data (PHP) — LTFRB / Iloilo City baseline, Aug 2026 ----------
+      const DEFAULTS = {
+        jeep: {
+          label: "Jeepney",
+          variants: {
+            traditional: { name: "Traditional", base: 14, baseKm: 4, perKm: 2.00,
+              note: "LTFRB nationwide rate, effective Mar 19 2026." },
+            modern: { name: "Modern", base: 17, baseKm: 4, perKm: 2.30,
+              note: "LTFRB nationwide rate, effective Mar 19 2026." }
+          }
+        },
+        tricycle: {
+          label: "Tricycle",
+          variants: {
+            shared: { name: "Shared", base: 15, baseKm: 2, perKm: 1.00,
+              note: "Iloilo City ordinance rate, shared/regular ride." },
+            special: { name: "Special (solo)", base: 50, baseKm: 2, perKm: 2.00,
+              note: "Special/single-passenger hire, whole tricycle." }
+          }
+        },
+        taxi: {
+          label: "Taxi",
+          variants: {
+            regular: { name: "Regular", base: 40, baseKm: 0.5, perKm: 13.50,
+              note: "Standard LTFRB flag-down + per-km meter rate." },
+            airport: { name: "Airport", base: 115, baseKm: 0.5, perKm: 13.50,
+              note: "Airport taxi flag-down, effective Mar 19 2026." }
+          }
+        },
+        van: {
+          label: "Van / UV Express",
+          variants: {
+            default: { name: "UV Express", base: 13, baseKm: 4, perKm: 1.80,
+              note: "Petition for a fare hike is pending — check the posted matrix." }
+          }
+        },
+        motor: {
+          label: "Single Motor",
+          variants: {
+            default: { name: "Habal-habal", base: 25, baseKm: 1, perKm: 10.00,
+              note: "No fixed government rate — varies ₱25–40 by area/driver. Agree on fare before boarding." }
+          }
+        }
+      };
+
+      // Live rates — updated automatically based on location
+      let RATES = JSON.parse(JSON.stringify(DEFAULTS));
+      let vehicle = "jeep";
+      let variantKey = { jeep: "traditional", tricycle: "shared", taxi: "regular", van: "default", motor: "default" };
+      let currentLocalitySlug = null;
+      let currentLocalityLabel = "";
+      let localityIsVerified = false;
+
+      // ---------- Map + GPS state ----------
+      let map = null,
+        pathLine = null,
+        startMarker = null,
+        liveMarker = null,
+        endMarker = null;
+      let watchId = null,
+        totalKm = 0,
+        lastPos = null,
+        tracking = false;
+      let gpsEnabled = false;
+
+      const distNum = document.getElementById('distNum');
+      const odoCaption = document.getElementById('odoCaption');
+      const statusPill = document.getElementById('statusPill');
+      const startBtn = document.getElementById('startBtn');
+      const endBtn = document.getElementById('endBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      const gpsNote = document.getElementById('gpsNote');
+      const localityInput = document.getElementById('localityInput');
+      const locStatus = document.getElementById('locStatus');
+      const savedPlacesEl = document.getElementById('savedPlaces');
+      const matrixAsOf = document.getElementById('matrixAsOf');
+      const gpsStatusIndicator = document.getElementById('gpsStatusIndicator');
+
+      function pinIcon(emoji, bg) {
+        return L.divIcon({
+          html: `<div style="background:${bg};width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.45);border:2px solid #fff;"><span style="transform:rotate(45deg);font-size:15px;">${emoji}</span></div>`,
+          className: '',
+          iconSize: [30, 30],
+          iconAnchor: [15, 30]
+        });
+      }
+
+      function ensureMap(lat, lon) {
+        if (!map) {
+          map = L.map('map', { zoomControl: true, attributionControl: true }).setView([lat, lon], 16);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors',
+            maxZoom: 19
+          }).addTo(map);
+          pathLine = L.polyline([], { color: '#c8571f', weight: 5, opacity: 0.9 }).addTo(map);
+        } else {
+          map.setView([lat, lon], 16);
+        }
+      }
+
+      function haversineKm(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(
+          dLon / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      }
+
+      function slugify(s) {
+        return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      }
+
+      // ---------- Reverse geocoding (Nominatim, OSM) ----------
+      async function reverseGeocode(lat, lon) {
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=14&addressdetails=1`
+          );
+          if (!res.ok) throw new Error('geocode failed');
+          const data = await res.json();
+          const addr = data.address || {};
+          const place = addr.city || addr.town || addr.municipality || addr.county || addr.village || null;
+          const province = addr.state || addr.province || '';
+          return { place, province, full: data.display_name || place };
+        } catch (e) {
+          return null;
+        }
+      }
+
+      async function setLocalityFromGeocode(lat, lon) {
+        locStatus.textContent = "Detecting location...";
+        const geo = await reverseGeocode(lat, lon);
+        if (geo && geo.place) {
+          const label = geo.province ? `${geo.place}, ${geo.province}` : geo.place;
+          localityInput.value = label;
+          await refreshLocality(label);
+        } else {
+          locStatus.textContent = "Could not detect location name — please type manually if needed.";
+        }
+      }
+
+      async function refreshLocality(label) {
+        currentLocalityLabel = label.trim();
+        currentLocalitySlug = slugify(currentLocalityLabel);
+        if (!currentLocalitySlug) { locStatus.textContent = "No location detected."; return; }
+        locStatus.textContent = `📍 ${currentLocalityLabel} — checking for saved rates...`;
+        await tryLoadSavedRates(true);
+      }
+
+      // ---------- AUTO-UPDATE: Rates are loaded based on locality ----------
+      async function tryLoadSavedRates(silent) {
+        if (!currentLocalitySlug) { locStatus.textContent = "Please enter a location."; return; }
+        try {
+          const key = 'locality:' + currentLocalitySlug;
+          const raw = localStorage.getItem(key);
+          if (raw) {
+            const saved = JSON.parse(raw);
+            RATES = saved.rates;
+            localityIsVerified = true;
+            locStatus.innerHTML =
+              `<span class="loc-status verified">✓ Saved rate for ${currentLocalityLabel}</span>`;
+            matrixAsOf.innerHTML = `Community rate for<br>${currentLocalityLabel}`;
+            renderSubToggle();
+            computeFare();
+          } else {
+            localityIsVerified = false;
+            RATES = JSON.parse(JSON.stringify(DEFAULTS));
+            locStatus.textContent =
+              `No saved rate for "${currentLocalityLabel}" — using LTFRB/Iloilo City default.`;
+            matrixAsOf.innerHTML = "LTFRB default<br>rates as of Aug 2026";
+            renderSubToggle();
+            computeFare();
+          }
+        } catch (e) {
+          if (!silent) locStatus.textContent = "Cannot access storage — please try again.";
+        }
+      }
+
+      // ---------- GPS availability check ----------
+      function checkGPS() {
+        if (!navigator.geolocation) {
+          gpsEnabled = false;
+          gpsStatusIndicator.style.display = 'block';
+          startBtn.disabled = true;
+          gpsNote.innerHTML = '<span class="gps-warn">⚠️ GPS not available on this device/browser.</span>';
+          return false;
+        }
+        // Test if GPS is actually enabled by trying to get a position
+        navigator.geolocation.getCurrentPosition(
+          () => {
+            gpsEnabled = true;
+            gpsStatusIndicator.style.display = 'none';
+            startBtn.disabled = false;
+            gpsNote.textContent = 'GPS is enabled. Tap "START" to begin tracking.';
+          },
+          (err) => {
+            gpsEnabled = false;
+            gpsStatusIndicator.style.display = 'block';
+            startBtn.disabled = true;
+            gpsNote.innerHTML = `<span class="gps-warn">⚠️ GPS is disabled or permission denied. Please enable location services.</span>`;
+          }, { enableHighAccuracy: true, timeout: 3000 }
+        );
+        return gpsEnabled;
+      }
+
+      // Check GPS on load and periodically
+      checkGPS();
+      setInterval(checkGPS, 5000);
+
+      // ---------- GPS trip tracking ----------
+      function updateOdo() { distNum.textContent = totalKm.toFixed(2);
+        computeFare(); }
+
+      function startTrip() {
+        if (!navigator.geolocation) {
+          gpsNote.innerHTML = '<span class="gps-warn">GPS not supported on this browser. Try Chrome/Safari on mobile.</span>';
+          return;
+        }
+
+        // Check GPS again before starting
+        navigator.geolocation.getCurrentPosition(
+          () => { gpsEnabled = true; },
+          () => {
+            gpsEnabled = false;
+            gpsStatusIndicator.style.display = 'block';
+            gpsNote.innerHTML = '<span class="gps-warn">⚠️ GPS is disabled. Please enable location to start.</span>';
+            return;
+          }, { timeout: 2000 }
+        );
+
+        if (!gpsEnabled) {
+          gpsNote.innerHTML = '<span class="gps-warn">⚠️ Please enable GPS first.</span>';
+          return;
+        }
+
+        totalKm = 0;
+        lastPos = null;
+        tracking = true;
+        if (pathLine) pathLine.setLatLngs([]);
+        if (startMarker) { map.removeLayer(startMarker);
+          startMarker = null; }
+        if (endMarker) { map.removeLayer(endMarker);
+          endMarker = null; }
+        if (liveMarker) { map.removeLayer(liveMarker);
+          liveMarker = null; }
+        updateOdo();
+        statusPill.textContent = "Locating…";
+        statusPill.className = "status-pill";
+        startBtn.disabled = true;
+        endBtn.disabled = false;
+        odoCaption.textContent = "Tracking your trip...";
+
+        navigator.geolocation.getCurrentPosition(pos => {
+          const { latitude, longitude } = pos.coords;
+          ensureMap(latitude, longitude);
+          startMarker = L.marker([latitude, longitude], { icon: pinIcon('🟢', '#0e4a3a') }).addTo(map)
+            .bindTooltip('Start');
+          setLocalityFromGeocode(latitude, longitude);
+        }, () => {}, { enableHighAccuracy: true, timeout: 8000 });
+
+        watchId = navigator.geolocation.watchPosition(pos => {
+          const { latitude, longitude, accuracy } = pos.coords;
+          statusPill.innerHTML = '<span class="dot"></span>Live';
+          statusPill.className = "status-pill live";
+          if (!map) ensureMap(latitude, longitude);
+
+          if (lastPos) {
+            if (!accuracy || accuracy < 50) {
+              const seg = haversineKm(lastPos.lat, lastPos.lon, latitude, longitude);
+              if (seg > 0.005 && seg < 2) { totalKm += seg; }
+            }
+          }
+          lastPos = { lat: latitude, lon: longitude };
+          pathLine.addLatLng([latitude, longitude]);
+
+          if (!liveMarker) {
+            liveMarker = L.marker([latitude, longitude], { icon: pinIcon('🚕', '#c8571f') }).addTo(map);
+          } else {
+            liveMarker.setLatLng([latitude, longitude]);
+          }
+          map.panTo([latitude, longitude]);
+          updateOdo();
+        }, err => {
+          gpsNote.innerHTML =
+            '<span class="gps-warn">Cannot access location: ' + err.message +
+            '. Please check browser permission.</span>';
+          statusPill.textContent = "No signal";
+        }, { enableHighAccuracy: true, maximumAge: 1000, timeout: 15000 });
+      }
+
+      function endTrip() {
+        if (watchId !== null) { navigator.geolocation.clearWatch(watchId);
+          watchId = null; }
+        tracking = false;
+        statusPill.textContent = "Finished";
+        statusPill.className = "status-pill";
+        startBtn.disabled = false;
+        endBtn.disabled = true;
+        odoCaption.textContent = "Trip completed — total distance tracked";
+        if (lastPos && map) {
+          if (liveMarker) map.removeLayer(liveMarker);
+          endMarker = L.marker([lastPos.lat, lastPos.lon], { icon: pinIcon('🏁', '#c8571f') }).addTo(map)
+            .bindTooltip('End');
+          const bounds = pathLine.getBounds();
+          if (bounds.isValid()) map.fitBounds(bounds, { padding: [24, 24] });
+        }
+        computeFare();
+      }
+
+      function resetTrip() {
+        if (watchId !== null) { navigator.geolocation.clearWatch(watchId);
+          watchId = null; }
+        tracking = false;
+        totalKm = 0;
+        lastPos = null;
+        statusPill.textContent = "Ready";
+        statusPill.className = "status-pill";
+        startBtn.disabled = false;
+        endBtn.disabled = true;
+        odoCaption.textContent = "Trip not yet started";
+        gpsNote.textContent = 'Tap "START" — your browser will ask for location permission. On mobile, the GPS chip will be used for accuracy.';
+        if (pathLine) pathLine.setLatLngs([]);
+        if (startMarker && map) { map.removeLayer(startMarker);
+          startMarker = null; }
+        if (endMarker && map) { map.removeLayer(endMarker);
+          endMarker = null; }
+        if (liveMarker && map) { map.removeLayer(liveMarker);
+          liveMarker = null; }
+        updateOdo();
+        checkGPS(); // re-check GPS status
+      }
+
+      startBtn.addEventListener('click', startTrip);
+      endBtn.addEventListener('click', endTrip);
+      resetBtn.addEventListener('click', resetTrip);
+
+      // ---------- Vehicle picker ----------
+      const picker = document.getElementById('vehiclePicker');
+      const subToggle = document.getElementById('subToggle');
+
+      function renderSubToggle() {
+        subToggle.innerHTML = "";
+        const variants = RATES[vehicle].variants;
+        const keys = Object.keys(variants);
+        if (keys.length <= 1) { subToggle.style.display = "none"; return; }
+        subToggle.style.display = "flex";
+        keys.forEach(k => {
+          const chip = document.createElement('div');
+          chip.className = "chip" + (variantKey[vehicle] === k ? " active" : "");
+          chip.textContent = variants[k].name;
+          chip.addEventListener('click', () => { variantKey[vehicle] = k;
+            renderSubToggle();
+            computeFare(); });
+          subToggle.appendChild(chip);
+        });
+      }
+
+      picker.querySelectorAll('.badge').forEach(b => {
+        b.addEventListener('click', () => {
+          picker.querySelectorAll('.badge').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+          vehicle = b.dataset.v;
+          renderSubToggle();
+          computeFare();
+        });
+      });
+
+      // ---------- Fare computation ----------
+      function fareFor(rateObj, km) {
+        if (km <= rateObj.baseKm) return rateObj.base;
+        return rateObj.base + (km - rateObj.baseKm) * rateObj.perKm;
+      }
+
+      function computeFare() {
+        const km = totalKm;
+        const v = RATES[vehicle];
+        const r = v.variants[variantKey[vehicle]] || v.variants[Object.keys(v.variants)[0]];
+
+        const total = fareFor(r, km);
+        document.getElementById('matrixTitle').textContent = v.label + " — " + r.name;
+        document.getElementById('fareAmt').textContent = total.toFixed(2);
+
+        const extraKm = Math.max(0, km - r.baseKm);
+        document.getElementById('fareBreakdown').innerHTML = `
+              <div class="row"><span>Base fare (first ${r.baseKm} km)</span><span>₱${r.base.toFixed(2)}</span></div>
+              <div class="row"><span>Extra distance (${extraKm.toFixed(2)} km × ₱${r.perKm.toFixed(2)})</span><span>₱${(extraKm*r.perKm).toFixed(2)}</span></div>
+              <div class="row"><span>Distance tracked</span><span>${km.toFixed(2)} km</span></div>
+            `;
+        document.getElementById('fareNote').textContent = r.note || "";
+        renderCompare(km);
+      }
+
+      function renderCompare(km) {
+        const list = document.getElementById('compareList');
+        list.innerHTML = "";
+        Object.keys(RATES).forEach(vk => {
+          const v = RATES[vk];
+          Object.keys(v.variants).forEach(vark => {
+            const r = v.variants[vark];
+            const total = fareFor(r, km);
+            const row = document.createElement('div');
+            const isSel = (vk === vehicle && vark === variantKey[vehicle]);
+            row.className = "compare-row" + (isSel ? " selected" : "");
+            row.innerHTML =
+              `<span>${v.label} — ${r.name}</span><span class="amt">₱${total.toFixed(2)}</span>`;
+            list.appendChild(row);
+          });
+        });
+      }
+
+      // ---------- Load saved places list ----------
+      async function loadSavedPlacesList() {
+        try {
+          const keys = Object.keys(localStorage).filter(k => k.startsWith('locality:'));
+          if (keys.length) {
+            const names = keys.slice(0, 12).map(k => k.replace('locality:', ''));
+            savedPlacesEl.innerHTML = "Saved locations: " + names.map(n =>
+              `<a data-slug="${n}">${n.replace(/-/g,' ')}</a>`
+            ).join(', ');
+            savedPlacesEl.querySelectorAll('a').forEach(a => {
+              a.addEventListener('click', async () => {
+                const slug = a.dataset.slug;
+                const label = slug.replace(/-/g, ' ');
+                localityInput.value = label;
+                await refreshLocality(label);
+              });
+            });
+          } else {
+            savedPlacesEl.textContent = "No saved locations yet — be the first!";
+          }
+        } catch (e) { /* ignore */ }
+      }
+
+      // ---------- init ----------
+      renderSubToggle();
+      computeFare();
+      ensureMap(10.7202, 122.5621); // default view: Iloilo City
+      loadSavedPlacesList();
+
+      // Check GPS on page load
+      setTimeout(checkGPS, 1000);
+    })();
+  </script>
+</body>
+</html>
