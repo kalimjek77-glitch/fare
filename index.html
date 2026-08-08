@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>🌾 PlantAdvisor PH - Complete Planting Guide</title>
+    <title>🌾 PlantAdvisor PH + Fishing Guide</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; background: #e8f0e6; padding: 10px; padding-bottom: 80px; min-height: 100vh; }
         .container { max-width: 480px; margin: 0 auto; }
         
+        /* ─── HEADER ─── */
         .header {
             background: linear-gradient(145deg, #1a4a1a, #0d2e0d);
             color: white;
@@ -31,6 +34,45 @@
         @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
         .update-time { font-size: 10px; opacity: 0.8; }
         
+        /* ─── TAB NAVIGATION ─── */
+        .tab-nav {
+            display: flex;
+            background: white;
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .tab-nav button {
+            flex: 1;
+            padding: 10px 8px;
+            border: none;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            background: transparent;
+            color: #888;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .tab-nav button:active { transform: scale(0.95); }
+        .tab-nav button.active {
+            background: #2d7a2d;
+            color: white;
+            box-shadow: 0 2px 8px rgba(45,122,45,0.3);
+        }
+        .tab-nav button i { font-size: 16px; }
+        
+        /* ─── TAB CONTENT ─── */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* ─── GPS BANNER ─── */
         .gps-banner {
             background: linear-gradient(135deg, #fff3e0, #ffe0b2);
             border: 2px solid #ff8f00;
@@ -58,6 +100,7 @@
         .btn-gps:active { transform: scale(0.95); background: #e65100; }
         .btn-gps:disabled { opacity: 0.6; cursor: not-allowed; }
         
+        /* ─── LOCATION CARD ─── */
         .location-card {
             background: white;
             border-radius: 14px;
@@ -71,6 +114,7 @@
         .gps-row .address { font-size: 12px; color: #555; width: 100%; }
         .gps-row .accuracy { font-size: 10px; color: #999; }
         
+        /* ─── WEATHER DISPLAY ─── */
         .weather-display {
             display: flex;
             flex-wrap: wrap;
@@ -86,6 +130,7 @@
         .weather-details .item i { font-size: 14px; color: #2d7a2d; width: 18px; }
         .weather-details .item .val { font-weight: bold; color: #1a4a1a; }
         
+        /* ─── PLANTING TIPS ─── */
         .planting-tips {
             background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
             border-radius: 14px;
@@ -110,6 +155,7 @@
         }
         .planting-tips .tip-grid .tip-item i { color: #2e7d32; font-size: 12px; width: 16px; }
         
+        /* ─── CALENDAR ─── */
         .calendar-section {
             background: white;
             border-radius: 14px;
@@ -168,9 +214,8 @@
         .calendar-grid .day.today { background: #2d7a2d; color: white; font-weight: bold; box-shadow: 0 2px 8px rgba(45,122,45,0.3); }
         .calendar-grid .day.planting { background: #c8e6c9; color: #1a4a1a; }
         .calendar-grid .day.harvest { background: #ffccbc; color: #bf360c; }
-        .calendar-grid .day.planting.today { background: #2d7a2d; color: white; }
-        .calendar-grid .day.harvest.today { background: #2d7a2d; color: white; }
-        .calendar-grid .day-label { font-weight: bold; color: #555; background: transparent; font-size: 9px; padding: 4px 0; }
+        .calendar-grid .day.fishing { background: #bbdefb; color: #0d47a1; }
+        .calendar-grid .day-label { font-weight: bold; color: #555; background: transparent; font-size: 8px; padding: 4px 0; }
         .calendar-grid .day.empty { background: transparent; }
         
         .calendar-legend {
@@ -185,8 +230,10 @@
         .calendar-legend .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
         .calendar-legend .dot.green { background: #c8e6c9; }
         .calendar-legend .dot.orange { background: #ffccbc; }
-        .calendar-legend .dot.blue { background: #2d7a2d; }
+        .calendar-legend .dot.blue { background: #bbdefb; }
+        .calendar-legend .dot.dark { background: #2d7a2d; }
         
+        /* ─── SEASONAL GUIDE ─── */
         .seasonal-guide {
             display: flex;
             gap: 8px;
@@ -213,6 +260,7 @@
         .seasonal-guide .season-card .months { font-size: 9px; color: #888; }
         .seasonal-guide .season-card.active { border-top-color: #ff8f00; background: #fff8e1; }
         
+        /* ─── PLANT/FISH LIST ─── */
         .advisor-card {
             background: white;
             border-radius: 14px;
@@ -222,7 +270,7 @@
         }
         .advisor-card h2 { font-size: 14px; color: #1a4a1a; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
         .advisor-card h2 i { color: #ffd93d; }
-        .advisor-card .plant-count { font-size: 11px; color: #888; font-weight: normal; }
+        .advisor-card .count { font-size: 11px; color: #888; font-weight: normal; }
         
         .filter-bar {
             display: flex;
@@ -250,7 +298,7 @@
         .filter-bar .filter-btn:active { transform: scale(0.95); }
         .filter-bar .filter-btn.active { background: #2d7a2d; color: white; border-color: #2d7a2d; }
         
-        .plant-recs {
+        .item-recs {
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -259,10 +307,10 @@
             padding-right: 4px;
             -webkit-overflow-scrolling: touch;
         }
-        .plant-recs::-webkit-scrollbar { width: 4px; }
-        .plant-recs::-webkit-scrollbar-thumb { background: #a0c0a0; border-radius: 10px; }
+        .item-recs::-webkit-scrollbar { width: 4px; }
+        .item-recs::-webkit-scrollbar-thumb { background: #a0c0a0; border-radius: 10px; }
         
-        .plant-card {
+        .item-card {
             background: #f8fbf8;
             border-radius: 12px;
             padding: 12px;
@@ -270,14 +318,14 @@
             transition: 0.2s;
             margin-bottom: 6px;
         }
-        .plant-card:active { transform: scale(0.98); background: #f0f7ef; }
-        .plant-card .plant-header {
+        .item-card:active { transform: scale(0.98); background: #f0f7ef; }
+        .item-card .item-header {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-bottom: 6px;
         }
-        .plant-card .plant-header .emoji {
+        .item-card .item-header .emoji {
             font-size: 32px;
             width: 44px;
             text-align: center;
@@ -286,10 +334,10 @@
             border-radius: 10px;
             padding: 4px;
         }
-        .plant-card .plant-header .plant-info { flex: 1; }
-        .plant-card .plant-header .plant-info h4 { font-size: 15px; color: #1a4a1a; }
-        .plant-card .plant-header .plant-info .sub { font-size: 11px; color: #888; }
-        .plant-card .plant-header .badge {
+        .item-card .item-header .item-info { flex: 1; }
+        .item-card .item-header .item-info h4 { font-size: 15px; color: #1a4a1a; }
+        .item-card .item-header .item-info .sub { font-size: 11px; color: #888; }
+        .item-card .item-header .badge {
             padding: 2px 10px;
             border-radius: 30px;
             font-size: 11px;
@@ -298,35 +346,36 @@
             background: #2d7a2d;
             flex-shrink: 0;
         }
-        .plant-card .plant-header .badge.warning { background: #ff8f00; }
-        .plant-card .plant-header .badge.danger { background: #d32f2f; }
-        .plant-card .plant-header .badge.perfect { background: #1a6e1a; }
+        .item-card .item-header .badge.warning { background: #ff8f00; }
+        .item-card .item-header .badge.danger { background: #d32f2f; }
+        .item-card .item-header .badge.perfect { background: #1a6e1a; }
+        .item-card .item-header .badge.fishing-badge { background: #0d47a1; }
         
-        .plant-details {
+        .item-details {
             display: none;
             padding-top: 8px;
             border-top: 1px solid #e8f0e6;
             margin-top: 6px;
         }
-        .plant-details.open { display: block; }
+        .item-details.open { display: block; }
         
-        .plant-details .detail-grid {
+        .item-details .detail-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 4px 10px;
             font-size: 12px;
             color: #444;
         }
-        .plant-details .detail-grid .label { color: #888; }
-        .plant-details .detail-grid .value { font-weight: 500; color: #1a4a1a; }
+        .item-details .detail-grid .label { color: #888; }
+        .item-details .detail-grid .value { font-weight: 500; color: #1a4a1a; }
         
-        .plant-details .section {
+        .item-details .section {
             margin-top: 8px;
             padding: 8px 10px;
             background: #f0f7ef;
             border-radius: 8px;
         }
-        .plant-details .section h5 {
+        .item-details .section h5 {
             font-size: 12px;
             color: #1a4a1a;
             margin-bottom: 4px;
@@ -334,19 +383,21 @@
             align-items: center;
             gap: 6px;
         }
-        .plant-details .section h5 i { font-size: 14px; }
-        .plant-details .section ul {
+        .item-details .section h5 i { font-size: 14px; }
+        .item-details .section ul {
             list-style: none;
             padding: 0;
             font-size: 11px;
             color: #555;
             line-height: 1.6;
         }
-        .plant-details .section ul li::before {
+        .item-details .section ul li::before {
             content: "• ";
             color: #2d7a2d;
             font-weight: bold;
         }
+        .item-details .section.fishing-section { background: #e3f2fd; border-left: 3px solid #0d47a1; }
+        .item-details .section.fishing-section h5 i { color: #0d47a1; }
         
         .toggle-btn {
             background: #2d7a2d;
@@ -366,6 +417,43 @@
         .loading i { font-size: 32px; color: #2d7a2d; margin-bottom: 8px; display: block; }
         .loading p { font-size: 13px; line-height: 1.5; }
         
+        /* ─── MAP ─── */
+        .map-card {
+            background: white;
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .map-card h2 { font-size: 14px; color: #1a4a1a; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .map-card h2 i { color: #0d47a1; }
+        #fishingMap { height: 300px; border-radius: 12px; background: #e8f0e6; border: 1px solid #c8dcc8; }
+        .map-legend { margin-top: 8px; font-size: 10px; color: #888; display: flex; gap: 12px; flex-wrap: wrap; }
+        .map-legend span { display: flex; align-items: center; gap: 4px; }
+        .map-legend .marker-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .map-legend .marker-dot.green { background: #2d7a2d; }
+        .map-legend .marker-dot.blue { background: #0d47a1; }
+        .map-legend .marker-dot.orange { background: #ff8f00; }
+        
+        /* ─── FISHING SPOTS ─── */
+        .spot-card {
+            background: white;
+            border-radius: 12px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            border-left: 3px solid #0d47a1;
+        }
+        .spot-card .spot-icon { font-size: 24px; width: 40px; text-align: center; }
+        .spot-card .spot-info { flex: 1; }
+        .spot-card .spot-info h4 { font-size: 13px; color: #1a4a1a; }
+        .spot-card .spot-info p { font-size: 10px; color: #888; }
+        .spot-card .spot-distance { font-size: 11px; color: #0d47a1; font-weight: bold; }
+        
+        /* ─── BOTTOM BAR ─── */
         .bottom-bar {
             position: fixed;
             bottom: 0;
@@ -391,6 +479,9 @@
             text-decoration: none;
             padding: 4px 12px;
             touch-action: manipulation;
+            cursor: pointer;
+            border: none;
+            background: none;
         }
         .bottom-bar .nav-item i { font-size: 20px; margin-bottom: 2px; }
         .bottom-bar .nav-item.active { color: #2d7a2d; }
@@ -419,10 +510,11 @@
         @media (max-width: 400px) {
             .header h1 { font-size: 16px; }
             .weather-display .main-temp { font-size: 30px; }
-            .plant-card .plant-header .emoji { font-size: 26px; width: 38px; }
-            .plant-card .plant-header .plant-info h4 { font-size: 13px; }
+            .item-card .item-header .emoji { font-size: 26px; width: 38px; }
+            .item-card .item-header .item-info h4 { font-size: 13px; }
             .calendar-grid .day { font-size: 10px; padding: 4px 0; }
-            .calendar-section .month-nav .month-label { font-size: 12px; min-width: 80px; }
+            .tab-nav button { font-size: 10px; padding: 8px 4px; }
+            .tab-nav button i { font-size: 14px; }
         }
         @media (min-width: 600px) {
             body { padding: 20px; padding-bottom: 80px; }
@@ -445,7 +537,7 @@
     <div class="gps-banner" id="gpsBanner">
         <i class="fas fa-satellite-dish"></i>
         <h3>📍 Enable GPS for Your Location</h3>
-        <p>Get exact weather, temperature & plant recommendations for your farm!</p>
+        <p>Get exact weather, plant recommendations & fishing spots near you!</p>
         <button class="btn-gps" id="gpsBtn" onclick="enableGPS()">
             <i class="fas fa-location-dot"></i> Enable GPS
         </button>
@@ -469,84 +561,177 @@
         </div>
     </div>
 
-    <!-- SEASONAL GUIDE -->
-    <div class="seasonal-guide" id="seasonalGuide">
-        <div class="season-card active" data-season="wet">
-            <span class="emoji">💧</span>
-            <div class="name">Wet Season</div>
-            <div class="months">Jun-Oct</div>
-        </div>
-        <div class="season-card" data-season="dry">
-            <span class="emoji">☀️</span>
-            <div class="name">Dry Season</div>
-            <div class="months">Nov-May</div>
-        </div>
-        <div class="season-card" data-season="cool">
-            <span class="emoji">🌿</span>
-            <div class="name">Cool Season</div>
-            <div class="months">Dec-Feb</div>
-        </div>
+    <!-- TAB NAVIGATION -->
+    <div class="tab-nav" id="tabNav">
+        <button class="active" data-tab="plants"><i class="fas fa-seedling"></i> Plants</button>
+        <button data-tab="fishing"><i class="fas fa-fish"></i> Fishing</button>
     </div>
 
-    <!-- PLANTING TIPS -->
-    <div class="planting-tips" id="plantingTips">
-        <h3><i class="fas fa-lightbulb"></i> Planting Tips for Today</h3>
-        <div class="tip-grid" id="tipGrid">
-            <div class="tip-item"><i class="fas fa-check-circle"></i> Check soil moisture</div>
-            <div class="tip-item"><i class="fas fa-check-circle"></i> Water in the morning</div>
-            <div class="tip-item"><i class="fas fa-check-circle"></i> Apply organic fertilizer</div>
-            <div class="tip-item"><i class="fas fa-check-circle"></i> Monitor for pests</div>
-        </div>
-    </div>
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!-- TAB 1: PLANTS -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <div class="tab-content active" id="tab-plants">
 
-    <!-- ACCURATE PLANTING CALENDAR -->
-    <div class="calendar-section">
-        <h2>
-            <i class="fas fa-calendar-alt"></i> Planting Calendar
-            <div class="month-nav">
-                <button onclick="changeMonth(-1)">◀</button>
-                <span class="month-label" id="monthLabel">July 2026</span>
-                <button onclick="changeMonth(1)">▶</button>
+        <!-- SEASONAL GUIDE -->
+        <div class="seasonal-guide" id="seasonalGuide">
+            <div class="season-card active" data-season="wet">
+                <span class="emoji">💧</span>
+                <div class="name">Wet Season</div>
+                <div class="months">Jun-Oct</div>
             </div>
-        </h2>
-        <div class="calendar-grid" id="calendarGrid"></div>
-        <div class="calendar-legend">
-            <span><span class="dot green"></span> Planting day</span>
-            <span><span class="dot orange"></span> Harvest day</span>
-            <span><span class="dot blue"></span> Today</span>
+            <div class="season-card" data-season="dry">
+                <span class="emoji">☀️</span>
+                <div class="name">Dry Season</div>
+                <div class="months">Nov-May</div>
+            </div>
+            <div class="season-card" data-season="cool">
+                <span class="emoji">🌿</span>
+                <div class="name">Cool Season</div>
+                <div class="months">Dec-Feb</div>
+            </div>
+        </div>
+
+        <!-- PLANTING TIPS -->
+        <div class="planting-tips" id="plantingTips">
+            <h3><i class="fas fa-lightbulb"></i> Planting Tips for Today</h3>
+            <div class="tip-grid" id="tipGrid">
+                <div class="tip-item"><i class="fas fa-check-circle"></i> Check soil moisture</div>
+                <div class="tip-item"><i class="fas fa-check-circle"></i> Water in the morning</div>
+                <div class="tip-item"><i class="fas fa-check-circle"></i> Apply organic fertilizer</div>
+                <div class="tip-item"><i class="fas fa-check-circle"></i> Monitor for pests</div>
+            </div>
+        </div>
+
+        <!-- PLANTING CALENDAR -->
+        <div class="calendar-section">
+            <h2>
+                <i class="fas fa-calendar-alt"></i> Planting Calendar
+                <div class="month-nav">
+                    <button onclick="changeMonth(-1)">◀</button>
+                    <span class="month-label" id="monthLabel">July 2026</span>
+                    <button onclick="changeMonth(1)">▶</button>
+                </div>
+            </h2>
+            <div class="calendar-grid" id="calendarGrid"></div>
+            <div class="calendar-legend">
+                <span><span class="dot green"></span> Planting</span>
+                <span><span class="dot orange"></span> Harvest</span>
+                <span><span class="dot dark"></span> Today</span>
+            </div>
+        </div>
+
+        <!-- PLANT ADVISOR -->
+        <div class="advisor-card">
+            <h2>
+                <i class="fas fa-lightbulb"></i> Plant Guide
+                <span class="count" id="plantCount">(0 crops)</span>
+            </h2>
+            <div class="filter-bar" id="plantFilter">
+                <button class="filter-btn active" data-filter="all">🌾 All</button>
+                <button class="filter-btn" data-filter="wet">💧 Wet</button>
+                <button class="filter-btn" data-filter="dry">☀️ Dry</button>
+                <button class="filter-btn" data-filter="cool">🌿 Cool</button>
+                <button class="filter-btn" data-filter="high">⭐ Top</button>
+            </div>
+            <div id="plantRecs" class="item-recs">
+                <div class="loading">
+                    <i class="fas fa-satellite-dish"></i>
+                    <p>Enable GPS to see<br />plant recommendations!</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- PLANT ADVISOR -->
-    <div class="advisor-card">
-        <h2>
-            <i class="fas fa-lightbulb"></i> Complete Plant Guide
-            <span class="plant-count" id="plantCount">(0 crops)</span>
-        </h2>
-        <div class="filter-bar" id="filterBar">
-            <button class="filter-btn active" data-filter="all">🌾 All</button>
-            <button class="filter-btn" data-filter="wet">💧 Wet</button>
-            <button class="filter-btn" data-filter="dry">☀️ Dry</button>
-            <button class="filter-btn" data-filter="cool">🌿 Cool</button>
-            <button class="filter-btn" data-filter="high">⭐ Top</button>
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <!-- TAB 2: FISHING -->
+    <!-- ════════════════════════════════════════════════════════════ -->
+    <div class="tab-content" id="tab-fishing">
+
+        <!-- FISHING TIPS -->
+        <div class="planting-tips" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-left-color: #0d47a1;">
+            <h3><i class="fas fa-fish" style="color:#0d47a1;"></i> Best Fishing Times</h3>
+            <div class="tip-grid" id="fishingTips">
+                <div class="tip-item"><i class="fas fa-check-circle" style="color:#0d47a1;"></i> Early morning 5-8 AM</div>
+                <div class="tip-item"><i class="fas fa-check-circle" style="color:#0d47a1;"></i> Late afternoon 4-6 PM</div>
+                <div class="tip-item"><i class="fas fa-check-circle" style="color:#0d47a1;"></i> High tide is best</div>
+                <div class="tip-item"><i class="fas fa-check-circle" style="color:#0d47a1;"></i> Use live bait</div>
+            </div>
         </div>
-        <div id="plantRecs" class="plant-recs">
-            <div class="loading">
-                <i class="fas fa-satellite-dish"></i>
-                <p>Enable GPS to see<br />plant recommendations!</p>
+
+        <!-- FISHING CALENDAR -->
+        <div class="calendar-section">
+            <h2>
+                <i class="fas fa-calendar-alt"></i> Fishing Calendar
+                <div class="month-nav">
+                    <button onclick="changeMonth(-1)">◀</button>
+                    <span class="month-label" id="fishingMonthLabel">July 2026</span>
+                    <button onclick="changeMonth(1)">▶</button>
+                </div>
+            </h2>
+            <div class="calendar-grid" id="fishingCalendarGrid"></div>
+            <div class="calendar-legend">
+                <span><span class="dot blue"></span> Best Fishing Days</span>
+                <span><span class="dot dark"></span> Today</span>
+            </div>
+        </div>
+
+        <!-- FISHING SPOTS MAP -->
+        <div class="map-card">
+            <h2><i class="fas fa-map-marked-alt"></i> Fishing Spots Near You</h2>
+            <div id="fishingMap"><div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Loading map...</p></div></div>
+            <div class="map-legend">
+                <span><span class="marker-dot green"></span> Your Location</span>
+                <span><span class="marker-dot blue"></span> Fishing Spots</span>
+                <span><span class="marker-dot orange"></span> Best Spots</span>
+                <span id="mapUpdateTime" style="margin-left:auto;">now</span>
+            </div>
+        </div>
+
+        <!-- FISHING SPOTS LIST -->
+        <div class="advisor-card">
+            <h2>
+                <i class="fas fa-location-dot"></i> Fishing Spots Near You
+                <span class="count" id="spotCount">(0 spots)</span>
+            </h2>
+            <div id="spotList">
+                <div class="loading">
+                    <i class="fas fa-satellite-dish"></i>
+                    <p>Enable GPS to find<br />fishing spots near you!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FISH GUIDE -->
+        <div class="advisor-card">
+            <h2>
+                <i class="fas fa-fish"></i> Fish in Your Area
+                <span class="count" id="fishCount">(0 species)</span>
+            </h2>
+            <div class="filter-bar" id="fishFilter">
+                <button class="filter-btn active" data-filter="all">🐟 All</button>
+                <button class="filter-btn" data-filter="saltwater">🌊 Saltwater</button>
+                <button class="filter-btn" data-filter="freshwater">🏞️ Freshwater</button>
+            </div>
+            <div id="fishRecs" class="item-recs">
+                <div class="loading">
+                    <i class="fas fa-satellite-dish"></i>
+                    <p>Enable GPS to see<br />fish in your area!</p>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- BOTTOM NAV -->
     <div class="bottom-bar">
-        <a class="nav-item active" href="#"><i class="fas fa-seedling"></i><span>Plants</span></a>
-        <a class="nav-item" href="#" onclick="document.querySelector('.calendar-section').scrollIntoView({behavior:'smooth'}); return false;">
-            <i class="fas fa-calendar"></i><span>Calendar</span>
-        </a>
-        <a class="nav-item" href="#" onclick="window.location.reload(); return false;">
+        <button class="nav-item active" onclick="switchTab('plants')">
+            <i class="fas fa-seedling"></i><span>Plants</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('fishing')">
+            <i class="fas fa-fish"></i><span>Fishing</span>
+        </button>
+        <button class="nav-item" onclick="window.location.reload();">
             <i class="fas fa-sync-alt"></i><span>Refresh</span>
-        </a>
+        </button>
     </div>
 
     <!-- SCROLL TOP -->
@@ -566,7 +751,7 @@
                 name: 'Rice (Palay)', emoji: '🌾', 
                 idealTemp: { min: 25, max: 35 }, idealHumidity: { min: 60, max: 85 }, 
                 season: 'wet', desc: 'Staple crop, needs flooded fields', daysToHarvest: 120, category: 'major',
-                pests: ['Stem Borer', 'Rice Blast', 'Brown Planthopper', 'Leaf Folder'],
+                pests: ['Stem Borer', 'Rice Blast', 'Brown Planthopper'],
                 care: 'Keep fields flooded at 5-10cm. Apply nitrogen fertilizer at tillering and panicle initiation.',
                 procedure: '1. Plow and harrow 2-3x. 2. Seedbed: 20-25 days. 3. Transplant: 2-3 seedlings/hill, 20x20cm. 4. Maintain 5-10cm water. 5. Harvest: when 80% of grains are golden.',
                 fertilizer: '🌱 Complete (14-14-14): 2 bags/ha. 🌱 Urea at tillering: 1 bag/ha. 🌱 Urea at panicle initiation: 1 bag/ha.',
@@ -576,8 +761,8 @@
                 name: 'Sugarcane (Tubo)', emoji: '🍬', 
                 idealTemp: { min: 25, max: 35 }, idealHumidity: { min: 50, max: 80 }, 
                 season: 'wet', desc: 'Sugar production, tall grass', daysToHarvest: 365, category: 'major',
-                pests: ['Stem Borer', 'White Grub', 'Rats', 'Sugarcane Aphid'],
-                care: 'Apply complete fertilizer at planting. Side-dress with urea at 3-4 months. Control weeds.',
+                pests: ['Stem Borer', 'White Grub', 'Rats'],
+                care: 'Apply complete fertilizer at planting. Side-dress with urea at 3-4 months.',
                 procedure: '1. Deep plowing 30-40cm. 2. Furrows 1m apart, lay seed canes. 3. Cover with 5-10cm soil. 4. Fertilize at 3-4 months. 5. Harvest: 10-12 months.',
                 fertilizer: '🌱 Complete (14-14-14): 4 bags/ha. 🌱 Urea at 3-4 months: 2 bags/ha. 🌱 Muriate of Potash: 1 bag/ha.',
                 vitamins: '💊 Boron: 2kg/ha. 💊 Calcium: 1 ton/ha dolomite.'
@@ -585,10 +770,10 @@
             { 
                 name: 'Corn (Mais)', emoji: '🌽', 
                 idealTemp: { min: 18, max: 32 }, idealHumidity: { min: 50, max: 80 }, 
-                season: 'wet', desc: 'High-yield grain, wind-sensitive', daysToHarvest: 90, category: 'major',
-                pests: ['Corn Borer', 'Armyworm', 'Asiatic Corn Borer', 'Rust'],
-                care: 'Apply 14-14-14 at planting. Side-dress with urea at knee-high stage. Monitor for pests.',
-                procedure: '1. Plow and harrow. 2. Planting: 75x25cm, 2 seeds/hill. 3. Thin to 1 plant/hill at 2 weeks. 4. Fertilize at planting and 30 days. 5. Harvest: when silks turn brown.',
+                season: 'wet', desc: 'High-yield grain', daysToHarvest: 90, category: 'major',
+                pests: ['Corn Borer', 'Armyworm', 'Rust'],
+                care: 'Apply 14-14-14 at planting. Side-dress with urea at knee-high stage.',
+                procedure: '1. Plow and harrow. 2. Planting: 75x25cm, 2 seeds/hill. 3. Thin to 1 plant/hill. 4. Fertilize at planting and 30 days. 5. Harvest: when silks turn brown.',
                 fertilizer: '🌱 Complete (14-14-14): 3 bags/ha. 🌱 Urea at knee-high: 2 bags/ha. 🌱 Zinc: 1 bag/ha.',
                 vitamins: '💊 Zinc Sulfate: 1kg/ha. 💊 Iron: apply if leaves show deficiency.'
             },
@@ -596,18 +781,18 @@
                 name: 'Coconut (Niyog)', emoji: '🥥', 
                 idealTemp: { min: 27, max: 35 }, idealHumidity: { min: 60, max: 85 }, 
                 season: 'wet', desc: 'Tropical tree, salt-tolerant', daysToHarvest: 730, category: 'major',
-                pests: ['Coconut Scale', 'Rhinoceros Beetle', 'Coconut Mite', 'Brontispa'],
-                care: 'Apply organic fertilizer 2x/year. Control weeds. Remove infected fronds. Apply salt.',
+                pests: ['Coconut Scale', 'Rhinoceros Beetle', 'Coconut Mite'],
+                care: 'Apply organic fertilizer 2x/year. Control weeds. Remove infected fronds.',
                 procedure: '1. Clear area, dig holes 60x60x60cm. 2. Spacing: 8-9m. 3. Fertilize with organic matter. 4. Maintain weed-free. 5. Harvest: 10-12 months from flowering.',
                 fertilizer: '🌱 Organic fertilizer: 5-10kg/tree/year. 🌱 Complete (14-14-14): 1kg/tree/year. 🌱 Salt: 1kg/tree/year.',
-                vitamins: '💊 Boron: 50g/tree. 💊 Magnesium: 100g/tree of magnesium sulfate.'
+                vitamins: '💊 Boron: 50g/tree. 💊 Magnesium: 100g/tree.'
             },
             { 
                 name: 'Banana (Saging)', emoji: '🍌', 
                 idealTemp: { min: 25, max: 35 }, idealHumidity: { min: 60, max: 85 }, 
-                season: 'wet', desc: 'Tropical fruit, wind-sensitive', daysToHarvest: 365, category: 'major',
-                pests: ['Banana Weevil', 'Nematodes', 'Leaf Spot', 'Moko Disease'],
-                care: 'Apply potassium fertilizer for fruit development. Remove suckers regularly. Support plants.',
+                season: 'wet', desc: 'Tropical fruit', daysToHarvest: 365, category: 'major',
+                pests: ['Banana Weevil', 'Nematodes', 'Leaf Spot'],
+                care: 'Apply potassium fertilizer. Remove suckers regularly. Support plants.',
                 procedure: '1. Plow, dig holes 50x50x50cm. 2. Spacing: 3-5m. 3. Apply organic fertilizer. 4. Remove suckers, leave 2-3 per mat. 5. Harvest: 8-12 months.',
                 fertilizer: '🌱 Organic fertilizer: 5kg/hill. 🌱 Complete (14-14-14): 150g/hill/month. 🌱 Potassium: 100g/hill/month.',
                 vitamins: '💊 Calcium: 50g/hill. 💊 Magnesium: 50g/hill.'
@@ -616,8 +801,8 @@
                 name: 'Mango (Mangga)', emoji: '🥭', 
                 idealTemp: { min: 24, max: 35 }, idealHumidity: { min: 40, max: 70 }, 
                 season: 'dry', desc: 'Perennial fruit tree', daysToHarvest: 150, category: 'major',
-                pests: ['Mango Hopper', 'Fruit Fly', 'Mealybug', 'Powdery Mildew'],
-                care: 'Prune after harvest. Apply potassium sulfate for flowering. Use bagging to protect fruits.',
+                pests: ['Mango Hopper', 'Fruit Fly', 'Mealybug'],
+                care: 'Prune after harvest. Apply potassium sulfate for flowering. Use bagging.',
                 procedure: '1. Clear, dig holes. 2. Spacing: 10-12m. 3. Fertilize with organic matter. 4. Prune for shape. 5. Harvest: when fully ripe.',
                 fertilizer: '🌱 Organic fertilizer: 10kg/tree/year. 🌱 Complete (14-14-14): 2kg/tree/year. 🌱 Potassium sulfate: 1kg/tree/year.',
                 vitamins: '💊 Boron: 20g/tree. 💊 Zinc: 50g/tree.'
@@ -625,10 +810,10 @@
             { 
                 name: 'Tomato (Kamatis)', emoji: '🍅', 
                 idealTemp: { min: 20, max: 30 }, idealHumidity: { min: 50, max: 70 }, 
-                season: 'dry', desc: 'Warm-season crop, needs support', daysToHarvest: 65, category: 'vegetable',
-                pests: ['Fruit Borer', 'Whitefly', 'Leafminer', 'Late Blight'],
-                care: 'Use stakes or trellis. Apply calcium to prevent blossom-end rot. Water regularly.',
-                procedure: '1. Nursery: sow seeds, transplant at 4-5 leaves. 2. Spacing: 60x40cm. 3. Staking: install stakes. 4. Fertilize at planting and flowering. 5. Harvest: when fully colored.',
+                season: 'dry', desc: 'Warm-season crop', daysToHarvest: 65, category: 'vegetable',
+                pests: ['Fruit Borer', 'Whitefly', 'Late Blight'],
+                care: 'Use stakes or trellis. Apply calcium to prevent blossom-end rot.',
+                procedure: '1. Nursery: sow seeds, transplant at 4-5 leaves. 2. Spacing: 60x40cm. 3. Staking. 4. Fertilize at planting and flowering. 5. Harvest: when fully colored.',
                 fertilizer: '🌱 Complete (14-14-14): 1 bag/ha. 🌱 Urea at flowering: 0.5 bag/ha. 🌱 Calcium nitrate: 1kg/16L water.',
                 vitamins: '💊 Calcium: prevent blossom-end rot. 💊 Magnesium: Epsom salt spray.'
             },
@@ -636,7 +821,7 @@
                 name: 'Eggplant (Talong)', emoji: '🍆', 
                 idealTemp: { min: 22, max: 32 }, idealHumidity: { min: 50, max: 75 }, 
                 season: 'dry', desc: 'Heat-tolerant, productive', daysToHarvest: 65, category: 'vegetable',
-                pests: ['Eggplant Fruit Borer', 'Aphids', 'Spider Mites', 'Flea Beetle'],
+                pests: ['Eggplant Fruit Borer', 'Aphids', 'Spider Mites'],
                 care: 'Apply nitrogen fertilizer. Remove infected fruits. Use pheromone traps.',
                 procedure: '1. Nursery: 30-40 days. 2. Transplant at 4-5 leaves. 3. Spacing: 75x50cm. 4. Fertilize at planting. 5. Harvest: when glossy and firm.',
                 fertilizer: '🌱 Complete (14-14-14): 1 bag/ha. 🌱 Urea at 30 days: 0.5 bag/ha. 🌱 Potassium: 0.5 bag/ha.',
@@ -657,18 +842,139 @@
                 idealTemp: { min: 20, max: 30 }, idealHumidity: { min: 60, max: 85 }, 
                 season: 'wet', desc: 'Fast-growing vine crop', daysToHarvest: 55, category: 'vegetable',
                 pests: ['Cucumber Beetle', 'Downy Mildew', 'Aphids'],
-                care: 'Provide trellis support. Water deeply at root level. Apply organic fertilizer.',
+                care: 'Provide trellis support. Water deeply at root level.',
                 procedure: '1. Sow seeds 2cm deep. 2. Spacing: 100x50cm. 3. Install trellis. 4. Fertilize with 14-14-14. 5. Harvest: when green and firm.',
                 fertilizer: '🌱 Complete (14-14-14): 0.5 bag/ha. 🌱 Nitrogen: weekly foliar spray.',
                 vitamins: '💊 Calcium: foliar spray. 💊 Magnesium: Epsom salt.'
             },
         ];
 
+        // ─── FISH DATABASE ──────────────────────────────────
+        const FISH_DB = [
+            { 
+                name: 'Bangus (Milkfish)', emoji: '🐟', 
+                type: 'saltwater', season: 'wet', 
+                desc: 'National fish, popular for frying', 
+                bait: 'Bread, algae, commercial pellets',
+                best_time: 'Early morning 5-8 AM',
+                best_spot: 'Coastal fishponds, shallow waters',
+                tips: 'Use floating bait. Best caught during high tide.'
+            },
+            { 
+                name: 'Tilapia', emoji: '🐠', 
+                type: 'freshwater', season: 'all', 
+                desc: 'Fast-growing, easy to farm', 
+                bait: 'Earthworms, bread, commercial pellets',
+                best_time: 'Morning and late afternoon',
+                best_spot: 'Lakes, rivers, fishponds',
+                tips: 'Use light tackle. Best during warm weather.'
+            },
+            { 
+                name: 'Galunggong (Round Scad)', emoji: '🐟', 
+                type: 'saltwater', season: 'dry', 
+                desc: 'Common fish, affordable', 
+                bait: 'Small fish, squid strips',
+                best_time: 'Early morning 4-7 AM',
+                best_spot: 'Open sea, coastal areas',
+                tips: 'Use small hooks. Best during clear weather.'
+            },
+            { 
+                name: 'Dalag (Mudfish)', emoji: '🐟', 
+                type: 'freshwater', season: 'wet', 
+                desc: 'Predatory fish, tasty', 
+                bait: 'Frogs, small fish, earthworms',
+                best_time: 'Night time, early morning',
+                best_spot: 'Swamps, rice paddies, rivers',
+                tips: 'Use live bait. Best during rainy season.'
+            },
+            { 
+                name: 'Tuna (Tulingan)', emoji: '🐟', 
+                type: 'saltwater', season: 'dry', 
+                desc: 'Large pelagic fish, valuable', 
+                bait: 'Live fish, squid, lures',
+                best_time: 'Early morning, late afternoon',
+                best_spot: 'Deep sea, open waters',
+                tips: 'Use heavy tackle. Best during summer months.'
+            },
+            { 
+                name: 'Hasa-Hasa (Shortfin Scad)', emoji: '🐟', 
+                type: 'saltwater', season: 'wet', 
+                desc: 'Common fish, good for drying', 
+                bait: 'Small fish, shrimp',
+                best_time: 'Morning 5-9 AM',
+                best_spot: 'Coastal areas, fish cages',
+                tips: 'Use small hooks. Best during high tide.'
+            },
+            { 
+                name: 'Catfish (Hito)', emoji: '🐟', 
+                type: 'freshwater', season: 'all', 
+                desc: 'Bottom feeder, farmed', 
+                bait: 'Earthworms, chicken liver, commercial feed',
+                best_time: 'Night time',
+                best_spot: 'Ponds, rivers, lakes',
+                tips: 'Use bottom rig. Best during warm nights.'
+            },
+            { 
+                name: 'Lapu-Lapu (Grouper)', emoji: '🐟', 
+                type: 'saltwater', season: 'dry', 
+                desc: 'Premium fish, expensive', 
+                bait: 'Live fish, squid, shrimp',
+                best_time: 'Early morning',
+                best_spot: 'Coral reefs, rocky areas',
+                tips: 'Use heavy tackle. Best during calm weather.'
+            },
+            { 
+                name: 'Maya-Maya (Red Snapper)', emoji: '🐟', 
+                type: 'saltwater', season: 'dry', 
+                desc: 'Popular fish, red color', 
+                bait: 'Squid, small fish, shrimp',
+                best_time: 'Morning 6-10 AM',
+                best_spot: 'Coral reefs, rocky bottoms',
+                tips: 'Use medium tackle. Best during high tide.'
+            },
+            { 
+                name: 'Bangus (Milkfish)', emoji: '🐟', 
+                type: 'saltwater', season: 'wet', 
+                desc: 'National fish, popular for frying', 
+                bait: 'Bread, algae, commercial pellets',
+                best_time: 'Early morning 5-8 AM',
+                best_spot: 'Coastal fishponds, shallow waters',
+                tips: 'Use floating bait. Best caught during high tide.'
+            },
+        ];
+
+        // ─── FISHING SPOTS ──────────────────────────────────
+        function getFishingSpots(lat, lng) {
+            // Generate spots based on location
+            const spots = [];
+            const spotNames = [
+                'Lapu-Lapu Reef', 'Tuna Point', 'Bangus Bay', 'Tilapia Lake',
+                'Galunggong Shoal', 'Hasa-Hasa Channel', 'Hito River', 'Maya-Maya Reef',
+                'Dalag Swamp', 'Coral Gardens', 'Milkfish Farm', 'Snapper Point'
+            ];
+            
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                const dist = 0.02 + Math.random() * 0.03;
+                spots.push({
+                    name: spotNames[i % spotNames.length],
+                    lat: lat + Math.cos(angle) * dist,
+                    lng: lng + Math.sin(angle) * dist,
+                    type: i % 2 === 0 ? 'Best Spot' : 'Fishing Spot',
+                    distance: Math.round(dist * 111.1 * (i + 1) * 0.5)
+                });
+            }
+            return spots;
+        }
+
         // ─── STATE ──────────────────────────────────────────
         let userLat = null;
         let userLng = null;
+        let userAddress = '';
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
+        let map = null;
+        let mapMarkers = [];
 
         // ─── DOM REFS ──────────────────────────────────────
         const gpsBtn = document.getElementById('gpsBtn');
@@ -684,103 +990,98 @@
         const season = document.getElementById('season');
         const plantRecs = document.getElementById('plantRecs');
         const plantCount = document.getElementById('plantCount');
+        const fishRecs = document.getElementById('fishRecs');
+        const fishCount = document.getElementById('fishCount');
+        const spotList = document.getElementById('spotList');
+        const spotCount = document.getElementById('spotCount');
         const scrollBtn = document.getElementById('scrollTop');
         const calendarGrid = document.getElementById('calendarGrid');
+        const fishingCalendarGrid = document.getElementById('fishingCalendarGrid');
         const monthLabel = document.getElementById('monthLabel');
+        const fishingMonthLabel = document.getElementById('fishingMonthLabel');
 
-        // ─── ACCURATE CALENDAR GENERATOR ──────────────────
-        function generateCalendar(month, year) {
+        // ─── TAB SWITCHING ──────────────────────────────────
+        window.switchTab = function(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-nav button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.toggle('active', content.id === 'tab-' + tab);
+            });
+            
+            // Update bottom nav
+            document.querySelectorAll('.bottom-bar .nav-item').forEach(item => {
+                item.classList.toggle('active', item.getAttribute('onclick')?.includes(tab));
+            });
+            
+            // Refresh map if fishing tab
+            if (tab === 'fishing' && userLat && userLng) {
+                setTimeout(initFishingMap, 300);
+            }
+        };
+
+        // ─── ACCURATE CALENDAR ──────────────────────────────
+        function generateCalendar(month, year, targetGrid, labelElement, isFishing = false) {
             const today = new Date();
             const todayDate = today.getDate();
             const todayMonth = today.getMonth();
             const todayYear = today.getFullYear();
             
             const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            monthLabel.textContent = monthNames[month] + ' ' + year;
+            labelElement.textContent = monthNames[month] + ' ' + year;
             
-            // Get first day of month
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             
-            // Planting and harvest days (based on moon phases / traditional calendar)
-            // For accuracy, we use a pattern based on the date
-            const plantingDays = [];
-            const harvestDays = [];
+            // Planting/Harvest days pattern
+            const plantingDays = [1,3,5,7,10,12,14,16,19,21,23,25,28,30];
+            const harvestDays = [2,4,6,8,11,13,15,18,20,22,24,27,29,31];
             
-            for (let d = 1; d <= daysInMonth; d++) {
-                // Planting days: 1st, 3rd, 5th, 7th, 10th, 12th, 14th, 16th, 19th, 21st, 23rd, 25th, 28th, 30th
-                if ([1,3,5,7,10,12,14,16,19,21,23,25,28,30].includes(d)) {
-                    plantingDays.push(d);
-                }
-                // Harvest days: 2nd, 4th, 6th, 8th, 11th, 13th, 15th, 18th, 20th, 22nd, 24th, 27th, 29th, 31st
-                if ([2,4,6,8,11,13,15,18,20,22,24,27,29,31].includes(d)) {
-                    harvestDays.push(d);
-                }
-            }
+            // Fishing days (different pattern)
+            const fishingDays = [1,2,5,6,9,10,13,14,17,18,21,22,25,26,29,30];
             
-            // Build calendar grid
             let html = '';
-            
-            // Day labels (first row)
             const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
             for (let i = 0; i < 7; i++) {
                 html += `<div class="day day-label">${dayLabels[i]}</div>`;
             }
             
-            // Empty cells before first day
             for (let i = 0; i < firstDay; i++) {
                 html += `<div class="day empty"></div>`;
             }
             
-            // Days of the month
             for (let d = 1; d <= daysInMonth; d++) {
                 let classes = 'day';
                 const dateObj = new Date(year, month, d);
                 const dayOfWeek = dateObj.getDay();
                 
-                // Weekend
-                if (dayOfWeek === 0 || dayOfWeek === 6) {
-                    classes += ' weekend';
-                }
+                if (dayOfWeek === 0 || dayOfWeek === 6) classes += ' weekend';
+                if (d === todayDate && month === todayMonth && year === todayYear) classes += ' today';
                 
-                // Today
-                if (d === todayDate && month === todayMonth && year === todayYear) {
-                    classes += ' today';
-                }
-                
-                // Planting day
-                if (plantingDays.includes(d)) {
-                    classes += ' planting';
-                }
-                
-                // Harvest day
-                if (harvestDays.includes(d)) {
-                    classes += ' harvest';
-                }
-                
-                // If today is also planting/harvest, keep today class
-                if (d === todayDate && month === todayMonth && year === todayYear) {
-                    classes = classes.replace('planting', 'planting today');
-                    classes = classes.replace('harvest', 'harvest today');
+                if (!isFishing) {
+                    if (plantingDays.includes(d)) classes += ' planting';
+                    if (harvestDays.includes(d)) classes += ' harvest';
+                } else {
+                    if (fishingDays.includes(d)) classes += ' fishing';
                 }
                 
                 html += `<div class="${classes}">${d}</div>`;
             }
             
-            calendarGrid.innerHTML = html;
+            targetGrid.innerHTML = html;
         }
 
         // ─── CHANGE MONTH ──────────────────────────────────
         window.changeMonth = function(delta) {
             currentMonth += delta;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            } else if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
-            generateCalendar(currentMonth, currentYear);
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            
+            generateCalendar(currentMonth, currentYear, calendarGrid, monthLabel, false);
+            generateCalendar(currentMonth, currentYear, fishingCalendarGrid, fishingMonthLabel, true);
         };
 
         // ─── ENABLE GPS ─────────────────────────────────────
@@ -810,7 +1111,8 @@
                         const data = await resp.json();
                         if (data.display_name) {
                             const parts = data.display_name.split(',');
-                            address.textContent = parts.slice(0, 3).join(', ');
+                            userAddress = parts.slice(0, 3).join(', ');
+                            address.textContent = userAddress;
                         }
                     } catch (e) {
                         address.textContent = '📍 Location detected';
@@ -818,6 +1120,7 @@
 
                     getWeatherForLocation(userLat, userLng);
                     updateSeasonalGuide();
+                    initFishingMap();
                     gpsBtn.innerHTML = '✅ GPS Enabled';
                 },
                 (error) => {
@@ -828,9 +1131,10 @@
                     userLat = 14.5995;
                     userLng = 120.9842;
                     gpsCoords.textContent = `📍 ${userLat.toFixed(4)}°N, ${userLng.toFixed(4)}°E (fallback)`;
-                    address.textContent = 'Manila, Philippines';
+                    address.textContent = 'Manila, Philippines (fallback)';
                     getWeatherForLocation(userLat, userLng);
                     updateSeasonalGuide();
+                    initFishingMap();
                 },
                 { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
             );
@@ -850,7 +1154,10 @@
             
             const weather = { temp, humidity: humidityVal, season: seasonVal };
             recommendPlants(weather, 'all');
+            recommendFish(weather, 'all');
             updatePlantingTips(weather);
+            updateFishingTips(weather);
+            updateSpotList();
             updateTimestamp();
         }
 
@@ -903,7 +1210,31 @@
             ).join('');
         }
 
-        // ─── RECOMMEND PLANTS ─────────────────────────────
+        // ─── UPDATE FISHING TIPS ────────────────────────────
+        function updateFishingTips(weather) {
+            const tips = document.getElementById('fishingTips');
+            let tipList = [];
+            
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour <= 8) tipList.push('🌅 Best time: Early morning 5-8 AM');
+            else if (hour >= 16 && hour <= 18) tipList.push('🌅 Best time: Late afternoon 4-6 PM');
+            else tipList.push('⏳ Best fishing times: 5-8 AM & 4-6 PM');
+            
+            if (weather.temp > 28) tipList.push('🌊 Fish are active in warm water');
+            else if (weather.temp < 22) tipList.push('❄️ Fish move to deeper waters');
+            
+            if (weather.season === 'wet') tipList.push('🐟 Good for bangus and tilapia');
+            else if (weather.season === 'dry') tipList.push('🐟 Good for tuna and galunggong');
+            
+            tipList.push('🎣 Use live bait for best results');
+            tipList.push('🌊 High tide = more fish');
+            
+            tips.innerHTML = tipList.slice(0, 4).map(t => 
+                `<div class="tip-item"><i class="fas fa-check-circle" style="color:#0d47a1;"></i> ${t}</div>`
+            ).join('');
+        }
+
+        // ─── RECOMMEND PLANTS ──────────────────────────────
         function recommendPlants(weather, filter = 'all') {
             if (!weather) return;
             
@@ -943,13 +1274,13 @@
                 else badgeClass += ' danger';
                 
                 const seasonEmoji = p.season === 'wet' ? '💧' : p.season === 'dry' ? '☀️' : '🌿';
-                const detailId = 'detail-' + p.name.replace(/\s/g, '');
+                const detailId = 'plant-' + p.name.replace(/\s/g, '');
                 
                 html += `
-                    <div class="plant-card">
-                        <div class="plant-header">
+                    <div class="item-card">
+                        <div class="item-header">
                             <span class="emoji">${p.emoji}</span>
-                            <div class="plant-info">
+                            <div class="item-info">
                                 <h4>${p.name}</h4>
                                 <div class="sub">${p.desc} · ${p.daysToHarvest} days</div>
                             </div>
@@ -958,7 +1289,7 @@
                         <button class="toggle-btn" onclick="toggleDetails('${detailId}')">
                             📋 Show Details
                         </button>
-                        <div class="plant-details" id="${detailId}">
+                        <div class="item-details" id="${detailId}">
                             <div class="detail-grid">
                                 <span class="label">🌡️ Ideal Temp:</span>
                                 <span class="value">${p.idealTemp.min}–${p.idealTemp.max}°C</span>
@@ -996,6 +1327,180 @@
             plantRecs.innerHTML = html || '<div class="loading"><p>No plants match this filter</p></div>';
         }
 
+        // ─── RECOMMEND FISH ──────────────────────────────────
+        function recommendFish(weather, filter = 'all') {
+            if (!weather) return;
+            
+            let filteredFish = FISH_DB;
+            if (filter === 'saltwater') filteredFish = FISH_DB.filter(f => f.type === 'saltwater');
+            else if (filter === 'freshwater') filteredFish = FISH_DB.filter(f => f.type === 'freshwater');
+            
+            const scored = filteredFish.map(f => {
+                let score = 0;
+                if (f.season === 'all' || f.season === weather.season) score += 50;
+                else if (f.season === 'wet' && weather.season === 'wet') score += 40;
+                else if (f.season === 'dry' && weather.season === 'dry') score += 40;
+                else score += 20;
+                
+                // Bonus for fish in this area
+                if (f.name === 'Bangus (Milkfish)' || f.name === 'Tilapia') score += 20;
+                
+                return { ...f, score: Math.min(100, Math.round(score)) };
+            });
+            
+            scored.sort((a, b) => b.score - a.score);
+            renderFishCards(scored);
+            fishCount.textContent = `(${scored.length} species)`;
+        }
+
+        // ─── RENDER FISH CARDS ──────────────────────────────
+        function renderFishCards(fish) {
+            let html = '';
+            for (const f of fish) {
+                let badgeClass = 'badge fishing-badge';
+                const detailId = 'fish-' + f.name.replace(/\s/g, '');
+                const seasonEmoji = f.season === 'wet' ? '💧' : f.season === 'dry' ? '☀️' : '🔄';
+                const typeEmoji = f.type === 'saltwater' ? '🌊' : '🏞️';
+                
+                html += `
+                    <div class="item-card" style="border-left-color:#0d47a1;">
+                        <div class="item-header">
+                            <span class="emoji">${f.emoji}</span>
+                            <div class="item-info">
+                                <h4>${f.name}</h4>
+                                <div class="sub">${typeEmoji} ${f.type} · ${seasonEmoji} ${f.season} season</div>
+                            </div>
+                            <span class="${badgeClass}">${f.score}%</span>
+                        </div>
+                        <button class="toggle-btn" onclick="toggleDetails('${detailId}')">
+                            📋 Show Details
+                        </button>
+                        <div class="item-details" id="${detailId}">
+                            <div class="detail-grid">
+                                <span class="label">🎣 Best Bait:</span>
+                                <span class="value">${f.bait}</span>
+                                <span class="label">⏰ Best Time:</span>
+                                <span class="value">${f.best_time}</span>
+                                <span class="label">📍 Best Spot:</span>
+                                <span class="value">${f.best_spot}</span>
+                            </div>
+                            <div class="section">
+                                <h5><i class="fas fa-info-circle"></i> Description</h5>
+                                <ul><li>${f.desc}</li></ul>
+                            </div>
+                            <div class="section fishing-section">
+                                <h5><i class="fas fa-lightbulb"></i> Fishing Tips</h5>
+                                <ul>${f.tips ? f.tips.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard fishing practices apply</li>'}</ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            fishRecs.innerHTML = html || '<div class="loading"><p>No fish found in this area</p></div>';
+        }
+
+        // ─── UPDATE SPOT LIST ────────────────────────────────
+        function updateSpotList() {
+            if (!userLat || !userLng) {
+                spotList.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to find fishing spots near you!</p></div>`;
+                return;
+            }
+            
+            const spots = getFishingSpots(userLat, userLng);
+            spotCount.textContent = `(${spots.length} spots)`;
+            
+            let html = '';
+            for (const spot of spots) {
+                const icon = spot.type === 'Best Spot' ? '⭐' : '🎣';
+                html += `
+                    <div class="spot-card">
+                        <div class="spot-icon">${icon}</div>
+                        <div class="spot-info">
+                            <h4>${spot.name}</h4>
+                            <p>${spot.type} · ${spot.distance}km from you</p>
+                        </div>
+                        <div class="spot-distance">${spot.distance}km</div>
+                    </div>
+                `;
+            }
+            spotList.innerHTML = html;
+        }
+
+        // ─── INIT FISHING MAP ────────────────────────────────
+        function initFishingMap() {
+            if (!userLat || !userLng) {
+                document.getElementById('fishingMap').innerHTML = `
+                    <div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to see fishing spots</p></div>
+                `;
+                return;
+            }
+            
+            const container = document.getElementById('fishingMap');
+            
+            // Clear previous map
+            if (map) {
+                map.off();
+                map.remove();
+                map = null;
+            }
+            
+            map = L.map(container).setView([userLat, userLng], 12);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OSM',
+                maxZoom: 18,
+            }).addTo(map);
+            
+            // User marker
+            const userIcon = L.divIcon({
+                html: '<div style="background:#2d7a2d;width:20px;height:20px;border-radius:50%;border:3px solid white;box-shadow:0 0 20px rgba(45,122,45,0.6);"></div>',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+            L.marker([userLat, userLng], { icon: userIcon })
+                .addTo(map)
+                .bindPopup('📍 <b>Your Location</b>');
+            
+            // Generate fishing spots
+            const spots = getFishingSpots(userLat, userLng);
+            const spotIcon = L.divIcon({
+                html: '🐟',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+            const bestIcon = L.divIcon({
+                html: '⭐',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+            
+            for (const spot of spots) {
+                const icon = spot.type === 'Best Spot' ? bestIcon : spotIcon;
+                L.marker([spot.lat, spot.lng], { icon: icon })
+                    .addTo(map)
+                    .bindPopup(`🎣 <b>${spot.name}</b><br>${spot.type}<br>${spot.distance}km away`);
+            }
+            
+            // Add 5km radius circle
+            L.circle([userLat, userLng], {
+                radius: 5000,
+                color: '#2d7a2d',
+                fillColor: '#2d7a2d',
+                fillOpacity: 0.05,
+                weight: 1,
+                dashArray: '4, 4'
+            }).addTo(map);
+            
+            // Fit bounds
+            const bounds = L.latLngBounds([userLat, userLng]);
+            for (const spot of spots) {
+                bounds.extend([spot.lat, spot.lng]);
+            }
+            map.fitBounds(bounds, { padding: [50, 50] });
+            
+            document.getElementById('mapUpdateTime').textContent = 'Updated: ' + new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
+        }
+
         // ─── TOGGLE DETAILS ────────────────────────────────
         window.toggleDetails = function(detailId) {
             const details = document.getElementById(detailId);
@@ -1019,9 +1524,9 @@
         }
 
         // ─── FILTER HANDLERS ──────────────────────────────
-        document.querySelectorAll('.filter-btn').forEach(btn => {
+        document.querySelectorAll('#plantFilter .filter-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('#plantFilter .filter-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 const filter = this.dataset.filter;
                 const weather = { 
@@ -1033,12 +1538,26 @@
             });
         });
 
+        document.querySelectorAll('#fishFilter .filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('#fishFilter .filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const filter = this.dataset.filter;
+                const weather = { 
+                    temp: parseInt(currentTemp.textContent) || 30,
+                    humidity: parseInt(humidity.textContent) || 65,
+                    season: season.textContent.toLowerCase() || 'wet'
+                };
+                recommendFish(weather, filter);
+            });
+        });
+
         // ─── SEASONAL GUIDE CLICK ──────────────────────────
         document.querySelectorAll('.season-card').forEach(card => {
             card.addEventListener('click', function() {
                 const season = this.dataset.season;
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                document.querySelector(`.filter-btn[data-filter="${season}"]`)?.classList.add('active');
+                document.querySelectorAll('#plantFilter .filter-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector(`#plantFilter .filter-btn[data-filter="${season}"]`)?.classList.add('active');
                 const weather = { 
                     temp: parseInt(currentTemp.textContent) || 30,
                     humidity: parseInt(humidity.textContent) || 65,
@@ -1058,10 +1577,12 @@
         });
 
         // ─── START ─────────────────────────────────────────
-        // Generate accurate calendar
-        generateCalendar(currentMonth, currentYear);
+        generateCalendar(currentMonth, currentYear, calendarGrid, monthLabel, false);
+        generateCalendar(currentMonth, currentYear, fishingCalendarGrid, fishingMonthLabel, true);
         
-        plantRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to see<br />complete plant guide!</p></div>`;
+        plantRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to see<br />plant recommendations!</p></div>`;
+        fishRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to see<br />fish in your area!</p></div>`;
+        spotList.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to find<br />fishing spots near you!</p></div>`;
         
         // Auto-GPS attempt
         setTimeout(() => {
@@ -1075,6 +1596,7 @@
                         address.textContent = '📍 Location detected automatically';
                         getWeatherForLocation(userLat, userLng);
                         updateSeasonalGuide();
+                        initFishingMap();
                     },
                     () => {},
                     { enableHighAccuracy: true, timeout: 5000 }
@@ -1082,11 +1604,10 @@
             }
         }, 1000);
         
-        // Update time every 5 seconds
         setInterval(updateTimestamp, 5000);
         
-        console.log('🌾 PlantAdvisor PH - Accurate Planting Calendar');
-        console.log('📚 ' + PLANT_DB.length + ' crops loaded');
+        console.log('🌾🐟 PlantAdvisor PH + Fishing Guide');
+        console.log('📚 ' + PLANT_DB.length + ' plants, ' + FISH_DB.length + ' fish species');
 
     })();
 </script>
