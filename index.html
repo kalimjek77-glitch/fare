@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html lang="tl">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>🌾 PlantAdvisor PH + Fishing + Livestock</title>
+    <title>🌾 PlantAdvisor PH • Farming • Fishing • Livestock</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -416,22 +414,6 @@
         .loading i { font-size: 32px; color: #2d7a2d; margin-bottom: 8px; display: block; }
         .loading p { font-size: 13px; line-height: 1.5; }
         
-        .map-card {
-            background: white;
-            border-radius: 14px;
-            padding: 12px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-        }
-        .map-card h2 { font-size: 14px; color: #1a4a1a; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .map-card h2 i { color: #0d47a1; }
-        #fishingMap { height: 280px; border-radius: 12px; background: #e8f0e6; border: 1px solid #c8dcc8; }
-        .map-legend { margin-top: 8px; font-size: 10px; color: #888; display: flex; gap: 12px; flex-wrap: wrap; }
-        .map-legend span { display: flex; align-items: center; gap: 4px; }
-        .map-legend .marker-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
-        .map-legend .marker-dot.green { background: #2d7a2d; }
-        .map-legend .marker-dot.blue { background: #0d47a1; }
-        .map-legend .marker-dot.orange { background: #ff8f00; }
         
         .spot-card {
             background: white;
@@ -545,19 +527,19 @@
     <!-- GPS BANNER -->
     <div class="gps-banner" id="gpsBanner">
         <i class="fas fa-satellite-dish"></i>
-        <h3>📍 I-On ang GPS para sa Exact Location</h3>
-        <p>Kunin ang eksaktong panahon, rekomendasyon sa halaman, pangingisda & hayop sa iyong lugar!</p>
+        <h3>📍 Enable GPS for Exact Location</h3>
+        <p>Use your exact location for weather, plant, fishing, and livestock recommendations.</p>
         <button class="btn-gps" id="gpsBtn" onclick="enableGPS()">
-            <i class="fas fa-location-dot"></i> I-On ang GPS
+            <i class="fas fa-location-dot"></i> Enable GPS
         </button>
     </div>
 
     <!-- LOCATION -->
     <div class="location-card">
         <div class="gps-row">
-            <span class="coords" id="gpsCoords">📍 Naghihintay...</span>
+            <span class="coords" id="gpsCoords">📍 Waiting for location...</span>
             <span class="accuracy" id="accuracy">⏳</span>
-            <span class="address" id="address">I-On ang GPS sa itaas</span>
+            <span class="address" id="address">Enable GPS sa itaas</span>
         </div>
         <div class="weather-display">
             <div class="main-temp"><i class="fas fa-sun"></i> <span id="currentTemp">--</span>°C</div>
@@ -572,9 +554,9 @@
 
     <!-- TAB NAVIGATION -->
     <div class="tab-nav" id="tabNav">
-        <button class="active" data-tab="plants"><i class="fas fa-seedling"></i> Halaman</button>
-        <button data-tab="fishing"><i class="fas fa-fish"></i> Pangingisda</button>
-        <button data-tab="livestock"><i class="fas fa-cow"></i> Hayop</button>
+        <button class="active" data-tab="plants"><i class="fas fa-seedling"></i> Plants</button>
+        <button data-tab="fishing"><i class="fas fa-fish"></i> Fishing</button>
+        <button data-tab="livestock"><i class="fas fa-cow"></i> Livestock</button>
     </div>
 
     <!-- ════════════════════════════════════════════════════════════ -->
@@ -583,13 +565,13 @@
     <div class="tab-content active" id="tab-plants">
 
         <div class="seasonal-guide" id="seasonalGuide">
-            <div class="season-card active" data-season="wet"><span class="emoji">💧</span><div class="name">Tag-Ulan</div><div class="months">Hun-Okt</div></div>
-            <div class="season-card" data-season="dry"><span class="emoji">☀️</span><div class="name">Tag-Araw</div><div class="months">Nob-May</div></div>
-            <div class="season-card" data-season="cool"><span class="emoji">🌿</span><div class="name">Tag-Lamig</div><div class="months">Dis-Peb</div></div>
+            <div class="season-card active" data-season="wet"><span class="emoji">💧</span><div class="name">Wet Season</div><div class="months">Jun–Oct</div></div>
+            <div class="season-card" data-season="dry"><span class="emoji">☀️</span><div class="name">Dry Season</div><div class="months">Nov–May</div></div>
+            <div class="season-card" data-season="cool"><span class="emoji">🌿</span><div class="name">Cool Season</div><div class="months">Dec–Feb</div></div>
         </div>
 
         <div class="planting-tips" id="plantingTips">
-            <h3><i class="fas fa-lightbulb"></i> Mga Tips sa Pagtatanim Ngayong Araw</h3>
+            <h3><i class="fas fa-lightbulb"></i> Today's Planting Tips</h3>
             <div class="tip-grid" id="tipGrid">
                 <div class="tip-item"><i class="fas fa-check-circle"></i> Suriin ang lupa</div>
                 <div class="tip-item"><i class="fas fa-check-circle"></i> Diligan sa umaga</div>
@@ -599,7 +581,7 @@
         </div>
 
         <div class="calendar-section">
-            <h2><i class="fas fa-calendar-alt"></i> Kalendaryo ng Pagtatanim
+            <h2><i class="fas fa-calendar-alt"></i> Planting Calendar
                 <div class="month-nav">
                     <button onclick="changeMonth(-1)">◀</button>
                     <span class="month-label" id="monthLabel">Hulyo 2026</span>
@@ -615,16 +597,16 @@
         </div>
 
         <div class="advisor-card">
-            <h2><i class="fas fa-lightbulb"></i> Gabay sa Halaman <span class="count" id="plantCount">(0 halaman)</span></h2>
+            <h2><i class="fas fa-lightbulb"></i> Gabay sa Plants <span class="count" id="plantCount">(0 halaman)</span></h2>
             <div class="filter-bar" id="plantFilter">
-                <button class="filter-btn active" data-filter="all">🌾 Lahat</button>
-                <button class="filter-btn" data-filter="wet">💧 Tag-Ulan</button>
-                <button class="filter-btn" data-filter="dry">☀️ Tag-Araw</button>
-                <button class="filter-btn" data-filter="cool">🌿 Tag-Lamig</button>
-                <button class="filter-btn" data-filter="high">⭐ Pinakamahusay</button>
+                <button class="filter-btn active" data-filter="all">🌾 All</button>
+                <button class="filter-btn" data-filter="wet">💧 Wet Season</button>
+                <button class="filter-btn" data-filter="dry">☀️ Dry Season</button>
+                <button class="filter-btn" data-filter="cool">🌿 Cool Season</button>
+                <button class="filter-btn" data-filter="high">⭐ Best Match</button>
             </div>
             <div id="plantRecs" class="item-recs">
-                <div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang rekomendasyon!</p></div>
+                <div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to see recommendations.</p></div>
             </div>
         </div>
     </div>
@@ -635,17 +617,17 @@
     <div class="tab-content" id="tab-fishing">
 
         <div class="planting-tips" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-left-color: #0d47a1;">
-            <h3><i class="fas fa-fish" style="color:#0d47a1;"></i> Pinakamagandang Oras sa Pangingisda</h3>
+            <h3><i class="fas fa-fish" style="color:#0d47a1;"></i> Pinakamagandang Oras sa Fishing</h3>
             <div class="tip-grid" id="fishingTips">
-                <div class="tip-item"><i class="fas fa-check-circle" style="color:#0d47a1;"></i> Umaga 5-8 AM</div>
-                <div class="tip-item"><i class="fas fa-check-circle" style="color:#0d47a1;"></i> Hapon 4-6 PM</div>
+                <div class="tip-item"><i class="fas fa-check-circle" style="color:#0d47a1;"></i> Morning 5-8 AM</div>
+                <div class="tip-item"><i class="fas fa-check-circle" style="color:#0d47a1;"></i> Afternoon 4-6 PM</div>
                 <div class="tip-item"><i class="fas fa-check-circle" style="color:#0d47a1;"></i> High tide ang pinakamainam</div>
                 <div class="tip-item"><i class="fas fa-check-circle" style="color:#0d47a1;"></i> Gumamit ng live na pain</div>
             </div>
         </div>
 
         <div class="calendar-section">
-            <h2><i class="fas fa-calendar-alt"></i> Kalendaryo ng Pangingisda
+            <h2><i class="fas fa-calendar-alt"></i> Kalendaryo ng Fishing
                 <div class="month-nav">
                     <button onclick="changeMonth(-1)">◀</button>
                     <span class="month-label" id="fishingMonthLabel">Hulyo 2026</span>
@@ -654,36 +636,25 @@
             </h2>
             <div class="calendar-grid" id="fishingCalendarGrid"></div>
             <div class="calendar-legend">
-                <span><span class="dot blue"></span> Pinakamainam na Araw</span>
+                <span><span class="dot blue"></span> Best Fishing Day</span>
                 <span><span class="dot dark"></span> Ngayon</span>
             </div>
         </div>
 
-        <div class="map-card">
-            <h2><i class="fas fa-map-marked-alt"></i> Mga Pangingisdaan Malapit sa Iyo</h2>
-            <div id="fishingMap"><div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Naglo-load ng mapa...</p></div></div>
-            <div class="map-legend">
-                <span><span class="marker-dot green"></span> Iyong Lokasyon</span>
-                <span><span class="marker-dot blue"></span> Pangingisdaan</span>
-                <span><span class="marker-dot orange"></span> Pinakamainam</span>
-                <span id="mapUpdateTime" style="margin-left:auto;">ngayon</span>
-            </div>
+        <div class="advisor-card">
+            <h2><i class="fas fa-location-dot"></i> Fishing Areas Near You Malapit sa Iyo <span class="count" id="spotCount">(0 lugar)</span></h2>
+            <div id="spotList"><div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to find fishing areas.</p></div></div>
         </div>
 
         <div class="advisor-card">
-            <h2><i class="fas fa-location-dot"></i> Mga Pangingisdaan Malapit sa Iyo <span class="count" id="spotCount">(0 lugar)</span></h2>
-            <div id="spotList"><div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang mga pangingisdaan!</p></div></div>
-        </div>
-
-        <div class="advisor-card">
-            <h2><i class="fas fa-fish"></i> Mga Isda sa Iyong Lugar <span class="count" id="fishCount">(0 isda)</span></h2>
+            <h2><i class="fas fa-fish"></i> Fish in Your Area <span class="count" id="fishCount">(0 isda)</span></h2>
             <div class="filter-bar" id="fishFilter">
-                <button class="filter-btn active" data-filter="all">🐟 Lahat</button>
-                <button class="filter-btn" data-filter="saltwater">🌊 Dagat</button>
-                <button class="filter-btn" data-filter="freshwater">🏞️ Tubig-tabang</button>
+                <button class="filter-btn active" data-filter="all">🐟 All</button>
+                <button class="filter-btn" data-filter="saltwater">🌊 Saltwater</button>
+                <button class="filter-btn" data-filter="freshwater">🏞️ Freshwater</button>
             </div>
             <div id="fishRecs" class="item-recs">
-                <div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang mga isda sa iyong lugar!</p></div>
+                <div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to see fish for your area.</p></div>
             </div>
         </div>
     </div>
@@ -694,7 +665,7 @@
     <div class="tab-content" id="tab-livestock">
 
         <div class="planting-tips" style="background: linear-gradient(135deg, #efebe9, #d7ccc8); border-left-color: #6d4c41;">
-            <h3><i class="fas fa-cow" style="color:#6d4c41;"></i> Pinakamainam na Hayop sa Iyong Lugar</h3>
+            <h3><i class="fas fa-cow" style="color:#6d4c41;"></i> Best Match na Livestock sa Iyong Lugar</h3>
             <div class="tip-grid" id="livestockTips">
                 <div class="tip-item"><i class="fas fa-check-circle" style="color:#6d4c41;"></i> Tignan ang temperatura</div>
                 <div class="tip-item"><i class="fas fa-check-circle" style="color:#6d4c41;"></i> Alamin ang pagkain na available</div>
@@ -704,16 +675,16 @@
         </div>
 
         <div class="advisor-card">
-            <h2><i class="fas fa-cow"></i> Pinakamainam na Hayop sa Iyong Lugar <span class="count" id="livestockCount">(0 hayop)</span></h2>
+            <h2><i class="fas fa-cow"></i> Best Match na Livestock sa Iyong Lugar <span class="count" id="livestockCount">(0 hayop)</span></h2>
             <div class="filter-bar" id="livestockFilter">
-                <button class="filter-btn active" data-filter="all">🐄 Lahat</button>
-                <button class="filter-btn" data-filter="poultry">🐔 Manok</button>
-                <button class="filter-btn" data-filter="swine">🐷 Baboy</button>
-                <button class="filter-btn" data-filter="cattle">🐮 Baka</button>
-                <button class="filter-btn" data-filter="small">🐐 Kambing</button>
+                <button class="filter-btn active" data-filter="all">🐄 All</button>
+                <button class="filter-btn" data-filter="poultry">🐔 Chicken</button>
+                <button class="filter-btn" data-filter="swine">🐷 Pig</button>
+                <button class="filter-btn" data-filter="cattle">🐮 Cattle</button>
+                <button class="filter-btn" data-filter="small">🐐 Goat</button>
             </div>
             <div id="livestockRecs" class="item-recs">
-                <div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang pinakamainam na hayop!</p></div>
+                <div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to see livestock recommendations.</p></div>
             </div>
         </div>
     </div>
@@ -721,13 +692,13 @@
     <!-- BOTTOM NAV -->
     <div class="bottom-bar">
         <button class="nav-item active" onclick="switchTab('plants')">
-            <i class="fas fa-seedling"></i><span>Halaman</span>
+            <i class="fas fa-seedling"></i><span>Plants</span>
         </button>
         <button class="nav-item" onclick="switchTab('fishing')">
-            <i class="fas fa-fish"></i><span>Isda</span>
+            <i class="fas fa-fish"></i><span>Fish</span>
         </button>
         <button class="nav-item" onclick="switchTab('livestock')">
-            <i class="fas fa-cow"></i><span>Hayop</span>
+            <i class="fas fa-cow"></i><span>Livestock</span>
         </button>
         <button class="nav-item" onclick="window.location.reload();">
             <i class="fas fa-sync-alt"></i><span>Refresh</span>
@@ -747,19 +718,19 @@
 
         // ─── PLANT DATABASE ──────────────────────────────────
         const PLANT_DB = [
-            { name: 'Palay', emoji: '🌾', idealTemp: { min: 25, max: 35 }, idealHumidity: { min: 60, max: 85 }, season: 'wet', desc: 'Pangunahing pagkain, kailangan ng tubig', daysToHarvest: 120, category: 'major',
+            { name: 'Palay', emoji: '🌾', idealTemp: { min: 25, max: 35 }, idealHumidity: { min: 60, max: 85 }, season: 'wet', desc: 'Staple crop that requires adequate water', daysToHarvest: 120, category: 'major',
               pests: ['Stem Borer', 'Rice Blast', 'Brown Planthopper'], care: 'Panatilihing baha ang palayan. Maglagay ng nitrogen fertilizer.',
               procedure: '1. Araruhin 2-3x. 2. Punlaan: 20-25 araw. 3. Itanim: 2-3 punla/burol, 20x20cm. 4. Panatilihin ang 5-10cm tubig. 5. Anihin: 80% dilaw na ang palay.',
               fertilizer: '🌱 Complete (14-14-14): 2 sako/ha. 🌱 Urea sa tillering: 1 sako/ha. 🌱 Urea sa panicle initiation: 1 sako/ha.',
               vitamins: '💊 Zinc Sulfate: 1kg/ha. 💊 Iron: kung dilaw ang dahon.' },
             { name: 'Tubo', emoji: '🍬', idealTemp: { min: 25, max: 35 }, idealHumidity: { min: 50, max: 80 }, season: 'wet', desc: 'Ginagawang asukal', daysToHarvest: 365, category: 'major',
               pests: ['Stem Borer', 'White Grub', 'Daga'], care: 'Maglagay ng complete fertilizer sa pagtatanim. Urea sa 3-4 na buwan.',
-              procedure: '1. Araruhin 30-40cm. 2. Hukay 1m ang layo, ilagay ang tanim. 3. Takpan ng 5-10cm lupa. 4. Abonohan sa 3-4 na buwan. 5. Anihin: 10-12 buwan.',
+              procedure: '1. Araruhin 30-40cm. 2. Hukay 1m ang layo, ilagay ang tanim. 3. Takpan ng 5-10cm lupa. 4. Fertilizerhan sa 3-4 na buwan. 5. Anihin: 10-12 buwan.',
               fertilizer: '🌱 Complete (14-14-14): 4 sako/ha. 🌱 Urea sa 3-4 buwan: 2 sako/ha. 🌱 Muriate of Potash: 1 sako/ha.',
               vitamins: '💊 Boron: 2kg/ha. 💊 Calcium: 1 ton/ha dolomite.' },
             { name: 'Mais', emoji: '🌽', idealTemp: { min: 18, max: 32 }, idealHumidity: { min: 50, max: 80 }, season: 'wet', desc: 'Mataas na ani, butil', daysToHarvest: 90, category: 'major',
               pests: ['Corn Borer', 'Armyworm', 'Rust'], care: 'Maglagay ng 14-14-14 sa pagtatanim. Urea sa knee-high stage.',
-              procedure: '1. Araruhin. 2. Itanim: 75x25cm, 2 butil/burol. 3. Payatin sa 1 halaman/burol. 4. Abonohan sa pagtatanim at 30 araw. 5. Anihin: kapag kayumanggi na ang buhok.',
+              procedure: '1. Araruhin. 2. Itanim: 75x25cm, 2 butil/burol. 3. Payatin sa 1 halaman/burol. 4. Fertilizerhan sa pagtatanim at 30 araw. 5. Anihin: kapag kayumanggi na ang buhok.',
               fertilizer: '🌱 Complete (14-14-14): 3 sako/ha. 🌱 Urea sa knee-high: 2 sako/ha. 🌱 Zinc: 1 sako/ha.',
               vitamins: '💊 Zinc Sulfate: 1kg/ha. 💊 Iron: kung dilaw ang dahon.' },
         ];
@@ -767,145 +738,145 @@
         // ─── FISH DATABASE WITH LOCAL NAMES ──────────────────
         const FISH_DB = [
             { 
-                name: 'Bangus (Milkfish)', 
+                name: 'Bangus', 
                 emoji: '🐟', 
                 type: 'saltwater', 
                 season: 'wet',
-                desc: 'Pambansang isda ng Pilipinas, popular sa prito at sinigang',
+                desc: 'National fish of the Philippines; commonly prepared fried or in soup.',
                 local_name: 'Bangus',
                 bait: 'Tinapay, algae, commercial pellets, lumot',
-                best_time: 'Madaling araw 5-8 AM',
-                best_spot: 'Palaisdaan sa baybayin, mababaw na tubig',
-                tips: 'Gumamit ng floating bait. Pinakamainam sa high tide.'
+                best_time: 'Early morning, 5–8 AM',
+                best_spot: 'Coastal fishponds and shallow water',
+                tips: 'Gumamit ng floating bait. Best Match sa high tide.'
             },
             { 
                 name: 'Tilapia',
                 emoji: '🐠', 
                 type: 'freshwater', 
                 season: 'all',
-                desc: 'Mabilis lumaki, madaling alagaan sa fishpond',
+                desc: 'Fast-growing and commonly raised in fishponds.',
                 local_name: 'Tilapia',
-                bait: 'Bulati, tinapay, commercial pellets, kangkong',
-                best_time: 'Umaga at hapon',
-                best_spot: 'Lawa, ilog, fishpond, palaisdaan',
-                tips: 'Gumamit ng light tackle. Pinakamainam sa mainit na panahon.'
+                bait: 'Worms, bread, commercial pellets, and kangkong',
+                best_time: 'Morning and afternoon',
+                best_spot: 'Lakes, rivers, fishponds, and ponds',
+                tips: 'Gumamit ng light tackle. Best Match sa mainit na panahon.'
             },
             { 
-                name: 'Galunggong (Round Scad)',
+                name: 'Galunggong',
                 emoji: '🐟', 
                 type: 'saltwater', 
                 season: 'dry',
-                desc: 'Karaniwang isda, mura at masarap, popular sa prito',
+                desc: 'Common food fish, often fried.',
                 local_name: 'Galunggong / GG',
-                bait: 'Maliit na isda, pusit, hipon',
+                bait: 'Small fish, squid, and shrimp',
                 best_time: 'Madaling araw 4-7 AM',
-                best_spot: 'Dagat, mga baybayin, fish cages',
-                tips: 'Gumamit ng maliliit na kawil. Pinakamainam sa maaliwalas na panahon.'
+                best_spot: 'Saltwater, mga baybayin, fish cages',
+                tips: 'Gumamit ng maliliit na kawil. Best Match sa maaliwalas na panahon.'
             },
             { 
-                name: 'Dalag (Mudfish)',
+                name: 'Dalag',
                 emoji: '🐟', 
                 type: 'freshwater', 
                 season: 'wet',
-                desc: 'Mapanirang isda, masarap sa sinigang at paksiw',
+                desc: 'Predatory freshwater fish, commonly cooked in soups or stews.',
                 local_name: 'Dalag / Mudfish',
-                bait: 'Palaka, maliit na isda, bulati, butete',
-                best_time: 'Gabi, madaling araw',
-                best_spot: 'Palayan, ilog, lawa, sapa',
-                tips: 'Gumamit ng live na pain. Pinakamainam sa tag-ulan.'
+                bait: 'Frog, small fish, worms, and small aquatic bait',
+                best_time: 'Night and early morning',
+                best_spot: 'Rice fields, rivers, lakes, and streams',
+                tips: 'Gumamit ng live na pain. Best Match sa tag-ulan.'
             },
             { 
-                name: 'Tulingan (Tuna)',
+                name: 'Tulingan',
                 emoji: '🐟', 
                 type: 'saltwater', 
                 season: 'dry',
-                desc: 'Malaking isda, mahalaga sa komersyo, masarap sa kinilaw',
+                desc: 'Important commercial fish, commonly prepared as kinilaw.',
                 local_name: 'Tulingan / Tuna',
-                bait: 'Buhay na isda, pusit, lures, hipon',
+                bait: 'Live fish, squid, lures, and shrimp',
                 best_time: 'Madaling araw, hapon',
-                best_spot: 'Karagatan, malalim na tubig, open sea',
-                tips: 'Gumamit ng heavy tackle. Pinakamainam sa tag-araw.'
+                best_spot: 'Open sea and deeper water',
+                tips: 'Gumamit ng heavy tackle. Best Match sa tag-araw.'
             },
             { 
-                name: 'Hito (Catfish)',
+                name: 'Hito',
                 emoji: '🐟', 
                 type: 'freshwater', 
                 season: 'all',
-                desc: 'Isda sa ilalim ng tubig, pwedeng alagaan sa fishpond',
+                desc: 'Fish sa ilalim ng tubig, pwedeng alagaan sa fishpond',
                 local_name: 'Hito / Catfish',
                 bait: 'Bulati, atay ng manok, commercial feed, daga',
-                best_time: 'Gabi, madaling araw',
+                best_time: 'Night and early morning',
                 best_spot: 'Fishpond, ilog, lawa, palaisdaan',
-                tips: 'Gumamit ng bottom rig. Pinakamainam sa mainit na gabi.'
+                tips: 'Gumamit ng bottom rig. Best Match sa mainit na gabi.'
             },
             { 
-                name: 'Lapu-Lapu (Grouper)',
+                name: 'Lapu-Lapu',
                 emoji: '🐟', 
                 type: 'saltwater', 
                 season: 'dry',
-                desc: 'Mamahaling isda, premium, masarap sa steamed at kinilaw',
+                desc: 'Premium reef fish commonly served steamed or as kinilaw.',
                 local_name: 'Lapu-Lapu / Grouper',
                 bait: 'Buhay na isda, pusit, hipon, alimango',
                 best_time: 'Madaling araw',
-                best_spot: 'Bahura (coral reefs), mabato na lugar',
-                tips: 'Gumamit ng heavy tackle. Pinakamainam sa tahimik na panahon.'
+                best_spot: 'Coral reefs and rocky habitat',
+                tips: 'Gumamit ng heavy tackle. Best Match sa tahimik na panahon.'
             },
             { 
-                name: 'Maya-Maya (Red Snapper)',
+                name: 'Maya-Maya',
                 emoji: '🐟', 
                 type: 'saltwater', 
                 season: 'dry',
-                desc: 'Popular na isda, kulay pula, masarap sa sinigang at prito',
+                desc: 'Popular reef fish, often cooked fried or in soup.',
                 local_name: 'Maya-Maya / Red Snapper',
-                bait: 'Pusit, maliit na isda, hipon, alimasag',
-                best_time: 'Umaga 6-10 AM',
-                best_spot: 'Bahura, mabato na ilalim ng dagat',
-                tips: 'Gumamit ng medium tackle. Pinakamainam sa high tide.'
+                bait: 'Squid, small fish, shrimp, and crab',
+                best_time: 'Morning 6-10 AM',
+                best_spot: 'Reefs and rocky seabeds',
+                tips: 'Gumamit ng medium tackle. Best Match sa high tide.'
             },
             { 
                 name: 'Hasa-Hasa (Shortfin Scad)',
                 emoji: '🐟', 
                 type: 'saltwater', 
                 season: 'wet',
-                desc: 'Karaniwang isda, maganda pang-tuyo at prito',
+                desc: 'Common fish, often dried or fried.',
                 local_name: 'Hasa-Hasa',
-                bait: 'Maliit na isda, hipon, bulati',
-                best_time: 'Umaga 5-9 AM',
-                best_spot: 'Baybayin, fish cages, palaisdaan',
-                tips: 'Gumamit ng maliliit na kawil. Pinakamainam sa high tide.'
+                bait: 'Small fish, shrimp, and worms',
+                best_time: 'Morning 5-9 AM',
+                best_spot: 'Coastal areas, fish cages, and fishponds',
+                tips: 'Gumamit ng maliliit na kawil. Best Match sa high tide.'
             },
             { 
-                name: 'Pusit (Squid)',
+                name: 'Pusit',
                 emoji: '🦑', 
                 type: 'saltwater', 
                 season: 'all',
-                desc: 'Malambot na seafood, pang-ihaw at prito, pang-pain din',
+                desc: 'Seafood commonly grilled or fried and also used as bait.',
                 local_name: 'Pusit / Squid',
-                bait: 'Maliit na isda, hipon, lures',
-                best_time: 'Gabi, madaling araw',
-                best_spot: 'Baybayin, dagat, reef',
-                tips: 'Gumamit ng jigging method. Pinakamainam sa gabi.'
+                bait: 'Small fish, shrimp, and lures',
+                best_time: 'Night and early morning',
+                best_spot: 'Coastal waters and reefs',
+                tips: 'Gumamit ng jigging method. Best Match sa gabi.'
             },
             { 
-                name: 'Alimango (Crab)',
+                name: 'Alimango',
                 emoji: '🦀', 
                 type: 'saltwater', 
                 season: 'wet',
-                desc: 'Masarap na seafood, pang-ihaw at ginataang alimango',
+                desc: 'Seafood commonly grilled or cooked in coconut milk.',
                 local_name: 'Alimango / Crab',
-                bait: 'Maliit na isda, bulati, manok, hipon',
-                best_time: 'Gabi, high tide',
-                best_spot: 'Mangrove, baybayin, palaisdaan',
-                tips: 'Gumamit ng crab traps. Pinakamainam sa high tide.'
+                bait: 'Small fish, worms, chicken, and shrimp',
+                best_time: 'Night, high tide',
+                best_spot: 'Mangroves, coastal areas, and fishponds',
+                tips: 'Gumamit ng crab traps. Best Match sa high tide.'
             },
         ];
 
         // ─── LIVESTOCK DATABASE ──────────────────────────────
         const LIVESTOCK_DB = [
             { 
-                name: 'Manok (Chicken)', emoji: '🐔', type: 'poultry',
+                name: 'Manok', emoji: '🐔', type: 'poultry',
                 idealTemp: { min: 18, max: 32 }, season: 'all',
-                desc: 'Pinakamainam para sa karne at itlog. Mabilis lumaki, madaling alagaan.',
+                desc: 'Best Match para sa karne at itlog. Mabilis lumaki, madaling alagaan.',
                 breed: 'Broiler (karne), Layer (itlog), Native (dalawa)',
                 best_for: 'Maliit na sakahan, backyard, mabilis na kita',
                 diseases: [
@@ -924,10 +895,10 @@
                 procedure: '1. Maghanda ng brooder na may heat lamp (90-95°F). 2. Magbigay ng starter feed at malinis na tubig. 3. Magbakuna sa day 1 (Mareks), day 14 (Newcastle). 4. Lipat sa grower sa 4 na linggo. 5. Para sa layer: maglagay ng pugad sa 16 na linggo. 6. Anihin: broiler sa 6-8 linggo, layer nagsisimulang mangitlog sa 18-20 linggo.'
             },
             { 
-                name: 'Baboy (Pig)', emoji: '🐷', type: 'swine',
+                name: 'Baboy', emoji: '🐷', type: 'swine',
                 idealTemp: { min: 18, max: 30 }, season: 'all',
                 desc: 'Mataas na produksyon ng karne, magandang negosyo para sa mga magsasaka.',
-                breed: 'Landrace, Yorkshire, Duroc, Native (Baboy damo)',
+                breed: 'Landrace, Yorkshire, Duroc, Native (Pig damo)',
                 best_for: 'Katamtaman hanggang malaking sakahan, produksyon ng karne',
                 diseases: [
                     { name: 'African Swine Fever (ASF)', medicine: 'Walang lunas - ihiwalay at patayin agad', symptoms: 'Mataas na lagnat, biglaang kamatayan, pulang batik, duguan na tae' },
@@ -945,7 +916,7 @@
                 procedure: '1. Maghanda ng malinis na kulungan. 2. Magbigay ng starter feed at malinis na tubig. 3. Ihiwalay sa ina sa 4-6 na linggo. 4. Bigyan ng grower feed hanggang 12 linggo. 5. Palitan ng finisher feed sa 12 linggo. 6. Anihin: sa 5-6 na buwan (100-120kg).'
             },
             { 
-                name: 'Kambing (Goat)', emoji: '🐐', type: 'small',
+                name: 'Kambing', emoji: '🐐', type: 'small',
                 idealTemp: { min: 15, max: 30 }, season: 'dry',
                 desc: 'Mababa ang maintenance, maganda para sa gatas at karne, nabubuhay sa tuyong lugar.',
                 breed: 'Anglo-Nubian (gatas), Boer (karne), Native (dalawa)',
@@ -966,7 +937,7 @@
                 procedure: '1. Maghanda ng malinis, tuyong tirahan. 2. Bigyan ng colostrum first 3 days. 3. Feed milk replacer hanggang 8 linggo. 4. Simulan ang forage at grain sa 2 buwan. 5. Deworm sa 2 buwan, then every 3 buwan. 6. Magpalahi sa 8-10 buwan. 7. Anihin: karne sa 8-12 buwan.'
             },
             { 
-                name: 'Baka (Cow)', emoji: '🐮', type: 'cattle',
+                name: 'Cattle (Cow)', emoji: '🐮', type: 'cattle',
                 idealTemp: { min: 15, max: 30 }, season: 'dry',
                 desc: 'Mataas na puhunan pero magandang kita para sa gatas at karne.',
                 breed: 'Holstein (gatas), Brahman (karne), Native (dalawa)',
@@ -1010,17 +981,19 @@
 
         // ─── REAL PHILIPPINE FISHING SPOTS ──────────────────
         const PHILIPPINE_SPOTS = {
-            'Manila': { spots: ['Navotas Fish Port', 'Malabon Fishpond', 'Pasig River', 'Manila Bay', 'Bataan Coast'], fish: ['Bangus', 'Tilapia', 'Galunggong', 'Hasa-Hasa', 'Alimango'] },
+            'Manila': { spots: ['Navotas Fish Port', 'Malabon Fishpond', 'Pasig River', 'Manila Bay'], fish: ['Bangus', 'Tilapia', 'Galunggong', 'Hasa-Hasa', 'Alimango'] },
             'Cebu': { spots: ['Mactan Channel', 'Cebu City Port', 'Camotes Sea', 'Moalboal', 'Malapascua'], fish: ['Lapu-Lapu', 'Tulingan', 'Maya-Maya', 'Pusit', 'Bangus'] },
-            'Davao': { spots: ['Davao Gulf', 'Samal Island', 'Digos Bay', 'Mati Bay', 'General Santos'], fish: ['Tuna', 'Lapu-Lapu', 'Maya-Maya', 'Pusit', 'Bangus'] },
-            'Iloilo': { spots: ['Iloilo River', 'Guimaras Strait', 'Miagao Coast', 'Panay Gulf', 'Sibalom'], fish: ['Bangus', 'Galunggong', 'Tilapia', 'Hito', 'Hasa-Hasa'] },
-            'Batangas': { spots: ['Batangas Bay', 'Balayan Bay', 'Nasugbu', 'Laiya Beach', 'Anilao'], fish: ['Lapu-Lapu', 'Tulingan', 'Maya-Maya', 'Pusit', 'Alimango'] },
-            'Pampanga': { spots: ['Pampanga River', 'Candaba Swamp', 'Macabebe', 'Guagua', 'Sexmoan'], fish: ['Tilapia', 'Hito', 'Dalag', 'Bangus', 'Catfish'] },
-            'Laguna': { spots: ['Laguna Lake', 'Pila', 'Calamba', 'Los Banos', 'Santa Cruz'], fish: ['Tilapia', 'Hito', 'Dalag', 'Bangus', 'Catfish'] },
+            'Davao': { spots: ['Davao Gulf', 'Samal Island', 'Digos Bay', 'Mati Bay'], fish: ['Tulingan', 'Lapu-Lapu', 'Maya-Maya', 'Pusit', 'Bangus'] },
+            'Iloilo': { spots: ['Iloilo River', 'Guimaras Strait', 'Miagao Coast', 'Panay Gulf'], fish: ['Bangus', 'Galunggong', 'Tilapia', 'Hito', 'Hasa-Hasa'] },
+            'Bacolod': { spots: ['Bacolod coastal fishing areas'], fish: ['Bangus', 'Galunggong', 'Hasa-Hasa', 'Alimango'] },
+            'Kabankalan': { spots: ['Kabankalan coastal fishing areas'], fish: ['Bangus', 'Galunggong', 'Hasa-Hasa', 'Alimango'] },
+            'Negros Occidental': { spots: ['Negros Occidental coastal fishing areas'], fish: ['Bangus', 'Galunggong', 'Hasa-Hasa', 'Alimango'] },
+            'Batangas': { spots: ['Batangas Bay', 'Balayan Bay', 'Nasugbu', 'Laiya', 'Anilao'], fish: ['Lapu-Lapu', 'Tulingan', 'Maya-Maya', 'Pusit', 'Alimango'] },
+            'Pampanga': { spots: ['Pampanga River', 'Candaba Swamp', 'Macabebe', 'Guagua'], fish: ['Tilapia', 'Hito', 'Dalag', 'Bangus'] },
+            'Laguna': { spots: ['Laguna de Bay', 'Pila', 'Calamba', 'Los Baños', 'Santa Cruz'], fish: ['Tilapia', 'Hito', 'Dalag', 'Bangus'] },
             'Quezon': { spots: ['Quezon Bay', 'Lucena Port', 'Infanta', 'Polillo Island', 'Real'], fish: ['Lapu-Lapu', 'Tulingan', 'Maya-Maya', 'Pusit', 'Alimango'] },
-            'Bicol': { spots: ['Lagonoy Gulf', 'Sorsogon Bay', 'Albay Gulf', 'San Miguel Bay', 'Catanduanes'], fish: ['Lapu-Lapu', 'Tulingan', 'Bangus', 'Galunggong', 'Pusit'] },
-            'Mindanao': { spots: ['Davao Gulf', 'Moro Gulf', 'Sulu Sea', 'Celebes Sea', 'Butuan Bay'], fish: ['Tuna', 'Lapu-Lapu', 'Tulingan', 'Maya-Maya', 'Bangus'] },
-            'default': { spots: ['Baybayin', 'Ilog', 'Fishpond', 'Lawa', 'Dagat'], fish: ['Bangus', 'Tilapia', 'Galunggong', 'Hito', 'Dalag'] }
+            'Bicol': { spots: ['Lagonoy Gulf', 'Sorsogon Bay', 'Albay Gulf', 'San Miguel Bay'], fish: ['Lapu-Lapu', 'Tulingan', 'Bangus', 'Galunggong', 'Pusit'] },
+            'Mindanao': { spots: ['Davao Gulf', 'Moro Gulf', 'Sulu Sea', 'Celebes Sea', 'Butuan Bay'], fish: ['Tulingan', 'Lapu-Lapu', 'Maya-Maya', 'Bangus'] }
         };
 
         // ─── STATE ──────────────────────────────────────────
@@ -1029,7 +1002,6 @@
         let userAddress = '';
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
-        let map = null;
 
         // ─── DOM REFS ──────────────────────────────────────
         const gpsBtn = document.getElementById('gpsBtn');
@@ -1069,9 +1041,6 @@
                 const onclick = item.getAttribute('onclick') || '';
                 item.classList.toggle('active', onclick.includes(tab));
             });
-            if (tab === 'fishing' && userLat && userLng) {
-                setTimeout(initFishingMap, 300);
-            }
             if (tab === 'livestock' && userLat && userLng) {
                 setTimeout(recommendLivestock, 300);
             }
@@ -1122,84 +1091,142 @@
 
         // ─── GET USER LOCATION TYPE ──────────────────────────
         function getLocationType() {
-            if (!userAddress) return 'default';
+            if (!userAddress) return null;
             const loc = userAddress.toLowerCase();
-            for (const key in PHILIPPINE_SPOTS) {
-                if (loc.includes(key.toLowerCase())) return key;
-            }
-            return 'default';
+            const keys = Object.keys(PHILIPPINE_SPOTS).sort((a, b) => b.length - a.length);
+            return keys.find(key => loc.includes(key.toLowerCase())) || null;
         }
 
         // ─── ENABLE GPS ─────────────────────────────────────
         window.enableGPS = function() {
             gpsBtn.disabled = true;
-            gpsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kumukuha ng GPS...';
+            gpsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting exact location...';
+
             if (!navigator.geolocation) {
-                gpsCoords.textContent = '❌ Hindi supported ang GPS';
-                gpsBtn.innerHTML = '❌ Hindi Available';
+                setLocationUnavailable('Geolocation is not supported by this browser.');
                 return;
             }
+
             navigator.geolocation.getCurrentPosition(
                 async (pos) => {
                     userLat = pos.coords.latitude;
                     userLng = pos.coords.longitude;
                     gpsBanner.style.display = 'none';
-                    gpsCoords.textContent = `📍 ${userLat.toFixed(6)}°N, ${userLng.toFixed(6)}°E`;
-                    accuracy.textContent = `±${Math.round(pos.coords.accuracy)}m`;
+                    gpsCoords.textContent = `📍 ${userLat.toFixed(6)}°, ${userLng.toFixed(6)}°`;
+                    accuracy.textContent = `±${Math.round(pos.coords.accuracy)} m`;
+                    userAddress = '';
+
                     try {
-                        const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLng}&zoom=14`);
+                        const resp = await fetch(
+                            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(userLat)}&lon=${encodeURIComponent(userLng)}&zoom=18&addressdetails=1`,
+                            { headers: { 'Accept-Language': 'en' } }
+                        );
                         const data = await resp.json();
-                        if (data.display_name) {
-                            const parts = data.display_name.split(',');
-                            userAddress = parts.slice(0, 3).join(', ');
-                            address.textContent = userAddress;
-                        }
-                    } catch (e) { address.textContent = '📍 Nakuha ang lokasyon'; }
-                    getWeatherForLocation(userLat, userLng);
+                        userAddress = data.display_name || '';
+                        address.textContent = userAddress || 'Exact GPS location acquired';
+                    } catch (e) {
+                        address.textContent = 'Exact GPS location acquired';
+                    }
+
+                    await getWeatherForLocation(userLat, userLng);
                     updateSeasonalGuide();
-                    initFishingMap();
                     recommendLivestock();
-                    gpsBtn.innerHTML = '✅ GPS Naka-on';
+                    updateSpotList();
+                    gpsBtn.innerHTML = '✅ Location locked';
+                    gpsBtn.disabled = false;
                 },
                 (error) => {
                     console.error('GPS Error:', error);
-                    gpsBtn.innerHTML = '🔄 Subukan ulit';
-                    gpsBtn.disabled = false;
-                    userLat = 14.5995;
-                    userLng = 120.9842;
-                    userAddress = 'Manila, Philippines';
-                    gpsCoords.textContent = `📍 ${userLat.toFixed(4)}°N, ${userLng.toFixed(4)}°E (fallback)`;
-                    address.textContent = 'Manila, Philippines';
-                    getWeatherForLocation(userLat, userLng);
-                    updateSeasonalGuide();
-                    initFishingMap();
-                    recommendLivestock();
+                    const msg = error.code === 1
+                        ? 'Location permission was denied.'
+                        : error.code === 2
+                        ? 'Your location could not be determined.'
+                        : 'Location request timed out.';
+                    setLocationUnavailable(msg);
                 },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
             );
         };
 
+        function setLocationUnavailable(message) {
+            userLat = null;
+            userLng = null;
+            userAddress = '';
+            gpsBanner.style.display = 'block';
+            gpsCoords.textContent = '📍 Location unavailable';
+            accuracy.textContent = '';
+            address.textContent = message;
+            currentTemp.textContent = '--';
+            humidity.textContent = '--';
+            windSpeed.textContent = '--';
+            rainChance.textContent = '--';
+            season.textContent = '--';
+            plantRecs.innerHTML = `<div class="loading"><i class="fas fa-location-crosshairs"></i><p>Enable location to load location-based recommendations.</p></div>`;
+            fishRecs.innerHTML = `<div class="loading"><i class="fas fa-location-crosshairs"></i><p>Enable location to load fish for your exact area.</p></div>`;
+            livestockRecs.innerHTML = `<div class="loading"><i class="fas fa-location-crosshairs"></i><p>Enable location to load livestock recommendations.</p></div>`;
+            spotList.innerHTML = `<div class="loading"><i class="fas fa-location-crosshairs"></i><p>Enable location to find fishing areas for your area.</p></div>`;
+            gpsBtn.innerHTML = '<i class="fas fa-location-dot"></i> Enable Exact Location';
+            gpsBtn.disabled = false;
+        };
+
         // ─── WEATHER ENGINE ──────────────────────────────────
-        function getWeatherForLocation(lat, lng) {
-            const temp = Math.round(30 - Math.abs(lat - 10) * 0.8 + Math.sin((new Date().getMonth() - 3) * 0.5) * 3);
-            const humidityVal = Math.min(95, Math.max(30, Math.round(70 - (temp - 25) * 1.5 + Math.sin((new Date().getMonth() - 3) * 0.5) * 8)));
-            const seasonVal = temp > 28 ? 'wet' : temp > 22 ? 'dry' : 'cool';
-            
-            currentTemp.textContent = temp;
-            humidity.textContent = humidityVal;
-            windSpeed.textContent = Math.round(10 + Math.abs(Math.sin(lat * lng * 0.003 + Date.now() / 20000)) * 4);
-            rainChance.textContent = Math.round(15 + Math.abs(Math.sin(lat * lng * 0.004 + Date.now() / 18000)) * 10);
-            const seasonNames = { wet: 'Tag-Ulan', dry: 'Tag-Araw', cool: 'Tag-Lamig' };
-            season.textContent = seasonNames[seasonVal] || seasonVal;
-            
-            const weather = { temp, humidity: humidityVal, season: seasonVal };
-            recommendPlants(weather, 'all');
-            recommendFish(weather, 'all');
-            updatePlantingTips(weather);
-            updateFishingTips(weather);
-            updateLivestockTips(weather);
-            updateSpotList();
-            updateTimestamp();
+        async function getWeatherForLocation(lat, lng) {
+            if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+                setLocationUnavailable('A valid location is required.');
+                return;
+            }
+
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lng)}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation,rain&hourly=precipitation_probability&forecast_days=1&timezone=auto`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Weather HTTP ${response.status}`);
+                const data = await response.json();
+
+                const current = data.current || {};
+                const temp = Number.isFinite(current.temperature_2m) ? Math.round(current.temperature_2m) : null;
+                const humidityVal = Number.isFinite(current.relative_humidity_2m) ? Math.round(current.relative_humidity_2m) : null;
+                const windVal = Number.isFinite(current.wind_speed_10m) ? Math.round(current.wind_speed_10m) : null;
+
+                const currentHour = new Date(current.time).getHours();
+                const hourlyTimes = data.hourly?.time || [];
+                const hourlyRain = data.hourly?.precipitation_probability || [];
+                let rainVal = null;
+                const hourIndex = hourlyTimes.findIndex(t => new Date(t).getHours() === currentHour);
+                if (hourIndex >= 0 && Number.isFinite(hourlyRain[hourIndex])) rainVal = Math.round(hourlyRain[hourIndex]);
+
+                if (temp === null || humidityVal === null || windVal === null) {
+                    throw new Error('Incomplete location weather data');
+                }
+
+                const month = new Date(current.time).getMonth();
+                const seasonVal = [5,6,7,8,9,10].includes(month) ? 'wet' : [2,3,4,11,0,1].includes(month) ? 'dry' : 'cool';
+
+                currentTemp.textContent = temp;
+                humidity.textContent = humidityVal;
+                windSpeed.textContent = windVal;
+                rainChance.textContent = rainVal === null ? '--' : rainVal;
+                const seasonNames = { wet: 'Wet season', dry: 'Dry season', cool: 'Cool season' };
+                season.textContent = seasonNames[seasonVal];
+
+                const weather = { temp, humidity: humidityVal, season: seasonVal, rainChance: rainVal, lat, lng };
+                recommendPlants(weather, 'all');
+                recommendFish(weather, 'all');
+                updatePlantingTips(weather);
+                updateFishingTips(weather);
+                updateLivestockTips(weather);
+                updateSpotList();
+                updateTimestamp();
+            } catch (error) {
+                console.error('Weather error:', error);
+                currentTemp.textContent = '--';
+                humidity.textContent = '--';
+                windSpeed.textContent = '--';
+                rainChance.textContent = '--';
+                season.textContent = '--';
+                plantRecs.innerHTML = `<div class="loading"><i class="fas fa-cloud-exclamation"></i><p>Weather data is unavailable for this exact location. No weather-based recommendations will be shown.</p></div>`;
+                fishRecs.innerHTML = `<div class="loading"><i class="fas fa-location-crosshairs"></i><p>Location data is unavailable. Fish recommendations are disabled.</p></div>`;
+                livestockRecs.innerHTML = `<div class="loading"><i class="fas fa-location-crosshairs"></i><p>Location weather is unavailable. Livestock recommendations are disabled.</p></div>`;
+            }
         }
 
         // ─── UPDATE TIPS ────────────────────────────────────
@@ -1222,8 +1249,8 @@
             const tips = document.getElementById('fishingTips');
             let tipList = [];
             const hour = new Date().getHours();
-            if (hour >= 5 && hour <= 8) tipList.push('🌅 Pinakamainam: Umaga 5-8 AM');
-            else if (hour >= 16 && hour <= 18) tipList.push('🌅 Pinakamainam: Hapon 4-6 PM');
+            if (hour >= 5 && hour <= 8) tipList.push('🌅 Best Match: Morning 5-8 AM');
+            else if (hour >= 16 && hour <= 18) tipList.push('🌅 Best Match: Afternoon 4-6 PM');
             else tipList.push('⏳ Mainam: 5-8 AM at 4-6 PM');
             if (weather.temp > 28) tipList.push('🌊 Aktibo ang isda sa mainit na tubig');
             else if (weather.temp < 22) tipList.push('❄️ Lumalim ang isda sa malamig');
@@ -1254,7 +1281,7 @@
 
         // ─── RECOMMEND PLANTS ──────────────────────────────
         function recommendPlants(weather, filter = 'all') {
-            if (!weather) return;
+            if (!weather || !Number.isFinite(userLat) || !Number.isFinite(userLng)) return;
             let filteredPlants = PLANT_DB;
             if (filter === 'wet') filteredPlants = PLANT_DB.filter(p => p.season === 'wet');
             else if (filter === 'dry') filteredPlants = PLANT_DB.filter(p => p.season === 'dry');
@@ -1272,7 +1299,7 @@
             });
             scored.sort((a, b) => b.score - a.score);
             renderPlantCards(scored.slice(0, 15));
-            plantCount.textContent = `(${scored.length} halaman)`;
+            plantCount.textContent = `(${scored.length} plants)`;
         }
 
         function renderPlantCards(plants) {
@@ -1288,96 +1315,97 @@
                     <div class="item-card">
                         <div class="item-header">
                             <span class="emoji">${p.emoji}</span>
-                            <div class="item-info"><h4>${p.name}</h4><div class="sub">${p.desc} · ${p.daysToHarvest} araw</div></div>
+                            <div class="item-info"><h4>${p.name}</h4><div class="sub">${p.desc} · ${p.daysToHarvest} days</div></div>
                             <span class="${badgeClass}">${p.score}%</span>
                         </div>
-                        <button class="toggle-btn" onclick="toggleDetails('${detailId}')">📋 Ipakita ang Detalye</button>
+                        <button class="toggle-btn" onclick="toggleDetails('${detailId}')">📋 Show Details</button>
                         <div class="item-details" id="${detailId}">
                             <div class="detail-grid">
-                                <span class="label">🌡️ Tamang Temp:</span><span class="value">${p.idealTemp.min}–${p.idealTemp.max}°C</span>
+                                <span class="label">🌡️ Ideal Temperature:</span><span class="value">${p.idealTemp.min}–${p.idealTemp.max}°C</span>
                                 <span class="label">💧 Humidity:</span><span class="value">${p.idealHumidity.min}–${p.idealHumidity.max}%</span>
-                                <span class="label">📅 Panahon:</span><span class="value">${p.season}</span>
-                                <span class="label">⏳ Araw bago anihin:</span><span class="value">${p.daysToHarvest} araw</span>
+                                <span class="label">📅 Season:</span><span class="value">${p.season}</span>
+                                <span class="label">⏳ Days to Harvest:</span><span class="value">${p.daysToHarvest} araw</span>
                             </div>
-                            <div class="section"><h5><i class="fas fa-bug"></i> Peste</h5><ul>${p.pests ? p.pests.map(ps => `<li>${ps}</li>`).join('') : '<li>Walang major na peste</li>'}</ul></div>
-                            <div class="section"><h5><i class="fas fa-hand-holding-heart"></i> Pag-aalaga</h5><ul>${p.care ? p.care.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard na pag-aalaga</li>'}</ul></div>
-                            <div class="section"><h5><i class="fas fa-list-ol"></i> Paraan</h5><ul>${p.procedure ? p.procedure.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard na paraan</li>'}</ul></div>
-                            <div class="section" style="background:#fff3e0; border-left:3px solid #ff8f00;"><h5><i class="fas fa-flask" style="color:#ff8f00;"></i> Abono</h5><ul>${p.fertilizer ? p.fertilizer.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Balanseng abono</li>'}</ul></div>
-                            <div class="section" style="background:#e8f5e9; border-left:3px solid #2e7d32;"><h5><i class="fas fa-heartbeat" style="color:#2e7d32;"></i> Bitamina</h5><ul>${p.vitamins ? p.vitamins.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard na bitamina</li>'}</ul></div>
+                            <div class="section"><h5><i class="fas fa-bug"></i> Pests</h5><ul>${p.pests ? p.pests.map(ps => `<li>${ps}</li>`).join('') : '<li>No major pests listed</li>'}</ul></div>
+                            <div class="section"><h5><i class="fas fa-hand-holding-heart"></i> Care</h5><ul>${p.care ? p.care.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard care</li>'}</ul></div>
+                            <div class="section"><h5><i class="fas fa-list-ol"></i> Procedure</h5><ul>${p.procedure ? p.procedure.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard procedure</li>'}</ul></div>
+                            <div class="section" style="background:#fff3e0; border-left:3px solid #ff8f00;"><h5><i class="fas fa-flask" style="color:#ff8f00;"></i> Fertilizer</h5><ul>${p.fertilizer ? p.fertilizer.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Balanced fertilizer</li>'}</ul></div>
+                            <div class="section" style="background:#e8f5e9; border-left:3px solid #2e7d32;"><h5><i class="fas fa-heartbeat" style="color:#2e7d32;"></i> Vitamins</h5><ul>${p.vitamins ? p.vitamins.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard vitamins</li>'}</ul></div>
                         </div>
                     </div>
                 `;
             }
-            plantRecs.innerHTML = html || '<div class="loading"><p>Walang halaman na tumutugma</p></div>';
+            plantRecs.innerHTML = html || '<div class="loading"><p>No plants match the current conditions</p></div>';
         }
 
         // ─── RECOMMEND FISH ──────────────────────────────────
         function recommendFish(weather, filter = 'all') {
-            if (!weather) return;
+            if (!weather || !Number.isFinite(userLat) || !Number.isFinite(userLng)) return;
+
+            const locType = getLocationType();
+            if (!locType || !PHILIPPINE_SPOTS[locType]) {
+                fishRecs.innerHTML = `<div class="loading"><i class="fas fa-location-crosshairs"></i><p>No verified fish profile is available for the detected location yet. Weather data is still tied to your exact GPS position.</p></div>`;
+                fishCount.textContent = '(0 fish)';
+                return;
+            }
+
             let filteredFish = FISH_DB;
             if (filter === 'saltwater') filteredFish = FISH_DB.filter(f => f.type === 'saltwater');
             else if (filter === 'freshwater') filteredFish = FISH_DB.filter(f => f.type === 'freshwater');
-            
-            // Get location-based fish
-            const locType = getLocationType();
-            const locationFish = PHILIPPINE_SPOTS[locType]?.fish || PHILIPPINE_SPOTS['default'].fish;
-            
+
+            const locationFish = PHILIPPINE_SPOTS[locType].fish;
+
             const scored = filteredFish.map(f => {
                 let score = 0;
-                if (f.season === 'all' || f.season === weather.season) score += 50;
-                else if (f.season === 'wet' && weather.season === 'wet') score += 40;
-                else if (f.season === 'dry' && weather.season === 'dry') score += 40;
-                else score += 20;
-                
-                // Bonus if fish is common in area
-                if (locationFish.some(lf => f.name.includes(lf) || lf.includes(f.name))) {
-                    score += 25;
-                }
-                
+                if (locationFish.some(lf => f.name.includes(lf) || lf.includes(f.name))) score += 65;
+                if (f.season === 'all' || f.season === weather.season) score += 35;
+                else score += 10;
                 return { ...f, score: Math.min(100, Math.round(score)) };
-            });
+            }).filter(f => f.score >= 60);
+
             scored.sort((a, b) => b.score - a.score);
             renderFishCards(scored);
-            fishCount.textContent = `(${scored.length} isda)`;
+            fishCount.textContent = `(${scored.length} fish)`;
         }
 
         function renderFishCards(fish) {
             let html = '';
             for (const f of fish) {
                 const detailId = 'fish-' + f.name.replace(/\s/g, '');
-                const typeLabel = f.type === 'saltwater' ? '🌊 Dagat' : '🏞️ Tubig-tabang';
+                const typeLabel = f.type === 'saltwater' ? '🌊 Saltwater' : '🏞️ Freshwater';
                 html += `
                     <div class="item-card" style="border-left-color:#0d47a1;">
                         <div class="item-header">
                             <span class="emoji">${f.emoji}</span>
-                            <div class="item-info"><h4>${f.name}</h4><div class="sub">${typeLabel} · ${f.season} panahon</div></div>
+                            <div class="item-info"><h4>${f.name}</h4><div class="sub">${typeLabel} · ${f.season} season</div></div>
                             <span class="badge fishing-badge">${f.score}%</span>
                         </div>
-                        <button class="toggle-btn" onclick="toggleDetails('${detailId}')">📋 Ipakita ang Detalye</button>
+                        <button class="toggle-btn" onclick="toggleDetails('${detailId}')">📋 Show Details</button>
                         <div class="item-details" id="${detailId}">
                             <div class="detail-grid">
-                                <span class="label">🐟 Lokal na Pangalan:</span><span class="value">${f.local_name || f.name}</span>
-                                <span class="label">🎣 Pain:</span><span class="value">${f.bait}</span>
-                                <span class="label">⏰ Pinakamainam na Oras:</span><span class="value">${f.best_time}</span>
-                                <span class="label">📍 Pinakamainam na Lugar:</span><span class="value">${f.best_spot}</span>
+                                <span class="label">🐟 Local Name:</span><span class="value">${f.local_name || f.name}</span>
+                                <span class="label">🎣 Bait:</span><span class="value">${f.bait}</span>
+                                <span class="label">⏰ Best Time:</span><span class="value">${f.best_time}</span>
+                                <span class="label">📍 Best Fishing Area:</span><span class="value">${f.best_spot}</span>
                             </div>
-                            <div class="section"><h5><i class="fas fa-info-circle"></i> Paglalarawan</h5><ul><li>${f.desc}</li></ul></div>
-                            <div class="section fishing-section"><h5><i class="fas fa-lightbulb"></i> Mga Tips sa Pangingisda</h5><ul>${f.tips ? f.tips.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard na tips</li>'}</ul></div>
+                            <div class="section"><h5><i class="fas fa-info-circle"></i> Description</h5><ul><li>${f.desc}</li></ul></div>
+                            <div class="section fishing-section"><h5><i class="fas fa-lightbulb"></i> Mga Tips sa Fishing</h5><ul>${f.tips ? f.tips.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard na tips</li>'}</ul></div>
                         </div>
                     </div>
                 `;
             }
-            fishRecs.innerHTML = html || '<div class="loading"><p>Walang isda sa lugar na ito</p></div>';
+            fishRecs.innerHTML = html || '<div class="loading"><p>No fish data available for this area</p></div>';
         }
 
         // ─── RECOMMEND LIVESTOCK ─────────────────────────────
         function recommendLivestock() {
             if (!userLat || !userLng) {
-                livestockRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang pinakamainam na hayop!</p></div>`;
+                livestockRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to see livestock recommendations.</p></div>`;
                 return;
             }
 
-            const temp = parseInt(currentTemp.textContent) || 30;
+            const temp = parseInt(currentTemp.textContent);
+            if (!Number.isFinite(temp)) return;
             
             const scored = LIVESTOCK_DB.map(animal => {
                 let score = 0;
@@ -1386,13 +1414,13 @@
                 else score += 30 - (temp - animal.idealTemp.max) * 2;
                 
                 // Bonus for best animals in PH
-                if (animal.name === 'Manok (Chicken)') score += 20;
-                if (animal.name === 'Baboy (Pig)') score += 20;
-                if (animal.name === 'Kambing (Goat)') score += 15;
-                if (animal.name === 'Baka (Cow)') score += 10;
+                if (animal.name === 'Manok') score += 20;
+                if (animal.name === 'Baboy') score += 20;
+                if (animal.name === 'Kambing') score += 15;
+                if (animal.name === 'Cattle (Cow)') score += 10;
                 
-                const currentSeason = season.textContent.toLowerCase().includes('ulan') ? 'wet' : 
-                                     season.textContent.toLowerCase().includes('araw') ? 'dry' : 'cool';
+                const currentSeason = season.textContent.toLowerCase().includes('wet') ? 'wet' : 
+                                     season.textContent.toLowerCase().includes('dry') ? 'dry' : 'cool';
                 if (animal.season === 'all') score += 10;
                 else if (animal.season === currentSeason) score += 15;
                 
@@ -1401,7 +1429,7 @@
             
             scored.sort((a, b) => b.score - a.score);
             renderLivestockCards(scored);
-            livestockCount.textContent = `(${scored.length} hayop)`;
+            livestockCount.textContent = `(${scored.length} livestock)`;
         }
 
         function renderLivestockCards(animals) {
@@ -1413,13 +1441,13 @@
                 else badgeClass += ' warning';
                 
                 const detailId = 'livestock-' + animal.name.replace(/\s/g, '');
-                const isBest = animal.score >= 80 ? '<span class="best-match-badge">⭐ Pinakamainam</span>' : '';
+                const isBest = animal.score >= 80 ? '<span class="best-match-badge">⭐ Best Match</span>' : '';
                 
                 const typeLabels = {
-                    poultry: '🐔 Manok',
-                    swine: '🐷 Baboy',
-                    cattle: '🐮 Baka',
-                    small: '🐐 Kambing'
+                    poultry: '🐔 Chicken',
+                    swine: '🐷 Pig',
+                    cattle: '🐮 Cattle',
+                    small: '🐐 Goat'
                 };
                 
                 html += `
@@ -1432,38 +1460,38 @@
                             </div>
                             <span class="${badgeClass}">${animal.score}%</span>
                         </div>
-                        <button class="toggle-btn" onclick="toggleDetails('${detailId}')">📋 Ipakita ang Detalye</button>
+                        <button class="toggle-btn" onclick="toggleDetails('${detailId}')">📋 Show Details</button>
                         <div class="item-details" id="${detailId}">
                             <div class="detail-grid">
-                                <span class="label">🌡️ Tamang Temp:</span><span class="value">${animal.idealTemp.min}–${animal.idealTemp.max}°C</span>
-                                <span class="label">📅 Pinakamainam na Panahon:</span><span class="value">${animal.season}</span>
-                                <span class="label">🐄 Pinakamainam Para sa:</span><span class="value">${animal.best_for}</span>
-                                <span class="label">🧬 Lahi:</span><span class="value">${animal.breed}</span>
+                                <span class="label">🌡️ Ideal Temperature:</span><span class="value">${animal.idealTemp.min}–${animal.idealTemp.max}°C</span>
+                                <span class="label">📅 Best Season:</span><span class="value">${animal.season}</span>
+                                <span class="label">🐄 Best For:</span><span class="value">${animal.best_for}</span>
+                                <span class="label">🧬 Breed:</span><span class="value">${animal.breed}</span>
                             </div>
                             
                             <div class="section livestock-section">
-                                <h5><i class="fas fa-heartbeat"></i> Karaniwang Sakit at Gamot</h5>
+                                <h5><i class="fas fa-heartbeat"></i> Common Diseases and Treatment</h5>
                                 <ul>${animal.diseases.map(d => `<li><strong>${d.name}</strong> - Gamot: ${d.medicine}<br><small>Sintomas: ${d.symptoms}</small></li>`).join('')}</ul>
                             </div>
                             
                             <div class="section feed-section">
-                                <h5><i class="fas fa-utensils"></i> Gabay sa Pagpapakain</h5>
+                                <h5><i class="fas fa-utensils"></i> Feeding Guide</h5>
                                 <ul>
                                     <li><strong>🍼 Sanggol:</strong> ${animal.feeding.baby}</li>
                                     <li><strong>🌱 Lumalaki:</strong> ${animal.feeding.grower}</li>
                                     <li><strong>🐄 Matanda:</strong> ${animal.feeding.adult}</li>
-                                    <li><strong>💊 Mga Supplement:</strong> ${animal.feeding.supplements}</li>
+                                    <li><strong>💊 Supplements:</strong> ${animal.feeding.supplements}</li>
                                 </ul>
                             </div>
                             
                             <div class="section">
-                                <h5><i class="fas fa-hand-holding-heart"></i> Pangkalahatang Pag-aalaga</h5>
-                                <ul>${animal.care ? animal.care.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard na pag-aalaga</li>'}</ul>
+                                <h5><i class="fas fa-hand-holding-heart"></i> General Care</h5>
+                                <ul>${animal.care ? animal.care.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard care</li>'}</ul>
                             </div>
                             
                             <div class="section">
-                                <h5><i class="fas fa-list-ol"></i> Hakbang-hakbang na Paraan</h5>
-                                <ul>${animal.procedure ? animal.procedure.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard na paraan</li>'}</ul>
+                                <h5><i class="fas fa-list-ol"></i> Step-by-step Procedure</h5>
+                                <ul>${animal.procedure ? animal.procedure.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard procedure</li>'}</ul>
                             </div>
                         </div>
                     </div>
@@ -1473,85 +1501,56 @@
         }
 
         // ─── FISHING SPOTS ──────────────────────────────────
-        function updateSpotList() {
-            if (!userLat || !userLng) {
-                spotList.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang mga pangingisdaan!</p></div>`;
+        async function updateSpotList() {
+            if (!Number.isFinite(userLat) || !Number.isFinite(userLng)) {
+                spotList.innerHTML = `<div class="loading"><i class="fas fa-location-crosshairs"></i><p>Enable GPS to find verified fishing areas near your exact location.</p></div>`;
+                spotCount.textContent = '(0 areas)';
                 return;
             }
-            
-            const locType = getLocationType();
-            const locationData = PHILIPPINE_SPOTS[locType] || PHILIPPINE_SPOTS['default'];
-            const spotNames = locationData.spots || PHILIPPINE_SPOTS['default'].spots;
-            
-            let spots = [];
-            for (let i = 0; i < spotNames.length; i++) {
-                const angle = (i / spotNames.length) * Math.PI * 2;
-                const dist = 0.015 + Math.random() * 0.025;
-                spots.push({
-                    name: spotNames[i % spotNames.length],
-                    lat: userLat + Math.cos(angle) * dist,
-                    lng: userLng + Math.sin(angle) * dist,
-                    type: i % 2 === 0 ? '⭐ Pinakamainam' : '🎣 Pangingisdaan',
-                    distance: Math.round(dist * 111.1 * (i + 1) * 0.3)
-                });
-            }
-            
-            spotCount.textContent = `(${spots.length} lugar)`;
-            let html = '';
-            for (const spot of spots) {
-                const icon = spot.type.includes('⭐') ? '⭐' : '🎣';
-                html += `
-                    <div class="spot-card">
-                        <div class="spot-icon">${icon}</div>
-                        <div class="spot-info"><h4>${spot.name}</h4><p>${spot.type} · ${spot.distance}km mula sa iyo</p></div>
-                        <div class="spot-distance">${spot.distance}km</div>
-                    </div>
-                `;
-            }
-            spotList.innerHTML = html;
-        }
 
-        // ─── FISHING MAP ────────────────────────────────────
-        function initFishingMap() {
-            if (!userLat || !userLng) {
-                document.getElementById('fishingMap').innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang mga pangingisdaan</p></div>`;
-                return;
+            spotList.innerHTML = `<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Finding mapped fishing areas near your exact location...</p></div>`;
+
+            try {
+                const query = `[out:json][timeout:12];(
+                    nwr(around:15000,${userLat},${userLng})["leisure"="fishing"];
+                    nwr(around:15000,${userLat},${userLng})["amenity"="fishing"];
+                    nwr(around:15000,${userLat},${userLng})["sport"="fishing"];
+                    nwr(around:15000,${userLat},${userLng})["man_made"="pier"]["name"];
+                );out center tags;`;
+                const response = await fetch('https://overpass-api.de/api/interpreter', {
+                    method: 'POST',
+                    body: query
+                });
+                if (!response.ok) throw new Error(`Fishing area lookup failed: ${response.status}`);
+                const data = await response.json();
+
+                const seen = new Set();
+                const spots = (data.elements || []).map(el => {
+                    const tags = el.tags || {};
+                    const name = tags.name || tags['name:en'];
+                    if (!name || seen.has(name)) return null;
+                    seen.add(name);
+                    return { name, type: tags.leisure === 'fishing' || tags.amenity === 'fishing' || tags.sport === 'fishing' ? 'Fishing area' : 'Fishing-related pier' };
+                }).filter(Boolean).slice(0, 12);
+
+                spotCount.textContent = `(${spots.length} verified areas)`;
+
+                if (!spots.length) {
+                    spotList.innerHTML = `<div class="loading"><i class="fas fa-water"></i><p>No mapped fishing areas were found within 15 km of your exact GPS location.</p></div>`;
+                    return;
+                }
+
+                spotList.innerHTML = spots.map(spot => `
+                    <div class="spot-card">
+                        <div class="spot-icon">🎣</div>
+                        <div class="spot-info"><h4>${spot.name}</h4><p>${spot.type} · within 15 km of your GPS location</p></div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Fishing area lookup error:', error);
+                spotCount.textContent = '(0 verified areas)';
+                spotList.innerHTML = `<div class="loading"><i class="fas fa-circle-exclamation"></i><p>Verified fishing-area data is temporarily unavailable. No invented locations are shown.</p></div>`;
             }
-            const container = document.getElementById('fishingMap');
-            if (map) { map.off(); map.remove(); map = null; }
-            map = L.map(container).setView([userLat, userLng], 12);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM', maxZoom: 18 }).addTo(map);
-            
-            const userIcon = L.divIcon({ html: '<div style="background:#2d7a2d;width:20px;height:20px;border-radius:50%;border:3px solid white;box-shadow:0 0 20px rgba(45,122,45,0.6);"></div>', iconSize: [20, 20], iconAnchor: [10, 10] });
-            L.marker([userLat, userLng], { icon: userIcon }).addTo(map).bindPopup('📍 <b>Iyong Lokasyon</b>');
-            
-            const locType = getLocationType();
-            const locationData = PHILIPPINE_SPOTS[locType] || PHILIPPINE_SPOTS['default'];
-            const spotNames = locationData.spots || PHILIPPINE_SPOTS['default'].spots;
-            
-            const spotIcon = L.divIcon({ html: '🎣', iconSize: [30, 30], iconAnchor: [15, 15] });
-            const bestIcon = L.divIcon({ html: '⭐', iconSize: [30, 30], iconAnchor: [15, 15] });
-            
-            for (let i = 0; i < spotNames.length; i++) {
-                const angle = (i / spotNames.length) * Math.PI * 2;
-                const dist = 0.015 + Math.random() * 0.025;
-                const lat = userLat + Math.cos(angle) * dist;
-                const lng = userLng + Math.sin(angle) * dist;
-                const type = i % 2 === 0 ? '⭐ Pinakamainam' : '🎣 Pangingisdaan';
-                const icon = type.includes('⭐') ? bestIcon : spotIcon;
-                L.marker([lat, lng], { icon: icon }).addTo(map).bindPopup(`🎣 <b>${spotNames[i % spotNames.length]}</b><br>${type}`);
-            }
-            
-            L.circle([userLat, userLng], { radius: 5000, color: '#2d7a2d', fillColor: '#2d7a2d', fillOpacity: 0.05, weight: 1, dashArray: '4, 4' }).addTo(map);
-            
-            const bounds = L.latLngBounds([userLat, userLng]);
-            for (let i = 0; i < spotNames.length; i++) {
-                const angle = (i / spotNames.length) * Math.PI * 2;
-                const dist = 0.015 + Math.random() * 0.025;
-                bounds.extend([userLat + Math.cos(angle) * dist, userLng + Math.sin(angle) * dist]);
-            }
-            map.fitBounds(bounds, { padding: [50, 50] });
-            document.getElementById('mapUpdateTime').textContent = 'Na-update: ' + new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
         }
 
         // ─── TOGGLE DETAILS ────────────────────────────────
@@ -1560,11 +1559,11 @@
             const btn = details.parentElement.querySelector('.toggle-btn');
             if (details.classList.contains('open')) {
                 details.classList.remove('open');
-                btn.textContent = '📋 Ipakita ang Detalye';
+                btn.textContent = '📋 Show Details';
                 btn.classList.remove('open-btn');
             } else {
                 details.classList.add('open');
-                btn.textContent = '📋 Itago ang Detalye';
+                btn.textContent = '📋 Hide Details';
                 btn.classList.add('open-btn');
             }
         };
@@ -1581,7 +1580,7 @@
                 document.querySelectorAll('#plantFilter .filter-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 const filter = this.dataset.filter;
-                const weather = { temp: parseInt(currentTemp.textContent) || 30, humidity: parseInt(humidity.textContent) || 65, season: season.textContent.toLowerCase().includes('ulan') ? 'wet' : season.textContent.toLowerCase().includes('araw') ? 'dry' : 'cool' };
+                const weather = { temp: parseInt(currentTemp.textContent), humidity: parseInt(humidity.textContent), season: season.textContent.toLowerCase().includes('wet') ? 'wet' : season.textContent.toLowerCase().includes('dry') ? 'dry' : 'cool' };
                 recommendPlants(weather, filter);
             });
         });
@@ -1591,7 +1590,7 @@
                 document.querySelectorAll('#fishFilter .filter-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 const filter = this.dataset.filter;
-                const weather = { temp: parseInt(currentTemp.textContent) || 30, humidity: parseInt(humidity.textContent) || 65, season: season.textContent.toLowerCase().includes('ulan') ? 'wet' : season.textContent.toLowerCase().includes('araw') ? 'dry' : 'cool' };
+                const weather = { temp: parseInt(currentTemp.textContent), humidity: parseInt(humidity.textContent), season: season.textContent.toLowerCase().includes('wet') ? 'wet' : season.textContent.toLowerCase().includes('dry') ? 'dry' : 'cool' };
                 recommendFish(weather, filter);
             });
         });
@@ -1603,23 +1602,24 @@
                 const filter = this.dataset.filter;
                 let filtered = LIVESTOCK_DB;
                 if (filter !== 'all') filtered = LIVESTOCK_DB.filter(a => a.type === filter);
-                const temp = parseInt(currentTemp.textContent) || 30;
+                const temp = parseInt(currentTemp.textContent);
+            if (!Number.isFinite(temp)) return;
                 const scored = filtered.map(animal => {
                     let score = 0;
                     if (temp >= animal.idealTemp.min && temp <= animal.idealTemp.max) score += 50;
                     else if (temp < animal.idealTemp.min) score += 30 - (animal.idealTemp.min - temp) * 2;
                     else score += 30 - (temp - animal.idealTemp.max) * 2;
-                    if (animal.name === 'Manok (Chicken)') score += 20;
-                    if (animal.name === 'Baboy (Pig)') score += 20;
-                    if (animal.name === 'Kambing (Goat)') score += 15;
-                    const currentSeason = season.textContent.toLowerCase().includes('ulan') ? 'wet' : season.textContent.toLowerCase().includes('araw') ? 'dry' : 'cool';
+                    if (animal.name === 'Manok') score += 20;
+                    if (animal.name === 'Baboy') score += 20;
+                    if (animal.name === 'Kambing') score += 15;
+                    const currentSeason = season.textContent.toLowerCase().includes('wet') ? 'wet' : season.textContent.toLowerCase().includes('dry') ? 'dry' : 'cool';
                     if (animal.season === 'all') score += 10;
                     else if (animal.season === currentSeason) score += 15;
                     return { ...animal, score: Math.max(0, Math.min(100, Math.round(score))) };
                 });
                 scored.sort((a, b) => b.score - a.score);
                 renderLivestockCards(scored);
-                livestockCount.textContent = `(${scored.length} hayop)`;
+                livestockCount.textContent = `(${scored.length} livestock)`;
             });
         });
 
@@ -1629,8 +1629,8 @@
                 const season = this.dataset.season;
                 document.querySelectorAll('#plantFilter .filter-btn').forEach(b => b.classList.remove('active'));
                 document.querySelector(`#plantFilter .filter-btn[data-filter="${season}"]`)?.classList.add('active');
-                const weather = { temp: parseInt(currentTemp.textContent) || 30, humidity: parseInt(humidity.textContent) || 65, season: season };
-                recommendPlants(weather, season);
+                const weather = { temp: parseInt(currentTemp.textContent), humidity: parseInt(humidity.textContent), season: season };
+                if (Number.isFinite(weather.temp) && Number.isFinite(weather.humidity) && Number.isFinite(userLat) && Number.isFinite(userLng)) recommendPlants(weather, season);
             });
         });
 
@@ -1643,35 +1643,15 @@
         generateCalendar(currentMonth, currentYear, calendarGrid, monthLabel, false);
         generateCalendar(currentMonth, currentYear, fishingCalendarGrid, fishingMonthLabel, true);
         
-        plantRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang rekomendasyon!</p></div>`;
-        fishRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang mga isda sa iyong lugar!</p></div>`;
-        livestockRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang pinakamainam na hayop!</p></div>`;
-        spotList.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang mga pangingisdaan!</p></div>`;
-        
-        setTimeout(() => {
-            if (!userLat && navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => {
-                        userLat = pos.coords.latitude;
-                        userLng = pos.coords.longitude;
-                        gpsBanner.style.display = 'none';
-                        gpsCoords.textContent = `📍 ${userLat.toFixed(6)}°N, ${userLng.toFixed(6)}°E`;
-                        address.textContent = '📍 Nakuha ang lokasyon';
-                        getWeatherForLocation(userLat, userLng);
-                        updateSeasonalGuide();
-                        initFishingMap();
-                        recommendLivestock();
-                    },
-                    () => {},
-                    { enableHighAccuracy: true, timeout: 5000 }
-                );
-            }
-        }, 1000);
+        plantRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to see recommendations.</p></div>`;
+        fishRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to see fish for your area.</p></div>`;
+        livestockRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to see livestock recommendations.</p></div>`;
+        spotList.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>Enable GPS to find fishing areas.</p></div>`;
         
         setInterval(updateTimestamp, 5000);
         
-        console.log('🌾🐟🐓 PlantAdvisor PH - Complete Guide with Local Names');
-        console.log('📚 Loaded: ' + PLANT_DB.length + ' halaman, ' + FISH_DB.length + ' isda, ' + LIVESTOCK_DB.length + ' hayop');
+        console.log('🌾🐟🐓 PlantAdvisor PH - English UI with local fish names');
+        console.log('📚 Loaded: ' + PLANT_DB.length + ' plants, ' + FISH_DB.length + ' fish, ' + LIVESTOCK_DB.length + ' livestock');
 
     })();
 </script>
