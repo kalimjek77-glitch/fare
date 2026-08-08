@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=yes">
-    <title>Pila ang Pamasahe? — Exact Fare Calculator</title>
+    <title>Pila ang Pamasahe? — Point-to-Point Fare Calculator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -56,13 +56,13 @@
             position: relative;
             z-index: 1;
             background: linear-gradient(180deg, var(--jeep-green) 0%, var(--jeep-green-dark) 100%);
-            padding: 14px 14px 22px;
+            padding: 14px 14px 24px;
             border-bottom: 6px solid var(--signage-yellow);
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
         }
         .topbar {
-            max-width: 820px;
-            margin: 0 auto 6px;
+            max-width: 720px;
+            margin: 0 auto 8px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -82,7 +82,7 @@
             font-weight: 600;
         }
         h1 {
-            max-width: 820px;
+            max-width: 720px;
             margin: 0 auto;
             text-align: center;
             font-family: 'Anton', sans-serif;
@@ -97,7 +97,7 @@
             color: var(--signage-yellow);
         }
         .sub {
-            max-width: 620px;
+            max-width: 560px;
             margin: 4px auto 0;
             text-align: center;
             color: #cfe3da;
@@ -105,7 +105,7 @@
             line-height: 1.4;
         }
         main {
-            max-width: 820px;
+            max-width: 720px;
             margin: -16px auto 0;
             padding: 0 10px;
             position: relative;
@@ -181,7 +181,7 @@
         }
         #map {
             width: 100%;
-            height: 300px;
+            height: 280px;
             border-radius: 10px;
             margin-bottom: 8px;
             border: 2px solid #2a241c;
@@ -198,8 +198,8 @@
             margin-bottom: 6px;
         }
         .search-box {
-            flex: 2;
-            min-width: 140px;
+            flex: 1;
+            min-width: 120px;
             padding: 6px 10px;
             border-radius: 8px;
             border: 1.5px solid #3a352a;
@@ -216,7 +216,7 @@
             border-color: var(--signage-yellow);
         }
         .btn-search {
-            padding: 6px 14px;
+            padding: 6px 12px;
             border: none;
             border-radius: 8px;
             background: var(--signage-yellow);
@@ -230,7 +230,7 @@
             filter: brightness(1.06);
         }
         .btn-gps {
-            padding: 6px 12px;
+            padding: 6px 10px;
             border: none;
             border-radius: 8px;
             background: var(--jeep-green);
@@ -244,7 +244,7 @@
             filter: brightness(1.1);
         }
         .btn-clear {
-            padding: 6px 12px;
+            padding: 6px 10px;
             border: none;
             border-radius: 8px;
             background: #4a3a2a;
@@ -312,34 +312,24 @@
         }
         .locality-row {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 8px;
             flex-wrap: wrap;
-            padding: 2px 0;
         }
         .locality-row .pin {
             font-size: 14px;
-            margin-top: 1px;
         }
         .locality-row .label {
             font-weight: 600;
             font-size: 11px;
             color: var(--ink);
-            min-width: 42px;
-            margin-top: 1px;
+            min-width: 45px;
         }
         .locality-row .value {
             font-size: 11px;
             color: #4a4234;
             flex: 1;
             word-break: break-word;
-            line-height: 1.4;
-        }
-        .locality-row .value .detail {
-            display: block;
-            font-size: 10px;
-            color: #6b6353;
-            margin-top: 1px;
         }
         .loc-status {
             font-size: 10px;
@@ -363,15 +353,10 @@
         }
         .routebadges {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 5px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
         }
-        @media (max-width:500px) {
-            .routebadges {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        @media (max-width:380px) {
+        @media (max-width:420px) {
             .routebadges {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -401,7 +386,7 @@
         .badge .name {
             font-family: 'Inter', sans-serif;
             font-weight: 700;
-            font-size: 10px;
+            font-size: 10.5px;
             color: var(--ink);
         }
         .badge.active .name {
@@ -541,7 +526,7 @@
             font-weight: 700;
         }
         footer {
-            max-width: 820px;
+            max-width: 720px;
             margin: 18px auto 0;
             padding: 0 14px;
             text-align: center;
@@ -619,42 +604,33 @@
             background: var(--ok);
             color: #fff;
         }
-        .search-results {
-            background: #1a1612;
-            border-radius: 8px;
-            max-height: 150px;
-            overflow-y: auto;
-            margin-top: 4px;
-            display: none;
-            border: 1px solid #3a352a;
+        .btn-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
         }
-        .search-results .result-item {
-            padding: 6px 10px;
-            color: #cfcabb;
-            font-size: 11px;
+        .btn-group .btn-small {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
             cursor: pointer;
-            border-bottom: 1px solid #2a241c;
-        }
-        .search-results .result-item:hover {
-            background: #2a241c;
-        }
-        .search-results .result-item .highlight {
-            color: var(--signage-yellow);
-        }
-        .search-results .result-item .sub {
-            display: block;
-            font-size: 9px;
-            color: #6b6353;
-        }
-        .detail-badge {
-            display: inline-block;
+            font-family: 'Inter', sans-serif;
             background: var(--chrome-dark);
             color: #fff;
-            font-size: 8px;
-            padding: 1px 6px;
-            border-radius: 99px;
-            margin-right: 3px;
-            font-weight: 600;
+        }
+        .btn-group .btn-small:hover {
+            filter: brightness(1.1);
+        }
+        .btn-group .btn-small.origin {
+            background: #0e4a3a;
+        }
+        .btn-group .btn-small.dest {
+            background: #c8571f;
+        }
+        .btn-group .btn-small.clear {
+            background: #4a3a2a;
         }
     </style>
 </head>
@@ -667,7 +643,7 @@
             <span class="eyebrow">Panay · Philippines · PUV Fare Guide</span>
         </div>
         <h1>PILA ANG <span>PAMASAHE?</span></h1>
-        <p class="sub">Click the map or search any place — barangay, purok, street, landmark, crossing. Get exact fare for Jeepney, Tricycle, Taxi, Van, or Motor.</p>
+        <p class="sub">Click the map to set Origin (🟢) and Destination (🔴) — fare is calculated instantly</p>
     </header>
 
     <main>
@@ -681,10 +657,7 @@
             <div id="map"></div>
 
             <div class="search-container">
-                <div style="flex:2;min-width:140px;position:relative;">
-                    <input type="text" id="searchInput" class="search-box" placeholder="Search any place, street, barangay, landmark..." autocomplete="off">
-                    <div id="searchResults" class="search-results"></div>
-                </div>
+                <input type="text" id="searchInput" class="search-box" placeholder="Search any place, street, barangay...">
                 <button class="btn-search" id="searchBtn">🔍 Search</button>
                 <button class="btn-gps" id="gpsBtn">📍 My Location</button>
                 <button class="btn-clear" id="clearBtn">✕ Clear</button>
@@ -827,8 +800,6 @@
             let destLatLng = null;
             let originLabel = "";
             let destLabel = "";
-            let originDetails = "";
-            let destDetails = "";
             let distanceKm = 0;
             let clickCount = 0;
 
@@ -849,7 +820,6 @@
             const step1 = document.getElementById('step1');
             const step2 = document.getElementById('step2');
             const step3 = document.getElementById('step3');
-            const searchResults = document.getElementById('searchResults');
 
             function pinIcon(emoji, bg) {
                 return L.divIcon({
@@ -878,110 +848,58 @@
                 }
             }
 
-            // ---------- Detailed reverse geocoding ----------
-            async function reverseGeocodeDetailed(lat, lon) {
+            async function reverseGeocode(lat, lon) {
                 try {
                     const res = await fetch(
-                        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1&extratags=1&namedetails=1`
+                        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1&extratags=1`
                     );
                     if (!res.ok) throw new Error('geocode failed');
                     const data = await res.json();
                     const addr = data.address || {};
 
-                    // Get ALL address components
-                    const components = {
-                        house: addr.house_number || '',
-                        road: addr.road || addr.street || '',
-                        neighbourhood: addr.neighbourhood || '',
-                        suburb: addr.suburb || '',
-                        village: addr.village || '',
-                        hamlet: addr.hamlet || '',
-                        city_district: addr.city_district || '',
-                        district: addr.district || '',
-                        city: addr.city || addr.town || addr.municipality || '',
-                        county: addr.county || '',
-                        state: addr.state || addr.province || '',
-                        postcode: addr.postcode || '',
-                        landmark: addr.landmark || '',
-                        crossing: addr.crossing || '',
-                        pedestrian: addr.pedestrian || '',
-                        square: addr.square || '',
-                        allotments: addr.allotments || '',
-                        farm: addr.farm || '',
-                        industrial: addr.industrial || '',
-                        retail: addr.retail || '',
-                        commercial: addr.commercial || '',
-                        residential: addr.residential || '',
-                        purok: addr.purok || '',
-                        barangay: addr.barangay || addr.village || addr.suburb || '',
-                        zone: addr.zone || '',
-                        block: addr.block || '',
-                        lot: addr.lot || '',
-                        building: addr.building || '',
-                        shop: addr.shop || '',
-                        amenity: addr.amenity || '',
-                        tourism: addr.tourism || '',
-                        historic: addr.historic || '',
-                    };
+                    // Get detailed address components
+                    const road = addr.road || addr.street || '';
+                    const barangay = addr.suburb || addr.village || addr.neighbourhood || addr.hamlet || '';
+                    const district = addr.city_district || addr.district || '';
+                    const city = addr.city || addr.town || addr.municipality || '';
+                    const province = addr.state || addr.province || '';
+                    const postcode = addr.postcode || '';
+                    const house = addr.house_number || '';
 
-                    // Build detailed display string
+                    // Build detailed address
                     const parts = [];
-                    const detailParts = [];
-
-                    // Priority order for display
-                    const ordered = [
-                        'house', 'building', 'shop', 'amenity', 'landmark', 'tourism', 'historic',
-                        'road', 'crossing', 'pedestrian', 'square',
-                        'purok', 'barangay', 'neighbourhood', 'suburb', 'village', 'hamlet',
-                        'city_district', 'district', 'city', 'county', 'state'
-                    ];
-
-                    const used = [];
-                    for (const key of ordered) {
-                        const val = components[key];
-                        if (val && !used.includes(val)) {
-                            parts.push(val);
-                            used.push(val);
-                            if (['purok', 'barangay', 'neighbourhood', 'suburb', 'village', 'hamlet', 'city_district',
-                                    'district', 'city'
-                                ].includes(key)) {
-                                detailParts.push(val);
-                            }
-                        }
-                    }
-
-                    // Also add postcode if available
-                    if (components.postcode && !used.includes(components.postcode)) {
-                        parts.push(components.postcode);
-                    }
+                    if (house) parts.push(house);
+                    if (road) parts.push(road);
+                    if (barangay) parts.push(barangay);
+                    if (district) parts.push(district);
+                    if (city) parts.push(city);
+                    if (province) parts.push(province);
 
                     const fullName = parts.length > 0 ? parts.join(', ') : data.display_name || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
-                    const cityName = components.city || components.city_district || components.district || components.county ||
-                        '';
 
-                    return {
-                        full: fullName,
-                        city: cityName,
-                        components: components,
-                        raw: data,
-                        details: detailParts.join(', ')
-                    };
+                    // Also return the city for rate detection
+                    const locationCity = city || district || barangay || '';
+                    return { full: fullName, city: locationCity, raw: data };
                 } catch (e) {
-                    return {
-                        full: `${lat.toFixed(4)}, ${lon.toFixed(4)}`,
-                        city: '',
-                        components: {},
-                        details: ''
-                    };
+                    return { full: `${lat.toFixed(4)}, ${lon.toFixed(4)}`, city: '' };
                 }
             }
 
             async function getLocationName(lat, lon) {
                 try {
-                    const result = await reverseGeocodeDetailed(lat, lon);
-                    return result;
+                    const result = await reverseGeocode(lat, lon);
+                    return result.full;
                 } catch (e) {
-                    return { full: `${lat.toFixed(4)}, ${lon.toFixed(4)}`, city: '', components: {}, details: '' };
+                    return `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                }
+            }
+
+            async function getCityFromLocation(lat, lon) {
+                try {
+                    const result = await reverseGeocode(lat, lon);
+                    return result.city;
+                } catch (e) {
+                    return '';
                 }
             }
 
@@ -990,17 +908,11 @@
                 if (clickCount === 1) {
                     // Set origin
                     originLatLng = latlng;
-                    const locData = await getLocationName(latlng.lat, latlng.lng);
-                    originLabel = locData.full;
-                    originDetails = locData.details;
-
+                    originLabel = await getLocationName(latlng.lat, latlng.lng);
                     if (originMarker) map.removeLayer(originMarker);
                     originMarker = L.marker([latlng.lat, latlng.lng], { icon: pinIcon('🟢', '#0e4a3a') }).addTo(map)
                         .bindTooltip('Origin: ' + originLabel, { permanent: false, direction: 'top' });
-
-                    originDisplay.innerHTML = originLabel + (originDetails ? `<span class="detail">📍 ${originDetails}</span>` :
-                        '');
-
+                    originDisplay.textContent = originLabel;
                     locStatus.textContent = '✅ Origin set. Click map again to set destination.';
                     statusPill.textContent = 'Origin set';
                     step1.className = 'step done';
@@ -1009,27 +921,21 @@
                         destMarker = null; }
                     destLatLng = null;
                     destLabel = "";
-                    destDetails = "";
-                    destDisplay.innerHTML = '—';
+                    destDisplay.textContent = '—';
                     routeLine.setLatLngs([]);
                     distanceKm = 0;
                     updateDisplay();
-
-                    const city = locData.city;
+                    // Detect rates based on origin
+                    const city = await getCityFromLocation(latlng.lat, latlng.lng);
                     if (city) await detectLocationForRates(city);
-
                 } else if (clickCount === 2) {
                     // Set destination
                     destLatLng = latlng;
-                    const locData = await getLocationName(latlng.lat, latlng.lng);
-                    destLabel = locData.full;
-                    destDetails = locData.details;
-
+                    destLabel = await getLocationName(latlng.lat, latlng.lng);
                     if (destMarker) map.removeLayer(destMarker);
                     destMarker = L.marker([latlng.lat, latlng.lng], { icon: pinIcon('🔴', '#c8571f') }).addTo(map)
                         .bindTooltip('Destination: ' + destLabel, { permanent: false, direction: 'top' });
-
-                    destDisplay.innerHTML = destLabel + (destDetails ? `<span class="detail">📍 ${destDetails}</span>` : '');
+                    destDisplay.textContent = destLabel;
 
                     distanceKm = haversineKm(originLatLng.lat, originLatLng.lng, destLatLng.lat, destLatLng.lng);
                     routeLine.setLatLngs([
@@ -1085,146 +991,88 @@
                 }
             }
 
-            // ---------- Search with autocomplete ----------
+            // ---------- Search ----------
             async function searchLocation(query) {
-                if (!query || query.length < 2) {
-                    searchResults.style.display = 'none';
-                    return;
-                }
                 try {
                     const res = await fetch(
-                        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=8&addressdetails=1&extratags=1&namedetails=1&bounded=1&viewbox=121.5,11.5,123.5,9.5`
+                        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1&extratags=1`
                     );
                     if (!res.ok) throw new Error('search failed');
                     const data = await res.json();
-
-                    searchResults.innerHTML = '';
                     if (data && data.length > 0) {
-                        searchResults.style.display = 'block';
-                        data.forEach((item, index) => {
-                            const div = document.createElement('div');
-                            div.className = 'result-item';
+                        const result = data[0];
+                        const lat = parseFloat(result.lat);
+                        const lon = parseFloat(result.lon);
+                        const displayName = result.display_name || query;
+                        const city = result.address?.city || result.address?.town || result.address?.municipality || '';
 
-                            const addr = item.address || {};
-                            const parts = [];
-                            const road = addr.road || addr.street || '';
-                            const barangay = addr.suburb || addr.village || addr.neighbourhood || '';
-                            const city = addr.city || addr.town || addr.municipality || '';
-                            const province = addr.state || addr.province || '';
-                            const house = addr.house_number || '';
-                            const landmark = addr.landmark || addr.tourism || addr.amenity || '';
+                        map.setView([lat, lon], 16);
 
-                            const displayParts = [];
-                            if (house) displayParts.push(house);
-                            if (road) displayParts.push(road);
-                            if (barangay) displayParts.push(barangay);
-                            if (landmark) displayParts.push(landmark);
-                            if (city) displayParts.push(city);
-                            if (province) displayParts.push(province);
-
-                            let label = displayParts.join(', ') || item.display_name || query;
-
-                            // Truncate if too long
-                            if (label.length > 60) label = label.substring(0, 60) + '...';
-
-                            const subParts = [];
-                            if (barangay) subParts.push('📍 ' + barangay);
-                            if (city) subParts.push('🏙️ ' + city);
-                            if (road) subParts.push('🛣️ ' + road);
-
-                            div.innerHTML = `<strong>${label}</strong>
-                                    <span class="sub">${subParts.join(' · ')}</span>`;
-
-                            div.addEventListener('click', async () => {
-                                const lat = parseFloat(item.lat);
-                                const lon = parseFloat(item.lon);
-                                const displayName = item.display_name || query;
-                                const city = addr.city || addr.town || addr.municipality || '';
-
-                                searchResults.style.display = 'none';
-                                searchInput.value = displayName;
-
-                                map.setView([lat, lon], 16);
-
-                                if (!originLatLng) {
-                                    const latlng = L.latLng(lat, lon);
-                                    originLatLng = latlng;
-                                    const locData = await getLocationName(lat, lon);
-                                    originLabel = locData.full;
-                                    originDetails = locData.details;
-                                    if (originMarker) map.removeLayer(originMarker);
-                                    originMarker = L.marker([lat, lon], { icon: pinIcon('🟢', '#0e4a3a') }).addTo(map)
-                                        .bindTooltip('Origin: ' + originLabel);
-                                    originDisplay.innerHTML = originLabel + (originDetails ?
-                                        `<span class="detail">📍 ${originDetails}</span>` : '');
-                                    locStatus.textContent = '✅ Origin set. Click map or search for destination.';
-                                    statusPill.textContent = 'Origin set';
-                                    step1.className = 'step done';
-                                    step2.className = 'step active';
-                                    if (destMarker) { map.removeLayer(destMarker);
-                                        destMarker = null; }
-                                    destLatLng = null;
-                                    destLabel = "";
-                                    destDetails = "";
-                                    destDisplay.innerHTML = '—';
-                                    routeLine.setLatLngs([]);
-                                    distanceKm = 0;
-                                    clickCount = 1;
-                                    updateDisplay();
-                                    if (city) await detectLocationForRates(city);
-                                } else if (!destLatLng) {
-                                    const latlng = L.latLng(lat, lon);
-                                    destLatLng = latlng;
-                                    const locData = await getLocationName(lat, lon);
-                                    destLabel = locData.full;
-                                    destDetails = locData.details;
-                                    if (destMarker) map.removeLayer(destMarker);
-                                    destMarker = L.marker([lat, lon], { icon: pinIcon('🔴', '#c8571f') }).addTo(map)
-                                        .bindTooltip('Destination: ' + destLabel);
-                                    destDisplay.innerHTML = destLabel + (destDetails ?
-                                        `<span class="detail">📍 ${destDetails}</span>` : '');
-                                    distanceKm = haversineKm(originLatLng.lat, originLatLng.lng, destLatLng.lat,
-                                        destLatLng.lng);
-                                    routeLine.setLatLngs([
-                                        [originLatLng.lat, originLatLng.lng],
-                                        [destLatLng.lat, destLatLng.lng]
-                                    ]);
-                                    const bounds = L.latLngBounds([originLatLng, destLatLng]);
-                                    map.fitBounds(bounds, { padding: [50, 50] });
-                                    locStatus.textContent = '✅ Origin and destination set. Fare calculated!';
-                                    statusPill.textContent = 'Ready';
-                                    step2.className = 'step done';
-                                    step3.className = 'step active';
-                                    clickCount = 0;
-                                    updateDisplay();
-                                } else {
-                                    clearPoints();
-                                    const latlng = L.latLng(lat, lon);
-                                    originLatLng = latlng;
-                                    const locData = await getLocationName(lat, lon);
-                                    originLabel = locData.full;
-                                    originDetails = locData.details;
-                                    if (originMarker) map.removeLayer(originMarker);
-                                    originMarker = L.marker([lat, lon], { icon: pinIcon('🟢', '#0e4a3a') }).addTo(map)
-                                        .bindTooltip('Origin: ' + originLabel);
-                                    originDisplay.innerHTML = originLabel + (originDetails ?
-                                        `<span class="detail">📍 ${originDetails}</span>` : '');
-                                    locStatus.textContent = '✅ Origin set. Click map or search for destination.';
-                                    statusPill.textContent = 'Origin set';
-                                    step1.className = 'step done';
-                                    step2.className = 'step active';
-                                    clickCount = 1;
-                                    updateDisplay();
-                                    if (city) await detectLocationForRates(city);
-                                }
-                            });
-                            searchResults.appendChild(div);
-                        });
+                        if (!originLatLng) {
+                            const latlng = L.latLng(lat, lon);
+                            originLatLng = latlng;
+                            originLabel = displayName;
+                            if (originMarker) map.removeLayer(originMarker);
+                            originMarker = L.marker([lat, lon], { icon: pinIcon('🟢', '#0e4a3a') }).addTo(map)
+                                .bindTooltip('Origin: ' + displayName);
+                            originDisplay.textContent = displayName;
+                            locStatus.textContent = '✅ Origin set. Click map or search for destination.';
+                            statusPill.textContent = 'Origin set';
+                            step1.className = 'step done';
+                            step2.className = 'step active';
+                            if (destMarker) { map.removeLayer(destMarker);
+                                destMarker = null; }
+                            destLatLng = null;
+                            destLabel = "";
+                            destDisplay.textContent = '—';
+                            routeLine.setLatLngs([]);
+                            distanceKm = 0;
+                            clickCount = 1;
+                            updateDisplay();
+                            if (city) await detectLocationForRates(city);
+                        } else if (!destLatLng) {
+                            const latlng = L.latLng(lat, lon);
+                            destLatLng = latlng;
+                            destLabel = displayName;
+                            if (destMarker) map.removeLayer(destMarker);
+                            destMarker = L.marker([lat, lon], { icon: pinIcon('🔴', '#c8571f') }).addTo(map)
+                                .bindTooltip('Destination: ' + displayName);
+                            destDisplay.textContent = displayName;
+                            distanceKm = haversineKm(originLatLng.lat, originLatLng.lng, destLatLng.lat, destLatLng.lng);
+                            routeLine.setLatLngs([
+                                [originLatLng.lat, originLatLng.lng],
+                                [destLatLng.lat, destLatLng.lng]
+                            ]);
+                            const bounds = L.latLngBounds([originLatLng, destLatLng]);
+                            map.fitBounds(bounds, { padding: [50, 50] });
+                            locStatus.textContent = '✅ Origin and destination set. Fare calculated!';
+                            statusPill.textContent = 'Ready';
+                            step2.className = 'step done';
+                            step3.className = 'step active';
+                            clickCount = 0;
+                            updateDisplay();
+                        } else {
+                            clearPoints();
+                            const latlng = L.latLng(lat, lon);
+                            originLatLng = latlng;
+                            originLabel = displayName;
+                            if (originMarker) map.removeLayer(originMarker);
+                            originMarker = L.marker([lat, lon], { icon: pinIcon('🟢', '#0e4a3a') }).addTo(map)
+                                .bindTooltip('Origin: ' + displayName);
+                            originDisplay.textContent = displayName;
+                            locStatus.textContent = '✅ Origin set. Click map or search for destination.';
+                            statusPill.textContent = 'Origin set';
+                            step1.className = 'step done';
+                            step2.className = 'step active';
+                            clickCount = 1;
+                            updateDisplay();
+                            if (city) await detectLocationForRates(city);
+                        }
                     } else {
-                        searchResults.style.display = 'none';
+                        gpsNote.textContent = '❌ No results found for "' + query + '"';
                     }
                 } catch (e) {
-                    searchResults.style.display = 'none';
+                    gpsNote.textContent = '❌ Search failed: ' + e.message;
                 }
             }
 
@@ -1243,21 +1091,18 @@
                         if (!originLatLng) {
                             const latlng = L.latLng(latitude, longitude);
                             originLatLng = latlng;
-                            const locData = await getLocationName(latitude, longitude);
-                            originLabel = locData.full;
-                            originDetails = locData.details;
+                            originLabel = await getLocationName(latitude, longitude);
                             if (originMarker) map.removeLayer(originMarker);
                             originMarker = L.marker([latitude, longitude], { icon: pinIcon('🟢', '#0e4a3a') }).addTo(map)
                                 .bindTooltip('Origin: ' + originLabel);
-                            originDisplay.innerHTML = originLabel + (originDetails ?
-                                `<span class="detail">📍 ${originDetails}</span>` : '');
+                            originDisplay.textContent = originLabel;
                             locStatus.textContent = '✅ Origin set to your location. Click map or search for destination.';
                             statusPill.textContent = 'Origin set';
                             step1.className = 'step done';
                             step2.className = 'step active';
                             clickCount = 1;
                             updateDisplay();
-                            const city = locData.city;
+                            const city = await getCityFromLocation(latitude, longitude);
                             if (city) await detectLocationForRates(city);
                         }
                     },
@@ -1278,12 +1123,10 @@
                 destLatLng = null;
                 originLabel = "";
                 destLabel = "";
-                originDetails = "";
-                destDetails = "";
                 distanceKm = 0;
                 clickCount = 0;
-                originDisplay.innerHTML = '—';
-                destDisplay.innerHTML = '—';
+                originDisplay.textContent = '—';
+                destDisplay.textContent = '—';
                 routeLine.setLatLngs([]);
                 locStatus.textContent = 'Click the map to set origin (first click) and destination (second click)';
                 statusPill.textContent = 'Ready';
@@ -1293,7 +1136,6 @@
                 updateDisplay();
                 gpsNote.textContent = 'Click "My Location" or search to get started.';
                 if (map) map.setView([10.7, 122.5], 13);
-                searchResults.style.display = 'none';
             }
 
             // ---------- Update display ----------
@@ -1396,7 +1238,6 @@
                             a.addEventListener('click', () => {
                                 const slug = a.dataset.slug;
                                 const label = slug.replace(/-/g, ' ');
-                                searchInput.value = label;
                                 searchLocation(label);
                             });
                         });
@@ -1408,38 +1249,13 @@
 
             // ---------- Event listeners ----------
             clearBtn.addEventListener('click', clearPoints);
-
             searchBtn.addEventListener('click', () => {
                 const query = searchInput.value.trim();
                 if (query) searchLocation(query);
             });
-
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.trim();
-                if (query.length >= 2) {
-                    searchLocation(query);
-                } else {
-                    searchResults.style.display = 'none';
-                }
-            });
-
             searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    const query = searchInput.value.trim();
-                    if (query) {
-                        searchLocation(query);
-                        searchResults.style.display = 'none';
-                    }
-                }
+                if (e.key === 'Enter') searchBtn.click();
             });
-
-            // Close search results on outside click
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.search-container')) {
-                    searchResults.style.display = 'none';
-                }
-            });
-
             gpsBtn.addEventListener('click', goToMyLocation);
 
             // ---------- Init ----------
@@ -1451,9 +1267,9 @@
             // Auto-GPS on load
             setTimeout(goToMyLocation, 800);
 
-            console.log('✅ Pila ang Pamasahe? — Detailed Point-to-Point Fare Calculator loaded!');
-            console.log('📌 Click on the map or search any place — barangay, purok, street, landmark, crossing.');
-            console.log('📍 First click = Origin 🟢, Second click = Destination 🔴');
+            console.log('✅ Pila ang Pamasahe? — Point-to-Point Fare Calculator loaded!');
+            console.log('📌 Click on the map to set origin (first click) and destination (second click).');
+            console.log('🔍 Or search for any place, street, barangay, or landmark.');
         })();
     </script>
 </body>
