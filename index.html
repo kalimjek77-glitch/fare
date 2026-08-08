@@ -1,1521 +1,3578 @@
+```html
 <!DOCTYPE html>
-<html lang="tl">
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>🌾 PlantAdvisor PH - Gabay sa Halaman at Hayop</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; background: #e8f0e6; padding: 10px; padding-bottom: 80px; min-height: 100vh; }
-        .container { max-width: 480px; margin: 0 auto; }
-        
-        .header {
-            background: linear-gradient(145deg, #1a4a1a, #0d2e0d);
-            color: white;
-            padding: 14px 18px;
-            border-radius: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .header h1 { font-size: 18px; display: flex; align-items: center; gap: 8px; }
-        .header h1 i { color: #ffd93d; font-size: 20px; }
-        .live-badge { background: #ff4444; padding: 2px 10px; border-radius: 30px; font-size: 9px; font-weight: bold; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-        .update-time { font-size: 10px; opacity: 0.8; }
-        
-        .tab-nav {
-            display: flex;
-            background: white;
-            border-radius: 14px;
-            padding: 4px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-            overflow-x: auto;
-            gap: 2px;
-        }
-        .tab-nav button {
-            flex: 1;
-            padding: 10px 6px;
-            border: none;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            background: transparent;
-            color: #888;
-            touch-action: manipulation;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            white-space: nowrap;
-            min-width: 60px;
-        }
-        .tab-nav button:active { transform: scale(0.95); }
-        .tab-nav button.active { background: #2d7a2d; color: white; box-shadow: 0 2px 8px rgba(45,122,45,0.3); }
-        .tab-nav button i { font-size: 14px; }
-        
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        
-        .gps-banner {
-            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
-            border: 2px solid #ff8f00;
-            border-radius: 14px;
-            padding: 16px 18px;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-        .gps-banner i { font-size: 32px; color: #ff8f00; display: block; margin-bottom: 6px; }
-        .gps-banner h3 { color: #e65100; font-size: 16px; margin-bottom: 4px; }
-        .gps-banner p { color: #555; font-size: 12px; margin-bottom: 10px; line-height: 1.4; }
-        .btn-gps {
-            background: #ff8f00;
-            color: white;
-            border: none;
-            padding: 14px 30px;
-            border-radius: 40px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            max-width: 280px;
-            touch-action: manipulation;
-        }
-        .btn-gps:active { transform: scale(0.95); background: #e65100; }
-        .btn-gps:disabled { opacity: 0.6; cursor: not-allowed; }
-        
-        .location-card {
-            background: white;
-            border-radius: 14px;
-            padding: 14px 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-            border-left: 4px solid #2d7a2d;
-        }
-        .gps-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 8px; }
-        .gps-row .coords { font-weight: bold; font-size: 13px; color: #1a4a1a; background: #f0f7ef; padding: 2px 12px; border-radius: 30px; flex: 1; min-width: 120px; }
-        .gps-row .address { font-size: 12px; color: #555; width: 100%; }
-        .gps-row .accuracy { font-size: 10px; color: #999; }
-        
-        .weather-display {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: center;
-            padding-top: 10px;
-            border-top: 1px solid #e8f0e6;
-        }
-        .weather-display .main-temp { font-size: 36px; font-weight: bold; color: #1a4a1a; display: flex; align-items: center; gap: 6px; }
-        .weather-display .main-temp i { color: #ff8c00; font-size: 28px; }
-        .weather-details { display: flex; flex-wrap: wrap; gap: 8px 14px; flex: 1; }
-        .weather-details .item { display: flex; align-items: center; gap: 4px; font-size: 12px; color: #444; }
-        .weather-details .item i { font-size: 14px; color: #2d7a2d; width: 18px; }
-        .weather-details .item .val { font-weight: bold; color: #1a4a1a; }
-        
-        .planting-tips {
-            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-            border-radius: 14px;
-            padding: 14px 16px;
-            margin-bottom: 12px;
-            border-left: 4px solid #2e7d32;
-        }
-        .planting-tips h3 { font-size: 14px; color: #1a4a1a; display: flex; align-items: center; gap: 8px; }
-        .planting-tips h3 i { color: #2e7d32; }
-        .planting-tips .tip-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px 12px;
-            margin-top: 8px;
-        }
-        .planting-tips .tip-grid .tip-item {
-            font-size: 11px;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .planting-tips .tip-grid .tip-item i { color: #2e7d32; font-size: 12px; width: 16px; }
-        
-        .calendar-section {
-            background: white;
-            border-radius: 14px;
-            padding: 12px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-        }
-        .calendar-section h2 {
-            font-size: 14px;
-            color: #1a4a1a;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .calendar-section h2 i { color: #ffd93d; }
-        .calendar-section .month-nav {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-left: auto;
-        }
-        .calendar-section .month-nav button {
-            background: #e8f0e6;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            font-size: 14px;
-            cursor: pointer;
-            touch-action: manipulation;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #1a4a1a;
-        }
-        .calendar-section .month-nav button:active { transform: scale(0.9); background: #c8dcc8; }
-        .calendar-section .month-nav .month-label { font-size: 14px; font-weight: 600; color: #1a4a1a; min-width: 100px; text-align: center; }
-        
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 3px;
-        }
-        .calendar-grid .day {
-            text-align: center;
-            padding: 6px 0;
-            font-size: 11px;
-            border-radius: 6px;
-            background: #f5f5f5;
-            color: #888;
-            font-weight: 500;
-        }
-        .calendar-grid .day.weekend { background: #fff3e0; color: #e65100; }
-        .calendar-grid .day.today { background: #2d7a2d; color: white; font-weight: bold; box-shadow: 0 2px 8px rgba(45,122,45,0.3); }
-        .calendar-grid .day.planting { background: #c8e6c9; color: #1a4a1a; }
-        .calendar-grid .day.harvest { background: #ffccbc; color: #bf360c; }
-        .calendar-grid .day-label { font-weight: bold; color: #555; background: transparent; font-size: 8px; padding: 4px 0; }
-        .calendar-grid .day.empty { background: transparent; }
-        
-        .calendar-legend {
-            display: flex;
-            gap: 12px;
-            margin-top: 10px;
-            font-size: 9px;
-            color: #888;
-            flex-wrap: wrap;
-        }
-        .calendar-legend span { display: flex; align-items: center; gap: 4px; }
-        .calendar-legend .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
-        .calendar-legend .dot.green { background: #c8e6c9; }
-        .calendar-legend .dot.orange { background: #ffccbc; }
-        .calendar-legend .dot.dark { background: #2d7a2d; }
-        
-        .seasonal-guide {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            -webkit-overflow-scrolling: touch;
-        }
-        .seasonal-guide .season-card {
-            background: white;
-            border-radius: 12px;
-            padding: 10px 14px;
-            min-width: 100px;
-            flex: 1;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            border-top: 3px solid #7cb342;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .seasonal-guide .season-card:active { transform: scale(0.95); }
-        .seasonal-guide .season-card .emoji { font-size: 24px; display: block; }
-        .seasonal-guide .season-card .name { font-size: 11px; font-weight: bold; color: #1a4a1a; margin-top: 2px; }
-        .seasonal-guide .season-card .months { font-size: 9px; color: #888; }
-        .seasonal-guide .season-card.active { border-top-color: #ff8f00; background: #fff8e1; }
-        
-        .advisor-card {
-            background: white;
-            border-radius: 14px;
-            padding: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-            margin-bottom: 12px;
-        }
-        .advisor-card h2 { font-size: 14px; color: #1a4a1a; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .advisor-card h2 i { color: #ffd93d; }
-        .advisor-card .count { font-size: 11px; color: #888; font-weight: normal; }
-        
-        .filter-bar {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            -webkit-overflow-scrolling: touch;
-        }
-        .filter-bar .filter-btn {
-            padding: 6px 14px;
-            border-radius: 30px;
-            border: 1px solid #c8dcc8;
-            background: white;
-            font-size: 11px;
-            cursor: pointer;
-            color: #555;
-            white-space: nowrap;
-            touch-action: manipulation;
-            min-height: 36px;
-            display: flex;
-            align-items: center;
-        }
-        .filter-bar .filter-btn:active { transform: scale(0.95); }
-        .filter-bar .filter-btn.active { background: #2d7a2d; color: white; border-color: #2d7a2d; }
-        
-        .item-recs {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 500px;
-            overflow-y: auto;
-            padding-right: 4px;
-            -webkit-overflow-scrolling: touch;
-        }
-        .item-recs::-webkit-scrollbar { width: 4px; }
-        .item-recs::-webkit-scrollbar-thumb { background: #a0c0a0; border-radius: 10px; }
-        
-        .item-card {
-            background: #f8fbf8;
-            border-radius: 12px;
-            padding: 12px;
-            border-left: 4px solid #7cb342;
-            transition: 0.2s;
-            margin-bottom: 6px;
-        }
-        .item-card:active { transform: scale(0.98); background: #f0f7ef; }
-        .item-card .item-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 6px;
-        }
-        .item-card .item-header .emoji {
-            font-size: 32px;
-            width: 44px;
-            text-align: center;
-            flex-shrink: 0;
-            background: #e8f0e6;
-            border-radius: 10px;
-            padding: 4px;
-        }
-        .item-card .item-header .item-info { flex: 1; }
-        .item-card .item-header .item-info h4 { font-size: 15px; color: #1a4a1a; }
-        .item-card .item-header .item-info .sub { font-size: 11px; color: #888; }
-        .item-card .item-header .badge {
-            padding: 2px 10px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: bold;
-            color: white;
-            background: #2d7a2d;
-            flex-shrink: 0;
-        }
-        .item-card .item-header .badge.warning { background: #ff8f00; }
-        .item-card .item-header .badge.danger { background: #d32f2f; }
-        .item-card .item-header .badge.perfect { background: #1a6e1a; }
-        .item-card .item-header .badge.livestock-badge { background: #6d4c41; }
-        .item-card .item-header .badge.disease-badge { background: #d32f2f; }
-        
-        .item-details {
-            display: none;
-            padding-top: 8px;
-            border-top: 1px solid #e8f0e6;
-            margin-top: 6px;
-        }
-        .item-details.open { display: block; }
-        
-        .item-details .detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px 10px;
-            font-size: 12px;
-            color: #444;
-        }
-        .item-details .detail-grid .label { color: #888; }
-        .item-details .detail-grid .value { font-weight: 500; color: #1a4a1a; }
-        
-        .item-details .section {
-            margin-top: 8px;
-            padding: 8px 10px;
-            background: #f0f7ef;
-            border-radius: 8px;
-        }
-        .item-details .section h5 {
-            font-size: 12px;
-            color: #1a4a1a;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .item-details .section h5 i { font-size: 14px; }
-        .item-details .section ul {
-            list-style: none;
-            padding: 0;
-            font-size: 11px;
-            color: #555;
-            line-height: 1.6;
-        }
-        .item-details .section ul li::before {
-            content: "• ";
-            color: #2d7a2d;
-            font-weight: bold;
-        }
-        .item-details .section.livestock-section { background: #efebe9; border-left: 3px solid #6d4c41; }
-        .item-details .section.livestock-section h5 i { color: #6d4c41; }
-        .item-details .section.feed-section { background: #fff3e0; border-left: 3px solid #e65100; }
-        .item-details .section.feed-section h5 i { color: #e65100; }
-        .item-details .section.disease-section { background: #ffebee; border-left: 3px solid #d32f2f; }
-        .item-details .section.disease-section h5 i { color: #d32f2f; }
-        .item-details .section.update-section { background: #e3f2fd; border-left: 3px solid #0d47a1; }
-        .item-details .section.update-section h5 i { color: #0d47a1; }
-        
-        .toggle-btn {
-            background: #2d7a2d;
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 12px;
-            cursor: pointer;
-            touch-action: manipulation;
-            transition: 0.2s;
-        }
-        .toggle-btn:active { transform: scale(0.95); opacity: 0.8; }
-        .toggle-btn.open-btn { background: #d32f2f; }
-        
-        .loading { text-align: center; padding: 30px 10px; color: #888; }
-        .loading i { font-size: 32px; color: #2d7a2d; margin-bottom: 8px; display: block; }
-        .loading p { font-size: 13px; line-height: 1.5; }
-        
-        .bottom-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            padding: 6px 8px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid #e8f0e6;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-            z-index: 1000;
-            max-width: 480px;
-            margin: 0 auto;
-        }
-        .bottom-bar .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 8px;
-            color: #888;
-            text-decoration: none;
-            padding: 2px 8px;
-            touch-action: manipulation;
-            cursor: pointer;
-            border: none;
-            background: none;
-            min-width: 50px;
-        }
-        .bottom-bar .nav-item i { font-size: 18px; margin-bottom: 1px; }
-        .bottom-bar .nav-item.active { color: #2d7a2d; }
-        .bottom-bar .nav-item:active { transform: scale(0.9); }
-        
-        .scroll-top {
-            position: fixed;
-            bottom: 70px;
-            right: 15px;
-            background: #2d7a2d;
-            color: white;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(45,122,45,0.3);
-            display: none;
-            touch-action: manipulation;
-            z-index: 999;
-        }
-        .scroll-top:active { transform: scale(0.9); }
-        .scroll-top.show { display: block; }
-        
-        .best-match-badge {
-            background: #ff8f00;
-            color: white;
-            padding: 2px 10px;
-            border-radius: 30px;
-            font-size: 9px;
-            font-weight: bold;
-            display: inline-block;
-        }
-        
-        .update-badge {
-            background: #0d47a1;
-            color: white;
-            padding: 2px 10px;
-            border-radius: 30px;
-            font-size: 8px;
-            font-weight: bold;
-            display: inline-block;
-        }
-        
-        @media (max-width: 400px) {
-            .header h1 { font-size: 15px; }
-            .weather-display .main-temp { font-size: 28px; }
-            .item-card .item-header .emoji { font-size: 24px; width: 34px; }
-            .item-card .item-header .item-info h4 { font-size: 12px; }
-            .calendar-grid .day { font-size: 9px; padding: 3px 0; }
-            .tab-nav button { font-size: 9px; padding: 6px 4px; min-width: 50px; }
-            .tab-nav button i { font-size: 12px; }
-            .bottom-bar .nav-item { font-size: 7px; min-width: 40px; }
-            .bottom-bar .nav-item i { font-size: 16px; }
-        }
-        @media (min-width: 600px) {
-            body { padding: 20px; padding-bottom: 80px; }
-            .container { max-width: 600px; }
-            .calendar-grid .day { font-size: 13px; padding: 8px 0; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PlantAdvisor</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+body{
+    font-family:-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:#e8f0e6;
+    padding:10px;
+    padding-bottom:80px;
+    min-height:100vh;
+}
+
+.container{
+    max-width:600px;
+    margin:0 auto;
+}
+
+/* HEADER */
+
+.header{
+    background:linear-gradient(145deg,#1a4a1a,#0d2e0d);
+    color:white;
+    padding:14px 18px;
+    border-radius:16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,.2);
+}
+
+.header h1{
+    font-size:18px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.header h1 i{
+    color:#ffd93d;
+    font-size:20px;
+}
+
+.live-badge{
+    background:#ff4444;
+    padding:2px 10px;
+    border-radius:30px;
+    font-size:9px;
+    font-weight:bold;
+    animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+    0%,100%{opacity:1}
+    50%{opacity:.4}
+}
+
+.update-time{
+    font-size:10px;
+    opacity:.8;
+}
+
+/* TABS */
+
+.tab-nav{
+    display:flex;
+    background:white;
+    border-radius:14px;
+    padding:4px;
+    margin-bottom:12px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    overflow-x:auto;
+    gap:2px;
+}
+
+.tab-nav button{
+    flex:1;
+    padding:10px 6px;
+    border:none;
+    border-radius:12px;
+    font-size:11px;
+    font-weight:600;
+    cursor:pointer;
+    background:transparent;
+    color:#888;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    white-space:nowrap;
+    min-width:80px;
+}
+
+.tab-nav button.active{
+    background:#2d7a2d;
+    color:white;
+    box-shadow:0 2px 8px rgba(45,122,45,.3);
+}
+
+.tab-nav button i{
+    font-size:14px;
+}
+
+.tab-content{
+    display:none;
+}
+
+.tab-content.active{
+    display:block;
+}
+
+/* GPS */
+
+.gps-banner{
+    background:linear-gradient(135deg,#fff3e0,#ffe0b2);
+    border:2px solid #ff8f00;
+    border-radius:14px;
+    padding:16px 18px;
+    margin-bottom:12px;
+    text-align:center;
+}
+
+.gps-banner i{
+    font-size:32px;
+    color:#ff8f00;
+    display:block;
+    margin-bottom:6px;
+}
+
+.gps-banner h3{
+    color:#e65100;
+    font-size:16px;
+    margin-bottom:4px;
+}
+
+.gps-banner p{
+    color:#555;
+    font-size:12px;
+    margin-bottom:10px;
+    line-height:1.4;
+}
+
+.btn-gps{
+    background:#ff8f00;
+    color:white;
+    border:none;
+    padding:14px 30px;
+    border-radius:40px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    width:100%;
+    max-width:280px;
+}
+
+.btn-gps:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+/* LOCATION */
+
+.location-card{
+    background:white;
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:12px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    border-left:4px solid #2d7a2d;
+}
+
+.gps-row{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+    margin-bottom:8px;
+}
+
+.coords{
+    font-weight:bold;
+    font-size:13px;
+    color:#1a4a1a;
+    background:#f0f7ef;
+    padding:5px 12px;
+    border-radius:30px;
+    flex:1;
+    min-width:120px;
+}
+
+.address{
+    font-size:12px;
+    color:#555;
+    width:100%;
+}
+
+.accuracy{
+    font-size:10px;
+    color:#999;
+}
+
+.weather-display{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    align-items:center;
+    padding-top:10px;
+    border-top:1px solid #e8f0e6;
+}
+
+.main-temp{
+    font-size:36px;
+    font-weight:bold;
+    color:#1a4a1a;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.main-temp i{
+    color:#ff8c00;
+    font-size:28px;
+}
+
+.weather-details{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 14px;
+    flex:1;
+}
+
+.weather-details .item{
+    display:flex;
+    align-items:center;
+    gap:4px;
+    font-size:12px;
+    color:#444;
+}
+
+.weather-details .item i{
+    font-size:14px;
+    color:#2d7a2d;
+    width:18px;
+}
+
+.weather-details .val{
+    font-weight:bold;
+    color:#1a4a1a;
+}
+
+/* SEASON */
+
+.seasonal-guide{
+    display:flex;
+    gap:8px;
+    margin-bottom:12px;
+    overflow-x:auto;
+    padding-bottom:4px;
+}
+
+.season-card{
+    background:white;
+    border-radius:12px;
+    padding:10px 14px;
+    min-width:100px;
+    flex:1;
+    text-align:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+    border-top:3px solid #7cb342;
+    cursor:pointer;
+}
+
+.season-card.active{
+    border-top-color:#ff8f00;
+    background:#fff8e1;
+}
+
+.season-card .emoji{
+    font-size:24px;
+    display:block;
+}
+
+.season-card .name{
+    font-size:11px;
+    font-weight:bold;
+    color:#1a4a1a;
+}
+
+.season-card .months{
+    font-size:9px;
+    color:#888;
+}
+
+/* TIPS */
+
+.planting-tips{
+    background:linear-gradient(135deg,#e8f5e9,#c8e6c9);
+    border-radius:14px;
+    padding:14px 16px;
+    margin-bottom:12px;
+    border-left:4px solid #2e7d32;
+}
+
+.planting-tips h3{
+    font-size:14px;
+    color:#1a4a1a;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.planting-tips h3 i{
+    color:#2e7d32;
+}
+
+.tip-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px 12px;
+    margin-top:8px;
+}
+
+.tip-item{
+    font-size:11px;
+    color:#333;
+    display:flex;
+    align-items:center;
+    gap:4px;
+}
+
+.tip-item i{
+    color:#2e7d32;
+    font-size:12px;
+}
+
+/* CALENDAR */
+
+.calendar-section{
+    background:white;
+    border-radius:14px;
+    padding:12px;
+    margin-bottom:12px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+}
+
+.calendar-section h2{
+    font-size:14px;
+    color:#1a4a1a;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.calendar-section h2 i{
+    color:#ffd93d;
+}
+
+.month-nav{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-left:auto;
+}
+
+.month-nav button{
+    background:#e8f0e6;
+    border:none;
+    border-radius:50%;
+    width:30px;
+    height:30px;
+    cursor:pointer;
+    color:#1a4a1a;
+}
+
+.month-label{
+    font-size:14px;
+    font-weight:600;
+    color:#1a4a1a;
+    min-width:100px;
+    text-align:center;
+}
+
+.calendar-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:3px;
+}
+
+.calendar-grid .day{
+    text-align:center;
+    padding:6px 0;
+    font-size:11px;
+    border-radius:6px;
+    background:#f5f5f5;
+    color:#888;
+}
+
+.calendar-grid .day.weekend{
+    background:#fff3e0;
+    color:#e65100;
+}
+
+.calendar-grid .day.today{
+    background:#2d7a2d;
+    color:white;
+    font-weight:bold;
+}
+
+.calendar-grid .day.planting{
+    background:#c8e6c9;
+    color:#1a4a1a;
+}
+
+.calendar-grid .day.harvest{
+    background:#ffccbc;
+    color:#bf360c;
+}
+
+.day-label{
+    font-weight:bold;
+    color:#555!important;
+    background:transparent!important;
+    font-size:8px!important;
+}
+
+.empty{
+    background:transparent!important;
+}
+
+/* ADVISOR */
+
+.advisor-card{
+    background:white;
+    border-radius:14px;
+    padding:12px;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    margin-bottom:12px;
+}
+
+.advisor-card h2{
+    font-size:14px;
+    color:#1a4a1a;
+    margin-bottom:8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.advisor-card h2 i{
+    color:#ffd93d;
+}
+
+.count{
+    font-size:11px;
+    color:#888;
+    font-weight:normal;
+}
+
+/* FILTER */
+
+.filter-bar{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    margin-bottom:10px;
+    overflow-x:auto;
+    padding-bottom:4px;
+}
+
+.filter-btn{
+    padding:6px 14px;
+    border-radius:30px;
+    border:1px solid #c8dcc8;
+    background:white;
+    font-size:11px;
+    cursor:pointer;
+    color:#555;
+    white-space:nowrap;
+    min-height:36px;
+}
+
+.filter-btn.active{
+    background:#2d7a2d;
+    color:white;
+    border-color:#2d7a2d;
+}
+
+/* ITEMS */
+
+.item-recs{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    max-height:600px;
+    overflow-y:auto;
+}
+
+.item-card{
+    background:#f8fbf8;
+    border-radius:12px;
+    padding:12px;
+    border-left:4px solid #7cb342;
+    margin-bottom:6px;
+}
+
+.item-header{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:6px;
+}
+
+.item-header .emoji{
+    font-size:32px;
+    width:44px;
+    text-align:center;
+    flex-shrink:0;
+    background:#e8f0e6;
+    border-radius:10px;
+    padding:4px;
+}
+
+.item-info{
+    flex:1;
+}
+
+.item-info h4{
+    font-size:15px;
+    color:#1a4a1a;
+}
+
+.item-info .sub{
+    font-size:11px;
+    color:#888;
+    font-style:italic;
+}
+
+.badge{
+    padding:2px 10px;
+    border-radius:30px;
+    font-size:10px;
+    font-weight:bold;
+    color:white;
+    background:#2d7a2d;
+    flex-shrink:0;
+}
+
+.badge.warning{
+    background:#ff8f00;
+}
+
+.badge.danger{
+    background:#d32f2f;
+}
+
+.badge.perfect{
+    background:#1a6e1a;
+}
+
+.livestock-badge{
+    background:#6d4c41;
+}
+
+.disease-badge{
+    background:#d32f2f;
+}
+
+/* DETAILS */
+
+.item-details{
+    display:none;
+    padding-top:8px;
+    border-top:1px solid #e8f0e6;
+    margin-top:6px;
+}
+
+.item-details.open{
+    display:block;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:5px 10px;
+    font-size:12px;
+}
+
+.label{
+    color:#888;
+}
+
+.value{
+    font-weight:500;
+    color:#1a4a1a;
+}
+
+.section{
+    margin-top:8px;
+    padding:8px 10px;
+    background:#f0f7ef;
+    border-radius:8px;
+}
+
+.section h5{
+    font-size:12px;
+    color:#1a4a1a;
+    margin-bottom:4px;
+}
+
+.section ul{
+    list-style:none;
+    padding:0;
+    font-size:11px;
+    color:#555;
+    line-height:1.6;
+}
+
+.section ul li::before{
+    content:"• ";
+    color:#2d7a2d;
+    font-weight:bold;
+}
+
+.livestock-section{
+    background:#efebe9;
+    border-left:3px solid #6d4c41;
+}
+
+.disease-section{
+    background:#ffebee;
+    border-left:3px solid #d32f2f;
+}
+
+.update-section{
+    background:#e3f2fd;
+    border-left:3px solid #0d47a1;
+}
+
+/* BUTTON */
+
+.toggle-btn{
+    background:#2d7a2d;
+    color:white;
+    border:none;
+    padding:6px 16px;
+    border-radius:30px;
+    font-size:12px;
+    cursor:pointer;
+}
+
+.toggle-btn.open-btn{
+    background:#d32f2f;
+}
+
+/* LOADING */
+
+.loading{
+    text-align:center;
+    padding:30px 10px;
+    color:#888;
+}
+
+.loading i{
+    font-size:32px;
+    color:#2d7a2d;
+    margin-bottom:8px;
+    display:block;
+}
+
+.loading p{
+    font-size:13px;
+    line-height:1.5;
+}
+
+/* UPDATE */
+
+.update-badge{
+    background:#0d47a1;
+    color:white;
+    padding:2px 10px;
+    border-radius:30px;
+    font-size:8px;
+}
+
+/* BOTTOM */
+
+.bottom-bar{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:white;
+    padding:6px 8px;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    border-top:1px solid #e8f0e6;
+    box-shadow:0 -2px 10px rgba(0,0,0,.05);
+    z-index:1000;
+    max-width:600px;
+    margin:auto;
+}
+
+.nav-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    font-size:8px;
+    color:#888;
+    text-decoration:none;
+    padding:2px 8px;
+    cursor:pointer;
+    border:none;
+    background:none;
+    min-width:50px;
+}
+
+.nav-item i{
+    font-size:18px;
+    margin-bottom:1px;
+}
+
+.nav-item.active{
+    color:#2d7a2d;
+}
+
+/* SCROLL */
+
+.scroll-top{
+    position:fixed;
+    bottom:70px;
+    right:15px;
+    background:#2d7a2d;
+    color:white;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    border:none;
+    font-size:18px;
+    cursor:pointer;
+    box-shadow:0 4px 15px rgba(45,122,45,.3);
+    display:none;
+    z-index:999;
+}
+
+.scroll-top.show{
+    display:block;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:400px){
+
+    .header h1{
+        font-size:15px;
+    }
+
+    .main-temp{
+        font-size:28px;
+    }
+
+    .item-header .emoji{
+        font-size:24px;
+        width:34px;
+    }
+
+    .item-info h4{
+        font-size:12px;
+    }
+
+    .calendar-grid .day{
+        font-size:9px;
+        padding:3px 0;
+    }
+
+    .tab-nav button{
+        font-size:9px;
+        min-width:65px;
+    }
+
+    .nav-item{
+        font-size:7px;
+        min-width:40px;
+    }
+
+    .nav-item i{
+        font-size:16px;
+    }
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
 
-    <!-- HEADER -->
-    <header class="header">
-        <h1><i class="fas fa-seedling"></i> PlantAdvisor <span class="live-badge">●</span></h1>
-        <span class="update-time"><i class="fas fa-clock"></i> <span id="updateTime">--:--</span></span>
-    </header>
+<!-- HEADER -->
 
-    <!-- GPS BANNER -->
-    <div class="gps-banner" id="gpsBanner">
-        <i class="fas fa-satellite-dish"></i>
-        <h3>📍 I-On ang GPS para sa Exact Location</h3>
-        <p>Kunin ang eksaktong panahon, rekomendasyon sa halaman & hayop sa iyong lugar!</p>
-        <button class="btn-gps" id="gpsBtn" onclick="enableGPS()">
-            <i class="fas fa-location-dot"></i> I-On ang GPS
-        </button>
-    </div>
+<header class="header">
 
-    <!-- LOCATION -->
-    <div class="location-card">
-        <div class="gps-row">
-            <span class="coords" id="gpsCoords">📍 Naghihintay...</span>
-            <span class="accuracy" id="accuracy">⏳</span>
-            <span class="address" id="address">I-On ang GPS sa itaas</span>
-        </div>
-        <div class="weather-display">
-            <div class="main-temp"><i class="fas fa-sun"></i> <span id="currentTemp">--</span>°C</div>
-            <div class="weather-details">
-                <div class="item"><i class="fas fa-tint"></i> <span class="val" id="humidity">--</span>%</div>
-                <div class="item"><i class="fas fa-wind"></i> <span class="val" id="windSpeed">--</span>km/h</div>
-                <div class="item"><i class="fas fa-cloud-rain"></i> <span class="val" id="rainChance">--</span>%</div>
-                <div class="item"><i class="fas fa-seedling"></i> <span class="val" id="season">--</span></div>
-            </div>
-        </div>
-    </div>
+    <h1>
+        <i class="fas fa-seedling"></i>
+        PlantAdvisor
+        <span class="live-badge">● LIVE</span>
+    </h1>
 
-    <!-- TAB NAVIGATION -->
-    <div class="tab-nav" id="tabNav">
-        <button class="active" data-tab="plants"><i class="fas fa-seedling"></i> Halaman</button>
-        <button data-tab="livestock"><i class="fas fa-cow"></i> Hayop</button>
-        <button data-tab="diseases"><i class="fas fa-biohazard"></i> Sakit at Gamot</button>
-    </div>
+    <span class="update-time">
+        <i class="fas fa-clock"></i>
+        <span id="updateTime">--:--</span>
+    </span>
 
-    <!-- ════════════════════════════════════════════════════════════ -->
-    <!-- TAB 1: PLANTS -->
-    <!-- ════════════════════════════════════════════════════════════ -->
-    <div class="tab-content active" id="tab-plants">
+</header>
 
-        <div class="seasonal-guide" id="seasonalGuide">
-            <div class="season-card active" data-season="wet"><span class="emoji">💧</span><div class="name">Tag-Ulan</div><div class="months">Hun-Okt</div></div>
-            <div class="season-card" data-season="dry"><span class="emoji">☀️</span><div class="name">Tag-Araw</div><div class="months">Nob-May</div></div>
-            <div class="season-card" data-season="cool"><span class="emoji">🌿</span><div class="name">Tag-Lamig</div><div class="months">Dis-Peb</div></div>
-        </div>
 
-        <div class="planting-tips" id="plantingTips">
-            <h3><i class="fas fa-lightbulb"></i> Mga Tips sa Pagtatanim Ngayong Araw</h3>
-            <div class="tip-grid" id="tipGrid">
-                <div class="tip-item"><i class="fas fa-check-circle"></i> Suriin ang lupa</div>
-                <div class="tip-item"><i class="fas fa-check-circle"></i> Diligan sa umaga</div>
-                <div class="tip-item"><i class="fas fa-check-circle"></i> Mag-abono</div>
-                <div class="tip-item"><i class="fas fa-check-circle"></i> Bantayan ang peste</div>
-            </div>
-        </div>
+<!-- GPS -->
 
-        <div class="calendar-section">
-            <h2><i class="fas fa-calendar-alt"></i> Kalendaryo ng Pagtatanim
-                <div class="month-nav">
-                    <button onclick="changeMonth(-1)">◀</button>
-                    <span class="month-label" id="monthLabel">Hulyo 2026</span>
-                    <button onclick="changeMonth(1)">▶</button>
-                </div>
-            </h2>
-            <div class="calendar-grid" id="calendarGrid"></div>
-            <div class="calendar-legend">
-                <span><span class="dot green"></span> Pagtatanim</span>
-                <span><span class="dot orange"></span> Pag-aani</span>
-                <span><span class="dot dark"></span> Ngayon</span>
-            </div>
-        </div>
+<div class="gps-banner" id="gpsBanner">
 
-        <div class="advisor-card">
-            <h2><i class="fas fa-lightbulb"></i> Gabay sa Halaman <span class="count" id="plantCount">(0 halaman)</span></h2>
-            <div class="filter-bar" id="plantFilter">
-                <button class="filter-btn active" data-filter="all">🌾 Lahat</button>
-                <button class="filter-btn" data-filter="wet">💧 Tag-Ulan</button>
-                <button class="filter-btn" data-filter="dry">☀️ Tag-Araw</button>
-                <button class="filter-btn" data-filter="cool">🌿 Tag-Lamig</button>
-                <button class="filter-btn" data-filter="high">⭐ Pinakamahusay</button>
-            </div>
-            <div id="plantRecs" class="item-recs">
-                <div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang rekomendasyon!</p></div>
-            </div>
-        </div>
-    </div>
+    <i class="fas fa-satellite-dish"></i>
 
-    <!-- ════════════════════════════════════════════════════════════ -->
-    <!-- TAB 2: LIVESTOCK -->
-    <!-- ════════════════════════════════════════════════════════════ -->
-    <div class="tab-content" id="tab-livestock">
-        <div class="planting-tips" style="background: linear-gradient(135deg, #efebe9, #d7ccc8); border-left-color: #6d4c41;">
-            <h3><i class="fas fa-cow" style="color:#6d4c41;"></i> Pinakamainam na Hayop sa Iyong Lugar</h3>
-            <div class="tip-grid" id="livestockTips">
-                <div class="tip-item"><i class="fas fa-check-circle" style="color:#6d4c41;"></i> Tignan ang temperatura</div>
-                <div class="tip-item"><i class="fas fa-check-circle" style="color:#6d4c41;"></i> Alamin ang pagkain na available</div>
-                <div class="tip-item"><i class="fas fa-check-circle" style="color:#6d4c41;"></i> Magsimula sa matitibay na lahi</div>
-                <div class="tip-item"><i class="fas fa-check-circle" style="color:#6d4c41;"></i> Regular na health check</div>
-            </div>
-        </div>
-        <div class="advisor-card">
-            <h2><i class="fas fa-cow"></i> Pinakamainam na Hayop sa Iyong Lugar <span class="count" id="livestockCount">(0 hayop)</span></h2>
-            <div class="filter-bar" id="livestockFilter">
-                <button class="filter-btn active" data-filter="all">🐄 Lahat</button>
-                <button class="filter-btn" data-filter="poultry">🐔 Manok</button>
-                <button class="filter-btn" data-filter="swine">🐷 Baboy</button>
-                <button class="filter-btn" data-filter="cattle">🐮 Baka</button>
-                <button class="filter-btn" data-filter="small">🐐 Kambing</button>
-            </div>
-            <div id="livestockRecs" class="item-recs">
-                <div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang pinakamainam na hayop!</p></div>
-            </div>
-        </div>
-    </div>
+    <h3>📍 Turn On GPS for Exact Location</h3>
 
-    <!-- ════════════════════════════════════════════════════════════ -->
-    <!-- TAB 3: DISEASES - WITH ONLINE UPDATES -->
-    <!-- ════════════════════════════════════════════════════════════ -->
-    <div class="tab-content" id="tab-diseases">
-        <div class="planting-tips" style="background: linear-gradient(135deg, #ffebee, #ffcdd2); border-left-color: #d32f2f;">
-            <h3><i class="fas fa-biohazard" style="color:#d32f2d;"></i> ⚠️ Mga Sakit at Gamot <span class="update-badge" id="updateBadge">🔄 Online</span></h3>
-            <div class="tip-grid" id="diseaseTips">
-                <div class="tip-item"><i class="fas fa-check-circle" style="color:#d32f2f;"></i> Agad na kumonsulta sa beterinaryo</div>
-                <div class="tip-item"><i class="fas fa-check-circle" style="color:#d32f2f;"></i> Ihiwalay ang may sakit</div>
-                <div class="tip-item"><i class="fas fa-check-circle" style="color:#d32f2f;"></i> Linisin ang paligid</div>
-                <div class="tip-item"><i class="fas fa-check-circle" style="color:#d32f2f;"></i> Magbakuna sa tamang oras</div>
-            </div>
-        </div>
+    <p>
+        Get the weather, planting recommendations,
+        livestock information and location data
+        for your current position.
+    </p>
 
-        <div class="advisor-card">
-            <h2><i class="fas fa-biohazard"></i> Mga Sakit ng Halaman <span class="count" id="plantDiseaseCount">(0 sakit)</span></h2>
-            <div id="plantDiseaseRecs" class="item-recs">
-                <div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Naglo-load ng mga sakit...</p></div>
-            </div>
-        </div>
+    <button
+        class="btn-gps"
+        id="gpsBtn"
+        onclick="enableGPS()">
 
-        <div class="advisor-card">
-            <h2><i class="fas fa-heartbeat"></i> Mga Sakit ng Hayop <span class="count" id="animalDiseaseCount">(0 sakit)</span></h2>
-            <div id="animalDiseaseRecs" class="item-recs">
-                <div class="loading"><i class="fas fa-spinner fa-spin"></i><p>Naglo-load ng mga sakit...</p></div>
-            </div>
-        </div>
+        <i class="fas fa-location-dot"></i>
+        Turn On GPS
 
-        <div class="advisor-card" style="background:#e3f2fd; border-left:4px solid #0d47a1;">
-            <h2><i class="fas fa-sync-alt fa-spin"></i> Huling Update mula sa Gobyerno</h2>
-            <p style="font-size:12px; color:#555;" id="lastUpdateTime">Naglo-load ng update...</p>
-            <div id="govUpdates" style="font-size:11px; color:#333; margin-top:6px;">
-                <p>📡 Kumukonekta sa Department of Agriculture...</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- BOTTOM NAV -->
-    <div class="bottom-bar">
-        <button class="nav-item active" onclick="switchTab('plants')">
-            <i class="fas fa-seedling"></i><span>Halaman</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('livestock')">
-            <i class="fas fa-cow"></i><span>Hayop</span>
-        </button>
-        <button class="nav-item" onclick="switchTab('diseases')">
-            <i class="fas fa-biohazard"></i><span>Sakit</span>
-        </button>
-        <button class="nav-item" onclick="window.location.reload();">
-            <i class="fas fa-sync-alt"></i><span>Refresh</span>
-        </button>
-    </div>
-
-    <!-- SCROLL TOP -->
-    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'});">
-        <i class="fas fa-arrow-up"></i>
     </button>
 
 </div>
 
+
+<!-- LOCATION -->
+
+<div class="location-card">
+
+    <div class="gps-row">
+
+        <span
+            class="coords"
+            id="gpsCoords">
+
+            📍 Waiting for GPS...
+
+        </span>
+
+        <span
+            class="accuracy"
+            id="accuracy">
+
+            ⏳
+
+        </span>
+
+        <span
+            class="address"
+            id="address">
+
+            Turn on GPS above.
+
+        </span>
+
+    </div>
+
+
+    <div class="weather-display">
+
+        <div class="main-temp">
+
+            <i class="fas fa-sun"></i>
+
+            <span id="currentTemp">--</span>°C
+
+        </div>
+
+
+        <div class="weather-details">
+
+            <div class="item">
+
+                <i class="fas fa-tint"></i>
+
+                <span
+                    class="val"
+                    id="humidity">
+
+                    --
+
+                </span>%
+
+            </div>
+
+
+            <div class="item">
+
+                <i class="fas fa-wind"></i>
+
+                <span
+                    class="val"
+                    id="windSpeed">
+
+                    --
+
+                </span>
+                km/h
+
+            </div>
+
+
+            <div class="item">
+
+                <i class="fas fa-cloud-rain"></i>
+
+                <span
+                    class="val"
+                    id="rainChance">
+
+                    --
+
+                </span>
+
+            </div>
+
+
+            <div class="item">
+
+                <i class="fas fa-seedling"></i>
+
+                <span
+                    class="val"
+                    id="season">
+
+                    --
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- TABS -->
+
+<div class="tab-nav">
+
+    <button
+        class="active"
+        data-tab="plants">
+
+        <i class="fas fa-seedling"></i>
+        Plants
+
+    </button>
+
+
+    <button
+        data-tab="livestock">
+
+        <i class="fas fa-cow"></i>
+        Livestock
+
+    </button>
+
+
+    <button
+        data-tab="diseases">
+
+        <i class="fas fa-biohazard"></i>
+        Diseases
+
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     PLANTS
+===================================================== -->
+
+<div
+    class="tab-content active"
+    id="tab-plants">
+
+
+    <!-- SEASON -->
+
+    <div
+        class="seasonal-guide"
+        id="seasonalGuide">
+
+
+        <div
+            class="season-card active"
+            data-season="wet">
+
+            <span class="emoji">💧</span>
+
+            <div class="name">
+                Wet Season
+            </div>
+
+            <div class="months">
+                Jun-Oct
+            </div>
+
+        </div>
+
+
+        <div
+            class="season-card"
+            data-season="dry">
+
+            <span class="emoji">☀️</span>
+
+            <div class="name">
+                Dry Season
+            </div>
+
+            <div class="months">
+                Nov-May
+            </div>
+
+        </div>
+
+
+        <div
+            class="season-card"
+            data-season="cool">
+
+            <span class="emoji">🌿</span>
+
+            <div class="name">
+                Cool Season
+            </div>
+
+            <div class="months">
+                Dec-Feb
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TIPS -->
+
+    <div class="planting-tips">
+
+        <h3>
+
+            <i class="fas fa-lightbulb"></i>
+
+            Planting Tips Today
+
+        </h3>
+
+
+        <div
+            class="tip-grid"
+            id="tipGrid">
+
+            <div class="tip-item">
+
+                <i class="fas fa-check-circle"></i>
+                Check soil condition
+
+            </div>
+
+
+            <div class="tip-item">
+
+                <i class="fas fa-check-circle"></i>
+                Water in the morning
+
+            </div>
+
+
+            <div class="tip-item">
+
+                <i class="fas fa-check-circle"></i>
+                Monitor pests
+
+            </div>
+
+
+            <div class="tip-item">
+
+                <i class="fas fa-check-circle"></i>
+                Maintain sanitation
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CALENDAR -->
+
+    <div class="calendar-section">
+
+        <h2>
+
+            <i class="fas fa-calendar-alt"></i>
+
+            Planting Calendar
+
+
+            <div class="month-nav">
+
+                <button onclick="changeMonth(-1)">
+                    ◀
+                </button>
+
+                <span
+                    class="month-label"
+                    id="monthLabel">
+
+                    --
+
+                </span>
+
+                <button onclick="changeMonth(1)">
+                    ▶
+                </button>
+
+            </div>
+
+        </h2>
+
+
+        <div
+            class="calendar-grid"
+            id="calendarGrid">
+        </div>
+
+
+        <div class="calendar-legend">
+
+            <span>
+                <span
+                    style="
+                    width:10px;
+                    height:10px;
+                    background:#c8e6c9;
+                    display:inline-block;
+                    border-radius:3px;">
+                </span>
+
+                Planting
+
+            </span>
+
+
+            <span>
+
+                <span
+                    style="
+                    width:10px;
+                    height:10px;
+                    background:#ffccbc;
+                    display:inline-block;
+                    border-radius:3px;">
+                </span>
+
+                Harvest
+
+            </span>
+
+
+            <span>
+
+                <span
+                    style="
+                    width:10px;
+                    height:10px;
+                    background:#2d7a2d;
+                    display:inline-block;
+                    border-radius:3px;">
+                </span>
+
+                Today
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- PLANT ADVISOR -->
+
+    <div class="advisor-card">
+
+        <h2>
+
+            <i class="fas fa-lightbulb"></i>
+
+            Plant Guide
+
+            <span
+                class="count"
+                id="plantCount">
+
+                (0 plants)
+
+            </span>
+
+        </h2>
+
+
+        <div
+            class="filter-bar"
+            id="plantFilter">
+
+
+            <button
+                class="filter-btn active"
+                data-filter="all">
+
+                🌾 All
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="wet">
+
+                💧 Wet Season
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="dry">
+
+                ☀️ Dry Season
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="cool">
+
+                🌿 Cool Season
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="high">
+
+                ⭐ Recommended
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="plantRecs"
+            class="item-recs">
+
+            <div class="loading">
+
+                <i class="fas fa-seedling"></i>
+
+                <p>
+                    Turn on GPS to see
+                    location-based recommendations.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     LIVESTOCK
+===================================================== -->
+
+<div
+    class="tab-content"
+    id="tab-livestock">
+
+
+    <div
+        class="planting-tips"
+        style="
+        background:linear-gradient(135deg,#efebe9,#d7ccc8);
+        border-left-color:#6d4c41;">
+
+        <h3>
+
+            <i
+                class="fas fa-cow"
+                style="color:#6d4c41;">
+            </i>
+
+            Livestock Guide
+
+        </h3>
+
+
+        <div
+            class="tip-grid"
+            id="livestockTips">
+
+            <div class="tip-item">
+
+                <i
+                    class="fas fa-check-circle"
+                    style="color:#6d4c41;">
+                </i>
+
+                Check temperature
+
+            </div>
+
+
+            <div class="tip-item">
+
+                <i
+                    class="fas fa-check-circle"
+                    style="color:#6d4c41;">
+                </i>
+
+                Provide clean water
+
+            </div>
+
+
+            <div class="tip-item">
+
+                <i
+                    class="fas fa-check-circle"
+                    style="color:#6d4c41;">
+                </i>
+
+                Maintain sanitation
+
+            </div>
+
+
+            <div class="tip-item">
+
+                <i
+                    class="fas fa-check-circle"
+                    style="color:#6d4c41;">
+                </i>
+
+                Regular health checks
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="advisor-card">
+
+        <h2>
+
+            <i class="fas fa-cow"></i>
+
+            Livestock
+
+            <span
+                class="count"
+                id="livestockCount">
+
+                (0)
+
+            </span>
+
+        </h2>
+
+
+        <div
+            class="filter-bar"
+            id="livestockFilter">
+
+
+            <button
+                class="filter-btn active"
+                data-filter="all">
+
+                🐄 All
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="poultry">
+
+                🐔 Poultry
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="swine">
+
+                🐷 Swine
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="cattle">
+
+                🐮 Cattle
+
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="small">
+
+                🐐 Goat
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="livestockRecs"
+            class="item-recs">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     DISEASES
+===================================================== -->
+
+<div
+    class="tab-content"
+    id="tab-diseases">
+
+
+    <div
+        class="planting-tips"
+        style="
+        background:linear-gradient(135deg,#ffebee,#ffcdd2);
+        border-left-color:#d32f2f;">
+
+        <h3>
+
+            <i
+                class="fas fa-biohazard"
+                style="color:#d32f2f;">
+            </i>
+
+            Diseases & Prevention
+
+            <span class="update-badge">
+                🔄 ONLINE
+            </span>
+
+        </h3>
+
+
+        <div class="tip-grid">
+
+            <div class="tip-item">
+
+                <i
+                    class="fas fa-check-circle"
+                    style="color:#d32f2f;">
+                </i>
+
+                Isolate infected plants/animals
+
+            </div>
+
+
+            <div class="tip-item">
+
+                <i
+                    class="fas fa-check-circle"
+                    style="color:#d32f2f;">
+                </i>
+
+                Maintain sanitation
+
+            </div>
+
+
+            <div class="tip-item">
+
+                <i
+                    class="fas fa-check-circle"
+                    style="color:#d32f2f;">
+                </i>
+
+                Monitor symptoms
+
+            </div>
+
+
+            <div class="tip-item">
+
+                <i
+                    class="fas fa-check-circle"
+                    style="color:#d32f2f;">
+                </i>
+
+                Contact proper authorities
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PLANT DISEASES -->
+
+    <div class="advisor-card">
+
+        <h2>
+
+            <i class="fas fa-biohazard"></i>
+
+            Plant Diseases
+
+            <span
+                class="count"
+                id="plantDiseaseCount">
+
+                (0)
+
+            </span>
+
+        </h2>
+
+
+        <div
+            id="plantDiseaseRecs"
+            class="item-recs">
+
+        </div>
+
+    </div>
+
+
+    <!-- ANIMAL DISEASES -->
+
+    <div class="advisor-card">
+
+        <h2>
+
+            <i class="fas fa-heartbeat"></i>
+
+            Animal Diseases
+
+            <span
+                class="count"
+                id="animalDiseaseCount">
+
+                (0)
+
+            </span>
+
+        </h2>
+
+
+        <div
+            id="animalDiseaseRecs"
+            class="item-recs">
+
+        </div>
+
+    </div>
+
+
+    <!-- GOVERNMENT -->
+
+    <div
+        class="advisor-card"
+        style="
+        background:#e3f2fd;
+        border-left:4px solid #0d47a1;">
+
+        <h2>
+
+            <i class="fas fa-sync-alt"></i>
+
+            Government Update
+
+        </h2>
+
+
+        <p
+            style="
+            font-size:12px;
+            color:#555;"
+            id="lastUpdateTime">
+
+            Checking...
+
+        </p>
+
+
+        <div
+            id="govUpdates"
+            style="
+            font-size:11px;
+            color:#333;
+            margin-top:8px;">
+
+            📡 Checking online data...
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<!-- BOTTOM NAV -->
+
+<div class="bottom-bar">
+
+    <button
+        class="nav-item active"
+        onclick="switchTab('plants')">
+
+        <i class="fas fa-seedling"></i>
+
+        <span>Plants</span>
+
+    </button>
+
+
+    <button
+        class="nav-item"
+        onclick="switchTab('livestock')">
+
+        <i class="fas fa-cow"></i>
+
+        <span>Livestock</span>
+
+    </button>
+
+
+    <button
+        class="nav-item"
+        onclick="switchTab('diseases')">
+
+        <i class="fas fa-biohazard"></i>
+
+        <span>Diseases</span>
+
+    </button>
+
+
+    <button
+        class="nav-item"
+        onclick="enableGPS()">
+
+        <i class="fas fa-location-crosshairs"></i>
+
+        <span>GPS</span>
+
+    </button>
+
+
+    <button
+        class="nav-item"
+        onclick="location.reload()">
+
+        <i class="fas fa-sync-alt"></i>
+
+        <span>Refresh</span>
+
+    </button>
+
+</div>
+
+
+<!-- SCROLL TOP -->
+
+<button
+    class="scroll-top"
+    id="scrollTop"
+    onclick="window.scrollTo({
+        top:0,
+        behavior:'smooth'
+    });">
+
+    <i class="fas fa-arrow-up"></i>
+
+</button>
+
+
 <script>
-    (function() {
-        'use strict';
 
-        // ─── PLANT DATABASE ──────────────────────────────────
-        const PLANT_DB = [
-            { name: 'Palay', emoji: '🌾', idealTemp: { min: 25, max: 35 }, idealHumidity: { min: 60, max: 85 }, season: 'wet', desc: 'Pangunahing pagkain, kailangan ng tubig', daysToHarvest: 120, category: 'major',
-              pests: ['Stem Borer', 'Rice Blast', 'Brown Planthopper'],
-              care: 'Panatilihing baha ang palayan. Maglagay ng nitrogen fertilizer.',
-              procedure: '1. Araruhin 2-3x. 2. Punlaan: 20-25 araw. 3. Itanim: 2-3 punla/burol, 20x20cm. 4. Panatilihin ang 5-10cm tubig. 5. Anihin: 80% dilaw na ang palay.',
-              fertilizer: '🌱 Complete (14-14-14): 2 sako/ha. 🌱 Urea sa tillering: 1 sako/ha. 🌱 Urea sa panicle initiation: 1 sako/ha.',
-              vitamins: '💊 Zinc Sulfate: 1kg/ha. 💊 Iron: kung dilaw ang dahon.' },
-            { name: 'Tubo', emoji: '🍬', idealTemp: { min: 25, max: 35 }, idealHumidity: { min: 50, max: 80 }, season: 'wet', desc: 'Ginagawang asukal', daysToHarvest: 365, category: 'major',
-              pests: ['Stem Borer', 'White Grub', 'Daga'],
-              care: 'Maglagay ng complete fertilizer sa pagtatanim. Urea sa 3-4 na buwan.',
-              procedure: '1. Araruhin 30-40cm. 2. Hukay 1m ang layo, ilagay ang tanim. 3. Takpan ng 5-10cm lupa. 4. Abonohan sa 3-4 na buwan. 5. Anihin: 10-12 buwan.',
-              fertilizer: '🌱 Complete (14-14-14): 4 sako/ha. 🌱 Urea sa 3-4 buwan: 2 sako/ha. 🌱 Muriate of Potash: 1 sako/ha.',
-              vitamins: '💊 Boron: 2kg/ha. 💊 Calcium: 1 ton/ha dolomite.' },
-            { name: 'Mais', emoji: '🌽', idealTemp: { min: 18, max: 32 }, idealHumidity: { min: 50, max: 80 }, season: 'wet', desc: 'Mataas na ani, butil', daysToHarvest: 90, category: 'major',
-              pests: ['Corn Borer', 'Armyworm', 'Rust'],
-              care: 'Maglagay ng 14-14-14 sa pagtatanim. Urea sa knee-high stage.',
-              procedure: '1. Araruhin. 2. Itanim: 75x25cm, 2 butil/burol. 3. Payatin sa 1 halaman/burol. 4. Abonohan sa pagtatanim at 30 araw. 5. Anihin: kapag kayumanggi na ang buhok.',
-              fertilizer: '🌱 Complete (14-14-14): 3 sako/ha. 🌱 Urea sa knee-high: 2 sako/ha. 🌱 Zinc: 1 sako/ha.',
-              vitamins: '💊 Zinc Sulfate: 1kg/ha. 💊 Iron: kung dilaw ang dahon.' },
-            { name: 'Kamatis', emoji: '🍅', idealTemp: { min: 20, max: 30 }, idealHumidity: { min: 50, max: 70 }, season: 'dry', desc: 'Gulay, kailangan ng suporta', daysToHarvest: 65, category: 'vegetable',
-              pests: ['Fruit Borer', 'Whitefly', 'Late Blight'],
-              care: 'Gumamit ng stake o trellis. Maglagay ng calcium.',
-              procedure: '1. Punlaan: 4-5 dahon. 2. Itanim: 60x40cm. 3. Mag-stake. 4. Abonohan sa pagtatanim at pamumulaklak. 5. Anihin: kapag kulay pula na.',
-              fertilizer: '🌱 Complete (14-14-14): 1 sako/ha. 🌱 Urea sa pamumulaklak: 0.5 sako/ha. 🌱 Calcium nitrate: 1kg/16L tubig.',
-              vitamins: '💊 Calcium: maiwasan ang blossom-end rot. 💊 Magnesium: Epsom salt spray.' },
-            { name: 'Talong', emoji: '🍆', idealTemp: { min: 22, max: 32 }, idealHumidity: { min: 50, max: 75 }, season: 'dry', desc: 'Matibay sa init, produktibo', daysToHarvest: 65, category: 'vegetable',
-              pests: ['Eggplant Fruit Borer', 'Aphids', 'Spider Mites'],
-              care: 'Maglagay ng nitrogen fertilizer. Tanggalin ang infected na prutas.',
-              procedure: '1. Punlaan: 30-40 araw. 2. Itanim: 4-5 dahon. 3. Itanim: 75x50cm. 4. Abonohan sa pagtatanim. 5. Anihin: kapag makintab at matigas.',
-              fertilizer: '🌱 Complete (14-14-14): 1 sako/ha. 🌱 Urea sa 30 araw: 0.5 sako/ha. 🌱 Potassium: 0.5 sako/ha.',
-              vitamins: '💊 Calcium: foliar spray. 💊 Magnesium: Epsom salt spray.' },
-        ];
+/* ==========================================================
+   API CONFIGURATION
+========================================================== */
 
-        // ─── LIVESTOCK DATABASE ──────────────────────────────
-        const LIVESTOCK_DB = [
-            { 
-                name: 'Manok', emoji: '🐔', type: 'poultry',
-                idealTemp: { min: 18, max: 32 }, season: 'all',
-                desc: 'Pinakamainam para sa karne at itlog. Mabilis lumaki, madaling alagaan.',
-                breed: 'Broiler (karne), Layer (itlog), Native (dalawa)',
-                best_for: 'Maliit na sakahan, backyard, mabilis na kita',
-                diseases: [
-                    { name: 'Newcastle Disease', medicine: 'Newcastle vaccine (sa 1, 14, 28 araw)', symptoms: 'Pagbahin, ubo, berdeng tae, paralisis' },
-                    { name: 'Bird Flu', medicine: 'Ihiwalay agad at magpatingin sa vet', symptoms: 'Biglaang kamatayan, hirap huminga, namamaga' }
-                ],
-                feeding: {
-                    baby: 'Starter mash (0-4 linggo): 20-22% protein. Pagkain: durog na mais + soybean meal + vitamins. Dami: 50-100g/araw.',
-                    grower: 'Grower mash (4-8 linggo): 18-20% protein. Pagkain: mais + soybean + fish meal + rice bran. Dami: 100-150g/araw.',
-                    adult: 'Layer mash (8+ linggo): 16-18% protein para sa itlog. Broiler finisher: 18-20% para sa karne. Dami: 120-150g/araw.',
-                    supplements: '💊 Vitamins: A,D,E sa tubig. 💊 Calcium: oyster shell para sa nangingitlog. 💊 Grit: para sa digestion.'
-                },
-                care: 'Magbigay ng malinis na tubig araw-araw. Linisin ang kulungan. Bigyan ng sapat na espasyo (2-3 sq ft/manok). Magbakuna sa tamang oras.',
-                procedure: '1. Maghanda ng brooder na may heat lamp (90-95°F). 2. Magbigay ng starter feed at malinis na tubig. 3. Magbakuna sa day 1 (Mareks), day 14 (Newcastle). 4. Lipat sa grower sa 4 na linggo. 5. Para sa layer: maglagay ng pugad sa 16 na linggo. 6. Anihin: broiler sa 6-8 linggo, layer nagsisimulang mangitlog sa 18-20 linggo.'
-            },
-            { 
-                name: 'Baboy', emoji: '🐷', type: 'swine',
-                idealTemp: { min: 18, max: 30 }, season: 'all',
-                desc: 'Mataas na produksyon ng karne, magandang negosyo para sa mga magsasaka.',
-                breed: 'Landrace, Yorkshire, Duroc, Native (Baboy damo)',
-                best_for: 'Katamtaman hanggang malaking sakahan, produksyon ng karne',
-                diseases: [
-                    { name: 'African Swine Fever (ASF)', medicine: 'Walang lunas - ihiwalay at patayin agad, report sa DA/BAI', symptoms: 'Mataas na lagnat, biglaang kamatayan, pulang batik, duguan na tae' },
-                    { name: 'Classical Swine Fever', medicine: 'CSF vaccine sa 4-6 na linggo', symptoms: 'Lagnat, tigas ng tae, panghihina' }
-                ],
-                feeding: {
-                    baby: 'Piglet creep feed (0-4 linggo): 20-22% protein. Pagkain: commercial piglet starter + milk replacer. Dami: 100-200g/araw.',
-                    grower: 'Grower feed (4-12 linggo): 18-20% protein. Pagkain: mais + soybean + fish meal + rice bran + vitamins. Dami: 500g-1kg/araw.',
-                    adult: 'Finisher feed (12+ linggo): 16-18% protein. Pagkain: mais + soybean + rice bran + minerals. Dami: 1.5-2.5kg/araw.',
-                    supplements: '💊 Vitamins: ADE + B-complex sa feed. 💊 Minerals: Calcium, Phosphorus. 💊 Tubig: Malinis na tubig lagi.'
-                },
-                care: 'Magbigay ng malinis na tubig lagi. Linisin ang kulungan araw-araw. Bigyan ng lilim (nagiinit ang baboy). Mag-deworm regularly. Magbakuna.',
-                procedure: '1. Maghanda ng malinis na kulungan. 2. Magbigay ng starter feed at malinis na tubig. 3. Ihiwalay sa ina sa 4-6 na linggo. 4. Bigyan ng grower feed hanggang 12 linggo. 5. Palitan ng finisher feed sa 12 linggo. 6. Anihin: sa 5-6 na buwan (100-120kg).'
-            },
-            { 
-                name: 'Kambing', emoji: '🐐', type: 'small',
-                idealTemp: { min: 15, max: 30 }, season: 'dry',
-                desc: 'Mababa ang maintenance, maganda para sa gatas at karne, nabubuhay sa tuyong lugar.',
-                breed: 'Anglo-Nubian (gatas), Boer (karne), Native (dalawa)',
-                best_for: 'Maliit na sakahan, mababang puhunan, produksyon ng gatas',
-                diseases: [
-                    { name: 'Foot Rot', medicine: 'Copper sulfate foot bath, antibiotics', symptoms: 'Pilay, namamaga sa pagitan ng kuko, mabahong amoy' },
-                    { name: 'Enterotoxemia', medicine: 'CD&T vaccine taon-taon', symptoms: 'Biglaang kamatayan, sakit ng tiyan, diarrhea' }
-                ],
-                feeding: {
-                    baby: 'Colostrum first 3 days. Milk replacer o gatas ng kambing (4-8 linggo). Pagkain: starter pellets (16-18% protein). Dami: 200-300ml gatas 3x/araw.',
-                    grower: 'Grower feed (2-6 buwan): Pasture + grain supplement (mais + soybean). Dami: 0.5-1kg/araw + magandang pasture.',
-                    adult: 'Adult feed (6+ buwan): Magandang pasture + 0.5-1kg grain/araw. Para sa milkers: magdagdag ng legume hay. Dami: 1-1.5kg/araw + pasture.',
-                    supplements: '💊 Minerals: Loose minerals lagi. 💊 Asin: Mineral block. 💊 Tubig: Malinis na tubig lagi.'
-                },
-                care: 'Bigyan ng tirahan mula sa ulan at araw. Kailangan ng magandang bakod. Mag-deworm kada 3 buwan. Gupitin ang kuko regularly.',
-                procedure: '1. Maghanda ng malinis, tuyong tirahan. 2. Bigyan ng colostrum first 3 days. 3. Feed milk replacer hanggang 8 linggo. 4. Simulan ang forage at grain sa 2 buwan. 5. Deworm sa 2 buwan, then every 3 buwan. 6. Magpalahi sa 8-10 buwan. 7. Anihin: karne sa 8-12 buwan.'
-            },
-            { 
-                name: 'Baka', emoji: '🐮', type: 'cattle',
-                idealTemp: { min: 15, max: 30 }, season: 'dry',
-                desc: 'Mataas na puhunan pero magandang kita para sa gatas at karne.',
-                breed: 'Holstein (gatas), Brahman (karne), Native (dalawa)',
-                best_for: 'Malaking sakahan, produksyon ng gatas, produksyon ng karne',
-                diseases: [
-                    { name: 'Foot and Mouth Disease (FMD)', medicine: 'FMD vaccine every 6 months', symptoms: 'Lagnat, paltos sa bibig at paa, sobrang laway' },
-                    { name: 'Mastitis', medicine: 'Antibiotics intramammary', symptoms: 'Namamagang udder, abnormal na gatas, lagnat' }
-                ],
-                feeding: {
-                    baby: 'Colostrum first 3 days. Milk replacer (4-8 linggo): 20% protein. Feed: 4-6L gatas/araw split into 2-3 feedings.',
-                    grower: 'Grower feed (2-6 buwan): Magandang pasture + grain supplement (mais + soybean meal). Feed: 1-2kg/araw + good pasture.',
-                    adult: 'Adult feed (6+ buwan): Magandang pasture o silage + 2-3kg grain/araw. Para sa milkers: mas mataas na quality feed. Feed: 2-4kg/araw + forage.',
-                    supplements: '💊 Minerals: Loose minerals (Ca, P, Mg). 💊 Asin: Salt block. 💊 Tubig: 30-50L/araw para sa adult.'
-                },
-                care: 'Magbigay ng magandang pasture o silage. Malinis na tubig lagi. Regular na hoof trimming. Magbakuna regularly.',
-                procedure: '1. Maghanda ng malinis na kamalig. 2. Bigyan ng colostrum first 3 days. 3. Feed milk replacer hanggang 8 linggo. 4. Simulan ang forage sa 2 buwan. 5. Magpalahi sa 15-18 buwan. 6. Manganganak sa 24-27 buwan. 7. Anihin: karne sa 18-24 buwan.'
-            },
-        ];
+const WEATHER_API_KEY =
+"263a6324e90575dbdb1717f6a0b9e4f4";
 
-        // ─── DISEASE DATABASE (auto-updated online) ──────────
-        let PLANT_DISEASES = [
-            { 
-                name: 'Rice Blast (Paltos ng Palay)', 
-                emoji: '🌾', affected: 'Palay',
-                symptoms: 'Brown spots sa dahon na may gray center, namamatay ang dahon',
-                cause: 'Fungus (Magnaporthe grisea)',
-                medicine: 'Fungicide (Tricyclazole, Isoprothiolane), magtanim ng resistant varieties',
-                prevention: 'Gumamit ng certified seeds, proper spacing, balanced fertilizer',
-                alert: 'Mataas na risk sa tag-ulan - Payo ng DA'
-            },
-            { 
-                name: 'Bacterial Leaf Blight (Pagtuyo ng Dahon)', 
-                emoji: '🌾', affected: 'Palay',
-                symptoms: 'Yellow to white streaks sa dahon, nalalanta ang halaman',
-                cause: 'Bacteria (Xanthomonas oryzae)',
-                medicine: 'Bactericide (Copper-based), patuyuin ang palayan, iwasan ang over-fertilization',
-                prevention: 'Gumamit ng resistant varieties, proper water management',
-                alert: 'Kumakalat sa hangin at ulan - Bantayan ang palayan'
-            },
-            { 
-                name: 'Corn Borer (Bubutong Mais)', 
-                emoji: '🌽', affected: 'Mais',
-                symptoms: 'Butas sa dahon, sawdust sa whorl, sirang butil',
-                cause: 'Insekto (Ostrinia furnacalis)',
-                medicine: 'Insecticide (Bacillus thuringiensis, Carbaryl), biological control',
-                prevention: 'Maagang pagtatanim, crop rotation, pheromone traps',
-                alert: 'Aktibo sa tag-araw - Binabantayan ng DA'
-            },
-            { 
-                name: 'Tomato Blight (Pagtuyo ng Kamatis)', 
-                emoji: '🍅', affected: 'Kamatis',
-                symptoms: 'Brown lesions sa dahon, white mold sa ilalim, nalalanta',
-                cause: 'Fungus (Phytophthora infestans)',
-                medicine: 'Fungicide (Mancozeb, Chlorothalonil), tanggalin ang infected na halaman',
-                prevention: 'Proper spacing, iwasan ang overhead irrigation, resistant varieties',
-                alert: 'Mataas na risk sa tag-ulan - Payo ng DA'
-            },
-            { 
-                name: 'Downy Mildew (Amag ng Dahon)', 
-                emoji: '🥬', affected: 'Lettuce, Cabbage',
-                symptoms: 'Yellow spots sa taas ng dahon, white/purple mold sa ilalim',
-                cause: 'Fungus (Peronospora)',
-                medicine: 'Fungicide (Mancozeb, Copper-based)',
-                prevention: 'Proper air circulation, iwasang mabasa ang dahon',
-                alert: 'Aktibo sa tag-ulan - Bantayan ang mga pananim'
-            },
-        ];
 
-        let ANIMAL_DISEASES = [
-            {
-                name: 'Newcastle Disease (Sakit ng Manok)',
-                emoji: '🐔', affected: 'Manok',
-                symptoms: 'Pagbahin, ubo, berdeng tae, paralisis, biglaang kamatayan',
-                medicine: 'Newcastle vaccine (1, 14, 28 araw), supportive care',
-                prevention: 'Bakuna, biosecurity, ihiwalay ang may sakit',
-                alert: '⚠️ Aktibong outbreak sa ilang rehiyon - BAI advisory'
-            },
-            {
-                name: 'African Swine Fever (ASF - Sakit ng Baboy)',
-                emoji: '🐷', affected: 'Baboy',
-                symptoms: 'Mataas na lagnat, biglaang kamatayan, pulang batik, duguan na tae',
-                medicine: 'WALANG LUNAS - ihiwalay at patayin agad, report sa DA/BAI',
-                prevention: 'Strict biosecurity, bawal ang swill feeding, quarantine new animals',
-                alert: '⚠️ NATIONAL EMERGENCY - I-report agad sa DA Hotline'
-            },
-            {
-                name: 'Foot and Mouth Disease (FMD - Sakit ng Paa at Bibig)',
-                emoji: '🐮', affected: 'Baka, Kambing, Baboy',
-                symptoms: 'Lagnat, paltos sa bibig at paa, sobrang laway, pilay',
-                medicine: 'FMD vaccine every 6 months, supportive care',
-                prevention: 'Bakuna, quarantine, disinfection ng vehicles at tao',
-                alert: '⚠️ Aktibong outbreak - I-report agad sa BAI'
-            },
-            {
-                name: 'Avian Influenza (Bird Flu - Sakit ng Manok)',
-                emoji: '🐔🦆', affected: 'Manok, Pato, Ibong ligaw',
-                symptoms: 'Biglaang kamatayan, hirap huminga, namamaga, pagbaba ng itlog',
-                medicine: 'Ihiwalay agad, magpatingin sa vet, report sa DA',
-                prevention: 'Biosecurity, quarantine, iwasan ang contact sa wild birds',
-                alert: '⚠️ NATIONAL ALERT - I-notify agad ang authorities!'
-            },
-            {
-                name: 'Coccidiosis (Sakit ng Manok at Pato)',
-                emoji: '🐔', affected: 'Manok, Pato',
-                symptoms: 'Duguan na tae, nalalagas na balahibo, payat',
-                medicine: 'Amprolium o Toltrazuril sa tubig',
-                prevention: 'Malinis na kapaligiran, good sanitation',
-                alert: 'Karaniwan sa tag-ulan - Bantayan ang mga hayop'
-            },
-        ];
+/* ==========================================================
+   GLOBAL VARIABLES
+========================================================== */
 
-        // ─── STATE ──────────────────────────────────────────
-        let userLat = null;
-        let userLng = null;
-        let userAddress = '';
-        let currentMonth = new Date().getMonth();
-        let currentYear = new Date().getFullYear();
+let userLat = null;
+let userLon = null;
+let currentWeather = null;
 
-        // ─── DOM REFS ──────────────────────────────────────
-        const gpsBtn = document.getElementById('gpsBtn');
-        const gpsBanner = document.getElementById('gpsBanner');
-        const updateTime = document.getElementById('updateTime');
-        const gpsCoords = document.getElementById('gpsCoords');
-        const address = document.getElementById('address');
-        const accuracy = document.getElementById('accuracy');
-        const currentTemp = document.getElementById('currentTemp');
-        const humidity = document.getElementById('humidity');
-        const windSpeed = document.getElementById('windSpeed');
-        const rainChance = document.getElementById('rainChance');
-        const season = document.getElementById('season');
-        const plantRecs = document.getElementById('plantRecs');
-        const plantCount = document.getElementById('plantCount');
-        const livestockRecs = document.getElementById('livestockRecs');
-        const livestockCount = document.getElementById('livestockCount');
-        const scrollBtn = document.getElementById('scrollTop');
-        const calendarGrid = document.getElementById('calendarGrid');
-        const monthLabel = document.getElementById('monthLabel');
-        const plantDiseaseRecs = document.getElementById('plantDiseaseRecs');
-        const animalDiseaseRecs = document.getElementById('animalDiseaseRecs');
-        const plantDiseaseCount = document.getElementById('plantDiseaseCount');
-        const animalDiseaseCount = document.getElementById('animalDiseaseCount');
-        const lastUpdateTime = document.getElementById('lastUpdateTime');
-        const govUpdates = document.getElementById('govUpdates');
+let calendarDate = new Date();
 
-        // ─── TAB SWITCHING ──────────────────────────────────
-        window.switchTab = function(tab) {
-            document.querySelectorAll('.tab-nav button').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.tab === tab);
-            });
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.toggle('active', content.id === 'tab-' + tab);
-            });
-            document.querySelectorAll('.bottom-bar .nav-item').forEach(item => {
-                const onclick = item.getAttribute('onclick') || '';
-                item.classList.toggle('active', onclick.includes(tab));
-            });
-            if (tab === 'diseases') {
-                renderDiseases();
-                fetchGovernmentDiseaseUpdates();
-            }
-            if (tab === 'livestock' && userLat && userLng) {
-                setTimeout(recommendLivestock, 300);
-            }
-        };
 
-        // ─── CALENDAR ──────────────────────────────────────
-        function generateCalendar(month, year, targetGrid, labelElement) {
-            const today = new Date();
-            const todayDate = today.getDate();
-            const todayMonth = today.getMonth();
-            const todayYear = today.getFullYear();
-            const months = ['Enero', 'Pebrero', 'Marso', 'Abril', 'Mayo', 'Hunyo', 'Hulyo', 'Agosto', 'Setyembre', 'Oktubre', 'Nobyembre', 'Disyembre'];
-            const days = ['Ling', 'Lun', 'Mar', 'Miy', 'Hu', 'Biy', 'Sab'];
-            labelElement.textContent = months[month] + ' ' + year;
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const plantingDays = [1,3,5,7,10,12,14,16,19,21,23,25,28,30];
-            const harvestDays = [2,4,6,8,11,13,15,18,20,22,24,27,29,31];
-            
-            let html = '';
-            for (let i = 0; i < 7; i++) html += `<div class="day day-label">${days[i]}</div>`;
-            for (let i = 0; i < firstDay; i++) html += `<div class="day empty"></div>`;
-            
-            for (let d = 1; d <= daysInMonth; d++) {
-                let classes = 'day';
-                const dayOfWeek = new Date(year, month, d).getDay();
-                if (dayOfWeek === 0 || dayOfWeek === 6) classes += ' weekend';
-                if (d === todayDate && month === todayMonth && year === todayYear) classes += ' today';
-                if (plantingDays.includes(d)) classes += ' planting';
-                if (harvestDays.includes(d)) classes += ' harvest';
-                html += `<div class="${classes}">${d}</div>`;
-            }
-            targetGrid.innerHTML = html;
-        }
+/* ==========================================================
+   PLANT DATABASE
+========================================================== */
 
-        window.changeMonth = function(delta) {
-            currentMonth += delta;
-            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-            else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-            generateCalendar(currentMonth, currentYear, calendarGrid, monthLabel);
-        };
+const plants = [
 
-        // ─── GET CURRENT WEATHER ────────────────────────────
-        function getCurrentWeather() {
-            const temp = parseInt(currentTemp.textContent) || 30;
-            const hum = parseInt(humidity.textContent) || 65;
-            const seasonText = season.textContent.toLowerCase();
-            let seasonVal = 'wet';
-            if (seasonText.includes('araw') || seasonText.includes('dry')) seasonVal = 'dry';
-            else if (seasonText.includes('lamig') || seasonText.includes('cool')) seasonVal = 'cool';
-            return { temp, humidity: hum, season: seasonVal };
-        }
+{
+    name:"Rice",
+    local:"Palay",
+    scientific:"Oryza sativa",
+    emoji:"🌾",
+    season:"wet",
+    type:"high",
+    temperature:"20–35°C",
+    water:"High",
+    harvest:"90–150 days",
+    soil:"Loam / Clay",
+    tips:[
+        "Use certified seeds",
+        "Maintain proper water management",
+        "Monitor rice pests",
+        "Keep the field clean"
+    ]
+},
 
-        // ─── ENABLE GPS ─────────────────────────────────────
-        window.enableGPS = function() {
-            gpsBtn.disabled = true;
-            gpsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Kumukuha ng GPS...';
-            if (!navigator.geolocation) {
-                gpsCoords.textContent = '❌ Hindi supported ang GPS';
-                gpsBtn.innerHTML = '❌ Hindi Available';
-                return;
-            }
-            navigator.geolocation.getCurrentPosition(
-                async (pos) => {
-                    userLat = pos.coords.latitude;
-                    userLng = pos.coords.longitude;
-                    gpsBanner.style.display = 'none';
-                    gpsCoords.textContent = `📍 ${userLat.toFixed(6)}°N, ${userLng.toFixed(6)}°E`;
-                    accuracy.textContent = `±${Math.round(pos.coords.accuracy)}m`;
-                    try {
-                        const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLng}&zoom=14`);
-                        const data = await resp.json();
-                        if (data.display_name) {
-                            const parts = data.display_name.split(',');
-                            userAddress = parts.slice(0, 3).join(', ');
-                            address.textContent = userAddress;
-                        }
-                    } catch (e) { address.textContent = '📍 Nakuha ang lokasyon'; }
-                    getWeatherForLocation(userLat, userLng);
-                    updateSeasonalGuide();
-                    recommendLivestock();
-                    renderDiseases();
-                    fetchGovernmentDiseaseUpdates();
-                    gpsBtn.innerHTML = '✅ GPS Naka-on';
-                },
-                (error) => {
-                    console.error('GPS Error:', error);
-                    gpsBtn.innerHTML = '🔄 Subukan ulit';
-                    gpsBtn.disabled = false;
-                    userLat = 14.5995;
-                    userLng = 120.9842;
-                    userAddress = 'Manila, Philippines';
-                    gpsCoords.textContent = `📍 ${userLat.toFixed(4)}°N, ${userLng.toFixed(4)}°E (fallback)`;
-                    address.textContent = 'Manila, Philippines';
-                    getWeatherForLocation(userLat, userLng);
-                    updateSeasonalGuide();
-                    recommendLivestock();
-                    renderDiseases();
-                    fetchGovernmentDiseaseUpdates();
-                },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
+{
+    name:"Corn",
+    local:"Mais",
+    scientific:"Zea mays",
+    emoji:"🌽",
+    season:"wet",
+    type:"high",
+    temperature:"18–32°C",
+    water:"Moderate",
+    harvest:"70–120 days",
+    soil:"Loam",
+    tips:[
+        "Provide good drainage",
+        "Apply fertilizer according to soil condition",
+        "Monitor fall armyworm",
+        "Maintain proper spacing"
+    ]
+},
+
+{
+    name:"Tomato",
+    local:"Kamatis",
+    scientific:"Solanum lycopersicum",
+    emoji:"🍅",
+    season:"cool",
+    type:"high",
+    temperature:"18–27°C",
+    water:"Moderate",
+    harvest:"60–90 days",
+    soil:"Well-drained loam",
+    tips:[
+        "Avoid prolonged leaf wetness",
+        "Provide plant support",
+        "Monitor fungal diseases",
+        "Avoid waterlogging"
+    ]
+},
+
+{
+    name:"Eggplant",
+    local:"Talong",
+    scientific:"Solanum melongena",
+    emoji:"🍆",
+    season:"wet",
+    type:"high",
+    temperature:"22–30°C",
+    water:"Moderate",
+    harvest:"70–100 days",
+    soil:"Loam",
+    tips:[
+        "Water regularly",
+        "Monitor fruit and shoot borer",
+        "Remove severely infected plant parts",
+        "Maintain field sanitation"
+    ]
+},
+
+{
+    name:"Chili Pepper",
+    local:"Sili",
+    scientific:"Capsicum annuum",
+    emoji:"🌶️",
+    season:"dry",
+    type:"high",
+    temperature:"21–30°C",
+    water:"Moderate",
+    harvest:"70–100 days",
+    soil:"Well-drained soil",
+    tips:[
+        "Provide sufficient sunlight",
+        "Avoid waterlogging",
+        "Monitor aphids",
+        "Maintain proper spacing"
+    ]
+},
+
+{
+    name:"Sweet Potato",
+    local:"Kamote",
+    scientific:"Ipomoea batatas",
+    emoji:"🍠",
+    season:"wet",
+    type:"high",
+    temperature:"21–30°C",
+    water:"Moderate",
+    harvest:"90–150 days",
+    soil:"Sandy loam",
+    tips:[
+        "Use healthy planting materials",
+        "Avoid excessive water",
+        "Keep the field clean",
+        "Monitor pests"
+    ]
+},
+
+{
+    name:"Cassava",
+    local:"Kamoteng Kahoy",
+    scientific:"Manihot esculenta",
+    emoji:"🌿",
+    season:"dry",
+    type:"high",
+    temperature:"25–29°C",
+    water:"Moderate",
+    harvest:"8–12 months",
+    soil:"Well-drained soil",
+    tips:[
+        "Use healthy stems",
+        "Avoid waterlogged areas",
+        "Control weeds early",
+        "Monitor pests and diseases"
+    ]
+},
+
+{
+    name:"Mung Bean",
+    local:"Monggo",
+    scientific:"Vigna radiata",
+    emoji:"🌱",
+    season:"dry",
+    type:"high",
+    temperature:"25–35°C",
+    water:"Moderate",
+    harvest:"60–90 days",
+    soil:"Loam",
+    tips:[
+        "Use quality seeds",
+        "Avoid excessive water",
+        "Control weeds",
+        "Harvest pods when mature"
+    ]
+},
+
+{
+    name:"Peanut",
+    local:"Mani",
+    scientific:"Arachis hypogaea",
+    emoji:"🥜",
+    season:"dry",
+    type:"high",
+    temperature:"25–30°C",
+    water:"Moderate",
+    harvest:"90–150 days",
+    soil:"Sandy loam",
+    tips:[
+        "Use well-drained soil",
+        "Avoid waterlogging",
+        "Maintain weed control",
+        "Harvest at proper maturity"
+    ]
+},
+
+{
+    name:"Banana",
+    local:"Saging",
+    scientific:"Musa spp.",
+    emoji:"🍌",
+    season:"wet",
+    type:"high",
+    temperature:"20–35°C",
+    water:"High",
+    harvest:"9–15 months",
+    soil:"Deep fertile soil",
+    tips:[
+        "Provide adequate water",
+        "Remove diseased leaves",
+        "Maintain field sanitation",
+        "Monitor banana pests"
+    ]
+}
+
+];
+
+
+/* ==========================================================
+   LIVESTOCK DATABASE
+========================================================== */
+
+const livestock = [
+
+{
+    name:"Chicken",
+    local:"Manok",
+    scientific:"Gallus gallus domesticus",
+    emoji:"🐔",
+    type:"poultry",
+    temperature:"18–30°C",
+    feed:"Commercial poultry feed, grains",
+    tips:[
+        "Keep housing clean",
+        "Provide clean drinking water",
+        "Follow proper vaccination programs",
+        "Provide adequate ventilation"
+    ]
+},
+
+{
+    name:"Pig",
+    local:"Baboy",
+    scientific:"Sus scrofa domesticus",
+    emoji:"🐷",
+    type:"swine",
+    temperature:"18–30°C",
+    feed:"Commercial hog feed",
+    tips:[
+        "Maintain strict biosecurity",
+        "Keep housing clean",
+        "Provide clean water",
+        "Avoid contact with suspected infected animals"
+    ]
+},
+
+{
+    name:"Cattle",
+    local:"Baka",
+    scientific:"Bos taurus",
+    emoji:"🐮",
+    type:"cattle",
+    temperature:"10–30°C",
+    feed:"Grass, forage and hay",
+    tips:[
+        "Provide clean water",
+        "Provide shade",
+        "Maintain clean housing",
+        "Perform regular health checks"
+    ]
+},
+
+{
+    name:"Goat",
+    local:"Kambing",
+    scientific:"Capra aegagrus hircus",
+    emoji:"🐐",
+    type:"small",
+    temperature:"10–30°C",
+    feed:"Grass, leaves and forage",
+    tips:[
+        "Keep housing dry",
+        "Provide clean water",
+        "Provide adequate forage",
+        "Follow veterinary health programs"
+    ]
+}
+
+];
+
+
+/* ==========================================================
+   DISEASE DATABASE
+========================================================== */
+
+const plantDiseases = [
+
+{
+    name:"Rice Blast",
+    local:"Blast ng Palay",
+    scientific:"Magnaporthe oryzae",
+    emoji:"🌾",
+    cause:"Fungal disease",
+    symptoms:[
+        "Leaf lesions",
+        "Drying of affected plant tissue",
+        "Panicle infection may occur"
+    ],
+    prevention:[
+        "Use healthy or certified seed",
+        "Avoid excessive nitrogen",
+        "Maintain proper field management"
+    ]
+},
+
+{
+    name:"Bacterial Leaf Blight",
+    local:"Bacterial Leaf Blight ng Palay",
+    scientific:"Xanthomonas oryzae pv. oryzae",
+    emoji:"🌿",
+    cause:"Bacterial disease",
+    symptoms:[
+        "Yellowing and drying leaves",
+        "Water-soaked lesions",
+        "Symptoms can spread from leaf margins"
+    ],
+    prevention:[
+        "Use resistant varieties when available",
+        "Maintain field sanitation",
+        "Avoid excessive nitrogen"
+    ]
+},
+
+{
+    name:"Tomato Late Blight",
+    local:"Late Blight ng Kamatis",
+    scientific:"Phytophthora infestans",
+    emoji:"🍅",
+    cause:"Oomycete disease",
+    symptoms:[
+        "Dark lesions on leaves",
+        "Rapid tissue collapse",
+        "Fruit lesions may develop"
+    ],
+    prevention:[
+        "Improve air circulation",
+        "Avoid prolonged leaf wetness",
+        "Remove severely infected material"
+    ]
+},
+
+{
+    name:"Powdery Mildew",
+    local:"Powdery Mildew",
+    scientific:"Various Erysiphales fungi",
+    emoji:"🍃",
+    cause:"Fungal disease",
+    symptoms:[
+        "White powdery growth",
+        "Leaf distortion",
+        "Reduced plant growth"
+    ],
+    prevention:[
+        "Improve air circulation",
+        "Avoid excessive humidity",
+        "Remove heavily infected leaves"
+    ]
+}
+
+];
+
+
+const animalDiseases = [
+
+{
+    name:"African Swine Fever",
+    local:"ASF",
+    scientific:"African swine fever virus",
+    emoji:"🐷",
+    cause:"Viral disease",
+    symptoms:[
+        "Fever",
+        "Weakness",
+        "Reddening or bleeding",
+        "Sudden death may occur"
+    ],
+    prevention:[
+        "Maintain strict farm biosecurity",
+        "Avoid unauthorized animal movement",
+        "Do not feed unsafe swill",
+        "Report suspected cases to authorities"
+    ]
+},
+
+{
+    name:"Newcastle Disease",
+    local:"Newcastle Disease ng Manok",
+    scientific:"Avian orthoavulavirus 1",
+    emoji:"🐔",
+    cause:"Viral disease",
+    symptoms:[
+        "Respiratory problems",
+        "Weakness",
+        "Neurological signs",
+        "Reduced production"
+    ],
+    prevention:[
+        "Follow vaccination programs",
+        "Maintain biosecurity",
+        "Isolate suspected infected birds",
+        "Clean and disinfect housing"
+    ]
+},
+
+{
+    name:"Foot-and-Mouth Disease",
+    local:"Foot-and-Mouth Disease",
+    scientific:"Foot-and-mouth disease virus",
+    emoji:"🐄",
+    cause:"Viral disease",
+    symptoms:[
+        "Fever",
+        "Blisters in mouth or feet",
+        "Drooling",
+        "Lameness"
+    ],
+    prevention:[
+        "Control animal movement",
+        "Maintain biosecurity",
+        "Report suspected cases",
+        "Follow government veterinary guidance"
+    ]
+}
+
+];
+
+
+/* ==========================================================
+   CLOCK
+========================================================== */
+
+function updateTime(){
+
+    const now = new Date();
+
+    document.getElementById("updateTime")
+    .textContent =
+    now.toLocaleTimeString([],{
+        hour:"2-digit",
+        minute:"2-digit"
+    });
+}
+
+
+/* ==========================================================
+   GPS
+========================================================== */
+
+function enableGPS(){
+
+    const button =
+    document.getElementById("gpsBtn");
+
+    if(!navigator.geolocation){
+
+        alert(
+            "Your browser does not support GPS."
+        );
+
+        return;
+    }
+
+    button.disabled=true;
+
+    button.innerHTML=
+    '<i class="fas fa-spinner fa-spin"></i> Getting location...';
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        position => {
+
+            userLat =
+            position.coords.latitude;
+
+            userLon =
+            position.coords.longitude;
+
+            const accuracy =
+            position.coords.accuracy;
+
+
+            document.getElementById("gpsCoords")
+            .textContent=
+            `📍 ${userLat.toFixed(6)}, ${userLon.toFixed(6)}`;
+
+
+            document.getElementById("accuracy")
+            .textContent=
+            `±${Math.round(accuracy)}m`;
+
+
+            document.getElementById("address")
+            .textContent=
+            "Getting location name...";
+
+
+            document.getElementById("gpsBanner")
+            .style.display="none";
+
+
+            button.disabled=false;
+
+            button.innerHTML=
+            '<i class="fas fa-location-dot"></i> GPS Enabled';
+
+
+            reverseGeocode(
+                userLat,
+                userLon
             );
-        };
 
-        // ─── WEATHER ENGINE ──────────────────────────────────
-        function getWeatherForLocation(lat, lng) {
-            const temp = Math.round(30 - Math.abs(lat - 10) * 0.8 + Math.sin((new Date().getMonth() - 3) * 0.5) * 3);
-            const humidityVal = Math.min(95, Math.max(30, Math.round(70 - (temp - 25) * 1.5 + Math.sin((new Date().getMonth() - 3) * 0.5) * 8)));
-            const seasonVal = temp > 28 ? 'wet' : temp > 22 ? 'dry' : 'cool';
-            
-            currentTemp.textContent = temp;
-            humidity.textContent = humidityVal;
-            windSpeed.textContent = Math.round(10 + Math.abs(Math.sin(lat * lng * 0.003 + Date.now() / 20000)) * 4);
-            rainChance.textContent = Math.round(15 + Math.abs(Math.sin(lat * lng * 0.004 + Date.now() / 18000)) * 10);
-            const seasonNames = { wet: 'Tag-Ulan', dry: 'Tag-Araw', cool: 'Tag-Lamig' };
-            season.textContent = seasonNames[seasonVal] || seasonVal;
-            
-            const weather = { temp, humidity: humidityVal, season: seasonVal };
-            const plantFilter = document.querySelector('#plantFilter .filter-btn.active')?.dataset.filter || 'all';
-            recommendPlants(weather, plantFilter);
-            updatePlantingTips(weather);
-            updateLivestockTips(weather);
-            updateTimestamp();
-        }
 
-        // ─── UPDATE TIPS ────────────────────────────────────
-        function updatePlantingTips(weather) {
-            const tips = document.getElementById('tipGrid');
-            let tipList = [];
-            if (weather.temp > 30) { tipList.push('🌡️ Diligan ng mas madalas'); tipList.push('☀️ Bigyan ng lilim ang mga punla'); }
-            else if (weather.temp < 22) { tipList.push('❄️ Protektahan mula sa lamig'); tipList.push('🧅 Magtanim ng gulay sa tag-lamig'); }
-            if (weather.humidity > 80) { tipList.push('💧 Bantayan ang fungal diseases'); tipList.push('🌿 Pahanginan ang halaman'); }
-            if (weather.season === 'wet') { tipList.push('🌱 Magandang magtanim ng palay'); tipList.push('🧹 Linisin ang drainage'); }
-            else if (weather.season === 'dry') { tipList.push('💦 Diligan sa umaga'); tipList.push('🌾 Magtanim ng tagtuyot-resistant'); }
-            while (tipList.length < 4) {
-                const defaults = ['🌱 Suriin ang lupa', '💧 Diligan sa umaga', '🌿 Maglagay ng abono', '🐛 Bantayan ang peste'];
-                tipList.push(defaults[tipList.length % defaults.length]);
+            getWeather(
+                userLat,
+                userLon
+            );
+
+        },
+
+
+        error => {
+
+            button.disabled=false;
+
+            button.innerHTML=
+            '<i class="fas fa-location-dot"></i> Try Again';
+
+
+            let message =
+            "Unable to get your location.";
+
+
+            if(error.code===1){
+
+                message=
+                "Location permission was denied. Please allow location access in your browser.";
+
             }
-            tips.innerHTML = tipList.slice(0, 4).map(t => `<div class="tip-item"><i class="fas fa-check-circle"></i> ${t}</div>`).join('');
-        }
 
-        function updateLivestockTips(weather) {
-            const tips = document.getElementById('livestockTips');
-            let tipList = [];
-            if (weather.temp > 32) {
-                tipList.push('🌡️ Bigyan ng lilim at tubig ang hayop');
-                tipList.push('💧 Dagdagan ang tubig');
-            } else if (weather.temp < 18) {
-                tipList.push('❄️ Bigyan ng tirahan mula sa lamig');
-                tipList.push('🧣 Magdagdag ng higaan');
+            else if(error.code===2){
+
+                message=
+                "Your location is currently unavailable.";
+
             }
-            tipList.push('🐄 Magsimula sa matitibay na lahi');
-            tipList.push('💉 Magbakuna regularly');
-            tipList.push('🧹 Linisin ang kulungan');
-            tips.innerHTML = tipList.slice(0, 4).map(t => 
-                `<div class="tip-item"><i class="fas fa-check-circle" style="color:#6d4c41;"></i> ${t}</div>`
-            ).join('');
+
+            else if(error.code===3){
+
+                message=
+                "GPS request timed out. Please try again.";
+
+            }
+
+
+            alert(message);
+
+        },
+
+
+        {
+            enableHighAccuracy:true,
+            timeout:15000,
+            maximumAge:0
         }
 
-        // ─── RECOMMEND PLANTS ──────────────────────────────
-        function recommendPlants(weather, filter = 'all') {
-            if (!weather) return;
-            let filteredPlants = PLANT_DB;
-            if (filter === 'wet') filteredPlants = PLANT_DB.filter(p => p.season === 'wet');
-            else if (filter === 'dry') filteredPlants = PLANT_DB.filter(p => p.season === 'dry');
-            else if (filter === 'cool') filteredPlants = PLANT_DB.filter(p => p.season === 'cool');
-            const scored = filteredPlants.map(p => {
-                let score = 0;
-                if (weather.temp >= p.idealTemp.min && weather.temp <= p.idealTemp.max) score += 40;
-                else if (weather.temp < p.idealTemp.min) score += 20 - (p.idealTemp.min - weather.temp) * 0.5;
-                else score += 20 - (weather.temp - p.idealTemp.max) * 0.5;
-                if (weather.humidity >= p.idealHumidity.min && weather.humidity <= p.idealHumidity.max) score += 30;
-                else score += 10;
-                if (p.season === weather.season) score += 20;
-                else score += 5;
-                return { ...p, score: Math.max(0, Math.min(100, Math.round(score))) };
-            });
-            scored.sort((a, b) => b.score - a.score);
-            renderPlantCards(scored.slice(0, 15));
-            plantCount.textContent = `(${scored.length} halaman)`;
+    );
+}
+
+
+/* ==========================================================
+   REVERSE GEOCODING
+========================================================== */
+
+async function reverseGeocode(lat,lon){
+
+    try{
+
+        const url=
+        `https://api.openweathermap.org/geo/1.0/reverse`+
+        `?lat=${lat}`+
+        `&lon=${lon}`+
+        `&limit=1`+
+        `&appid=${WEATHER_API_KEY}`;
+
+
+        const response =
+        await fetch(url);
+
+
+        if(!response.ok)
+        throw new Error("Location API error");
+
+
+        const data =
+        await response.json();
+
+
+        if(data.length>0){
+
+            const place=data[0];
+
+            const parts=[
+                place.name,
+                place.state,
+                place.country
+            ].filter(Boolean);
+
+
+            document.getElementById("address")
+            .textContent=
+            "📍 "+parts.join(", ");
+
         }
 
-        function renderPlantCards(plants) {
-            let html = '';
-            for (const p of plants) {
-                let badgeClass = 'badge';
-                if (p.score >= 80) badgeClass += ' perfect';
-                else if (p.score >= 60) badgeClass += '';
-                else if (p.score >= 40) badgeClass += ' warning';
-                else badgeClass += ' danger';
-                const detailId = 'plant-' + p.name.replace(/\s/g, '');
-                html += `
-                    <div class="item-card">
-                        <div class="item-header">
-                            <span class="emoji">${p.emoji}</span>
-                            <div class="item-info"><h4>${p.name}</h4><div class="sub">${p.desc} · ${p.daysToHarvest} araw</div></div>
-                            <span class="${badgeClass}">${p.score}%</span>
-                        </div>
-                        <button class="toggle-btn" onclick="toggleDetails('${detailId}')">📋 Ipakita ang Detalye</button>
-                        <div class="item-details" id="${detailId}">
-                            <div class="detail-grid">
-                                <span class="label">🌡️ Tamang Temp:</span><span class="value">${p.idealTemp.min}–${p.idealTemp.max}°C</span>
-                                <span class="label">💧 Humidity:</span><span class="value">${p.idealHumidity.min}–${p.idealHumidity.max}%</span>
-                                <span class="label">📅 Panahon:</span><span class="value">${p.season}</span>
-                                <span class="label">⏳ Araw bago anihin:</span><span class="value">${p.daysToHarvest} araw</span>
-                            </div>
-                            <div class="section"><h5><i class="fas fa-bug"></i> Peste</h5><ul>${p.pests ? p.pests.map(ps => `<li>${ps}</li>`).join('') : '<li>Walang major na peste</li>'}</ul></div>
-                            <div class="section"><h5><i class="fas fa-hand-holding-heart"></i> Pag-aalaga</h5><ul>${p.care ? p.care.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard na pag-aalaga</li>'}</ul></div>
-                            <div class="section"><h5><i class="fas fa-list-ol"></i> Paraan</h5><ul>${p.procedure ? p.procedure.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard na paraan</li>'}</ul></div>
-                            <div class="section" style="background:#fff3e0; border-left:3px solid #ff8f00;"><h5><i class="fas fa-flask" style="color:#ff8f00;"></i> Abono</h5><ul>${p.fertilizer ? p.fertilizer.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Balanseng abono</li>'}</ul></div>
-                            <div class="section" style="background:#e8f5e9; border-left:3px solid #2e7d32;"><h5><i class="fas fa-heartbeat" style="color:#2e7d32;"></i> Bitamina</h5><ul>${p.vitamins ? p.vitamins.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard na bitamina</li>'}</ul></div>
-                        </div>
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        document.getElementById("address")
+        .textContent=
+        `📍 ${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+
+    }
+}
+
+
+/* ==========================================================
+   WEATHER
+========================================================== */
+
+async function getWeather(lat,lon){
+
+    try{
+
+        const url=
+        `https://api.openweathermap.org/data/2.5/weather`+
+        `?lat=${lat}`+
+        `&lon=${lon}`+
+        `&appid=${WEATHER_API_KEY}`+
+        `&units=metric`;
+
+
+        const response =
+        await fetch(url);
+
+
+        if(!response.ok){
+
+            throw new Error(
+                `Weather API error ${response.status}`
+            );
+
+        }
+
+
+        const data =
+        await response.json();
+
+
+        currentWeather=data;
+
+
+        updateWeatherUI(data);
+
+        updateSeason();
+
+        updatePlantRecommendations();
+
+        updateLivestockRecommendations();
+
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Weather error:",
+            error
+        );
+
+
+        alert(
+            "Unable to load weather data. Check your API key and internet connection."
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   WEATHER UI
+========================================================== */
+
+function updateWeatherUI(data){
+
+    document.getElementById("currentTemp")
+    .textContent=
+    Math.round(data.main.temp);
+
+
+    document.getElementById("humidity")
+    .textContent=
+    data.main.humidity;
+
+
+    const wind=
+    data.wind &&
+    data.wind.speed
+    ?
+    (data.wind.speed*3.6).toFixed(1)
+    :
+    0;
+
+
+    document.getElementById("windSpeed")
+    .textContent=wind;
+
+
+    let condition="--";
+
+
+    if(data.weather &&
+       data.weather.length){
+
+        const weather=
+        data.weather[0].main.toLowerCase();
+
+
+        if(
+            weather.includes("rain") ||
+            weather.includes("drizzle") ||
+            weather.includes("thunderstorm")
+        ){
+
+            condition="Rain";
+
+        }
+
+        else{
+
+            condition="0";
+
+        }
+
+    }
+
+
+    document.getElementById("rainChance")
+    .textContent=condition;
+
+}
+
+
+/* ==========================================================
+   SEASON
+========================================================== */
+
+function updateSeason(){
+
+    const month =
+    new Date().getMonth()+1;
+
+
+    let season="Wet Season";
+
+
+    if(month>=3 && month<=5){
+
+        season="Dry Season";
+
+    }
+
+
+    if(month>=6 && month<=10){
+
+        season="Wet Season";
+
+    }
+
+
+    if(
+        month===11 ||
+        month===12 ||
+        month===1 ||
+        month===2
+    ){
+
+        season="Cool Season";
+
+    }
+
+
+    document.getElementById("season")
+    .textContent=season;
+
+
+    document.querySelectorAll(".season-card")
+    .forEach(card=>{
+
+        card.classList.remove("active");
+
+    });
+
+
+    const seasonMap={
+
+        "Wet Season":"wet",
+        "Dry Season":"dry",
+        "Cool Season":"cool"
+
+    };
+
+
+    const active =
+    document.querySelector(
+        `.season-card[data-season="${seasonMap[season]}"]`
+    );
+
+
+    if(active){
+
+        active.classList.add("active");
+
+    }
+
+}
+
+
+/* ==========================================================
+   PLANTS
+========================================================== */
+
+function updatePlantRecommendations(){
+
+    loadPlants("all");
+
+}
+
+
+function loadPlants(filter="all"){
+
+    let list=plants;
+
+
+    if(
+        filter==="wet" ||
+        filter==="dry" ||
+        filter==="cool"
+    ){
+
+        list=
+        plants.filter(
+            plant=>plant.season===filter
+        );
+
+    }
+
+
+    if(filter==="high"){
+
+        list=
+        plants.filter(
+            plant=>plant.type==="high"
+        );
+
+    }
+
+
+    document.getElementById("plantCount")
+    .textContent=
+    `(${list.length} plants)`;
+
+
+    const container=
+    document.getElementById("plantRecs");
+
+
+    container.innerHTML=
+    list.map(plant=>{
+
+        return `
+
+        <div
+            class="item-card">
+
+            <div class="item-header">
+
+                <div class="emoji">
+                    ${plant.emoji}
+                </div>
+
+
+                <div class="item-info">
+
+                    <h4>
+                        ${plant.local}
+                    </h4>
+
+                    <div class="sub">
+                        ${plant.scientific}
                     </div>
-                `;
-            }
-            plantRecs.innerHTML = html || '<div class="loading"><p>Walang halaman na tumutugma</p></div>';
-        }
 
-        // ─── RECOMMEND LIVESTOCK ─────────────────────────────
-        function recommendLivestock() {
-            if (!userLat || !userLng) {
-                livestockRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang pinakamainam na hayop!</p></div>`;
-                return;
-            }
+                </div>
 
-            const temp = parseInt(currentTemp.textContent) || 30;
-            const filter = document.querySelector('#livestockFilter .filter-btn.active')?.dataset.filter || 'all';
-            let filtered = LIVESTOCK_DB;
-            if (filter !== 'all') filtered = LIVESTOCK_DB.filter(a => a.type === filter);
-            
-            const scored = filtered.map(animal => {
-                let score = 0;
-                if (temp >= animal.idealTemp.min && temp <= animal.idealTemp.max) score += 50;
-                else if (temp < animal.idealTemp.min) score += 30 - (animal.idealTemp.min - temp) * 2;
-                else score += 30 - (temp - animal.idealTemp.max) * 2;
-                if (animal.name === 'Manok' || animal.name === 'Baboy') score += 20;
-                const seasonText = season.textContent.toLowerCase();
-                const currentSeason = seasonText.includes('ulan') || seasonText.includes('wet') ? 'wet' : 
-                                     seasonText.includes('araw') || seasonText.includes('dry') ? 'dry' : 'cool';
-                if (animal.season === 'all') score += 10;
-                else if (animal.season === currentSeason) score += 15;
-                return { ...animal, score: Math.max(0, Math.min(100, Math.round(score))) };
-            });
-            scored.sort((a, b) => b.score - a.score);
-            renderLivestockCards(scored);
-            livestockCount.textContent = `(${scored.length} hayop)`;
-        }
 
-        function renderLivestockCards(animals) {
-            let html = '';
-            for (const animal of animals) {
-                let badgeClass = 'badge livestock-badge';
-                if (animal.score >= 80) badgeClass += ' perfect';
-                else if (animal.score >= 60) badgeClass += '';
-                else badgeClass += ' warning';
-                
-                const detailId = 'livestock-' + animal.name.replace(/\s/g, '');
-                const isBest = animal.score >= 80 ? `<span class="best-match-badge">⭐ Pinakamainam</span>` : '';
-                
-                html += `
-                    <div class="item-card" style="border-left-color:#6d4c41;">
-                        <div class="item-header">
-                            <span class="emoji">${animal.emoji}</span>
-                            <div class="item-info">
-                                <h4>${animal.name} ${isBest}</h4>
-                                <div class="sub">${animal.desc}</div>
-                            </div>
-                            <span class="${badgeClass}">${animal.score}%</span>
-                        </div>
-                        <button class="toggle-btn" onclick="toggleDetails('${detailId}')">📋 Ipakita ang Detalye</button>
-                        <div class="item-details" id="${detailId}">
-                            <div class="detail-grid">
-                                <span class="label">🌡️ Tamang Temp:</span><span class="value">${animal.idealTemp.min}–${animal.idealTemp.max}°C</span>
-                                <span class="label">📅 Pinakamainam na Panahon:</span><span class="value">${animal.season}</span>
-                                <span class="label">🐄 Pinakamainam Para sa:</span><span class="value">${animal.best_for}</span>
-                                <span class="label">🧬 Lahi:</span><span class="value">${animal.breed}</span>
-                            </div>
-                            
-                            <div class="section livestock-section">
-                                <h5><i class="fas fa-heartbeat"></i> Karaniwang Sakit at Gamot</h5>
-                                <ul>${animal.diseases.map(d => `<li><strong>${d.name}</strong> - Gamot: ${d.medicine}<br><small>Sintomas: ${d.symptoms}</small></li>`).join('')}</ul>
-                            </div>
-                            
-                            <div class="section feed-section">
-                                <h5><i class="fas fa-utensils"></i> Gabay sa Pagpapakain</h5>
-                                <ul>
-                                    <li><strong>🍼 Sanggol:</strong> ${animal.feeding.baby}</li>
-                                    <li><strong>🌱 Lumalaki:</strong> ${animal.feeding.grower}</li>
-                                    <li><strong>🐄 Matanda:</strong> ${animal.feeding.adult}</li>
-                                    <li><strong>💊 Mga Supplement:</strong> ${animal.feeding.supplements}</li>
-                                </ul>
-                            </div>
-                            
-                            <div class="section">
-                                <h5><i class="fas fa-hand-holding-heart"></i> Pangkalahatang Pag-aalaga</h5>
-                                <ul>${animal.care ? animal.care.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard na pag-aalaga</li>'}</ul>
-                            </div>
-                            
-                            <div class="section">
-                                <h5><i class="fas fa-list-ol"></i> Hakbang-hakbang na Paraan</h5>
-                                <ul>${animal.procedure ? animal.procedure.split('.').filter(s => s.trim()).map(s => `<li>${s.trim()}</li>`).join('') : '<li>Standard na paraan</li>'}</ul>
-                            </div>
-                        </div>
+                <span class="badge perfect">
+                    Recommended
+                </span>
+
+            </div>
+
+
+            <button
+                class="toggle-btn"
+                onclick="toggleDetails(this)">
+
+                View Details
+
+            </button>
+
+
+            <div class="item-details">
+
+
+                <div class="detail-grid">
+
+                    <span class="label">
+                        Local name
+                    </span>
+
+                    <span class="value">
+                        ${plant.local}
+                    </span>
+
+
+                    <span class="label">
+                        Scientific name
+                    </span>
+
+                    <span class="value">
+                        ${plant.scientific}
+                    </span>
+
+
+                    <span class="label">
+                        Temperature
+                    </span>
+
+                    <span class="value">
+                        ${plant.temperature}
+                    </span>
+
+
+                    <span class="label">
+                        Water
+                    </span>
+
+                    <span class="value">
+                        ${plant.water}
+                    </span>
+
+
+                    <span class="label">
+                        Harvest
+                    </span>
+
+                    <span class="value">
+                        ${plant.harvest}
+                    </span>
+
+
+                    <span class="label">
+                        Soil
+                    </span>
+
+                    <span class="value">
+                        ${plant.soil}
+                    </span>
+
+                </div>
+
+
+                <div class="section">
+
+                    <h5>
+                        <i class="fas fa-lightbulb"></i>
+                        Planting Tips
+                    </h5>
+
+
+                    <ul>
+
+                        ${plant.tips.map(
+                            tip=>`<li>${tip}</li>`
+                        ).join("")}
+
+                    </ul>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        `;
+
+    }).join("");
+
+}
+
+
+/* ==========================================================
+   LIVESTOCK
+========================================================== */
+
+function updateLivestockRecommendations(){
+
+    loadLivestock("all");
+
+}
+
+
+function loadLivestock(filter="all"){
+
+    let list=livestock;
+
+
+    if(filter!=="all"){
+
+        list=
+        livestock.filter(
+            animal=>animal.type===filter
+        );
+
+    }
+
+
+    document.getElementById("livestockCount")
+    .textContent=
+    `(${list.length} livestock)`;
+
+
+    document.getElementById("livestockRecs")
+    .innerHTML=
+    list.map(animal=>{
+
+        return `
+
+        <div
+            class="item-card"
+            style="border-left-color:#6d4c41;">
+
+            <div class="item-header">
+
+                <div class="emoji">
+                    ${animal.emoji}
+                </div>
+
+
+                <div class="item-info">
+
+                    <h4>
+                        ${animal.local}
+                    </h4>
+
+                    <div class="sub">
+                        ${animal.scientific}
                     </div>
-                `;
-            }
-            livestockRecs.innerHTML = html || '<div class="loading"><p>Walang hayop na tumutugma</p></div>';
+
+                </div>
+
+
+                <span class="badge livestock-badge">
+                    Suitable
+                </span>
+
+            </div>
+
+
+            <button
+                class="toggle-btn"
+                onclick="toggleDetails(this)"
+                style="background:#6d4c41;">
+
+                View Details
+
+            </button>
+
+
+            <div class="item-details">
+
+
+                <div class="detail-grid">
+
+                    <span class="label">
+                        Local name
+                    </span>
+
+                    <span class="value">
+                        ${animal.local}
+                    </span>
+
+
+                    <span class="label">
+                        Scientific name
+                    </span>
+
+                    <span class="value">
+                        ${animal.scientific}
+                    </span>
+
+
+                    <span class="label">
+                        Temperature
+                    </span>
+
+                    <span class="value">
+                        ${animal.temperature}
+                    </span>
+
+
+                    <span class="label">
+                        Feed
+                    </span>
+
+                    <span class="value">
+                        ${animal.feed}
+                    </span>
+
+                </div>
+
+
+                <div
+                    class="section livestock-section">
+
+                    <h5>
+                        <i class="fas fa-cow"></i>
+                        Care Tips
+                    </h5>
+
+
+                    <ul>
+
+                        ${animal.tips.map(
+                            tip=>`<li>${tip}</li>`
+                        ).join("")}
+
+                    </ul>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+        `;
+
+    }).join("");
+
+}
+
+
+/* ==========================================================
+   DISEASES
+========================================================== */
+
+function loadDiseases(){
+
+    document.getElementById("plantDiseaseCount")
+    .textContent=
+    `(${plantDiseases.length} diseases)`;
+
+
+    document.getElementById("animalDiseaseCount")
+    .textContent=
+    `(${animalDiseases.length} diseases)`;
+
+
+    document.getElementById("plantDiseaseRecs")
+    .innerHTML=
+    plantDiseases
+    .map(diseaseCard)
+    .join("");
+
+
+    document.getElementById("animalDiseaseRecs")
+    .innerHTML=
+    animalDiseases
+    .map(diseaseCard)
+    .join("");
+
+}
+
+
+function diseaseCard(disease){
+
+    return `
+
+    <div
+        class="item-card"
+        style="border-left-color:#d32f2f;">
+
+        <div class="item-header">
+
+            <div class="emoji">
+                ${disease.emoji}
+            </div>
+
+
+            <div class="item-info">
+
+                <h4>
+                    ${disease.local}
+                </h4>
+
+                <div class="sub">
+                    ${disease.scientific}
+                </div>
+
+            </div>
+
+
+            <span class="badge disease-badge">
+                Disease
+            </span>
+
+        </div>
+
+
+        <button
+            class="toggle-btn"
+            onclick="toggleDetails(this)"
+            style="background:#d32f2f;">
+
+            View Details
+
+        </button>
+
+
+        <div class="item-details">
+
+
+            <div class="detail-grid">
+
+                <span class="label">
+                    Local name
+                </span>
+
+                <span class="value">
+                    ${disease.local}
+                </span>
+
+
+                <span class="label">
+                    Scientific name
+                </span>
+
+                <span class="value">
+                    ${disease.scientific}
+                </span>
+
+
+                <span class="label">
+                    Cause
+                </span>
+
+                <span class="value">
+                    ${disease.cause}
+                </span>
+
+            </div>
+
+
+            <div class="section disease-section">
+
+                <h5>
+                    <i class="fas fa-triangle-exclamation"></i>
+                    Symptoms
+                </h5>
+
+
+                <ul>
+
+                    ${disease.symptoms.map(
+                        item=>`<li>${item}</li>`
+                    ).join("")}
+
+                </ul>
+
+            </div>
+
+
+            <div class="section">
+
+                <h5>
+                    <i class="fas fa-shield"></i>
+                    Prevention
+                </h5>
+
+
+                <ul>
+
+                    ${disease.prevention.map(
+                        item=>`<li>${item}</li>`
+                    ).join("")}
+
+                </ul>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+
+/* ==========================================================
+   GOVERNMENT UPDATE PLACEHOLDER
+========================================================== */
+
+function loadGovernmentUpdates(){
+
+    const now =
+    new Date().toLocaleString();
+
+
+    document.getElementById(
+        "lastUpdateTime"
+    ).textContent=
+    "Last local data check: "+now;
+
+
+    document.getElementById(
+        "govUpdates"
+    ).innerHTML=`
+
+        <p>
+            📡 Weather service connected.
+        </p>
+
+        <p style="margin-top:5px;">
+            ⚠️ Disease alerts should only be
+            displayed as official government
+            alerts when connected to an official
+            Philippine government data source.
+        </p>
+
+    `;
+
+}
+
+
+/* ==========================================================
+   TAB SWITCH
+========================================================== */
+
+function switchTab(tabName){
+
+    document.querySelectorAll(
+        ".tab-content"
+    ).forEach(tab=>{
+
+        tab.classList.remove("active");
+
+    });
+
+
+    document.querySelectorAll(
+        ".tab-nav button"
+    ).forEach(button=>{
+
+        button.classList.remove("active");
+
+    });
+
+
+    const tab=
+    document.getElementById(
+        "tab-"+tabName
+    );
+
+
+    if(tab){
+
+        tab.classList.add("active");
+
+    }
+
+
+    const button=
+    document.querySelector(
+        `.tab-nav button[data-tab="${tabName}"]`
+    );
+
+
+    if(button){
+
+        button.classList.add("active");
+
+    }
+
+
+    document.querySelectorAll(
+        ".nav-item"
+    ).forEach(item=>{
+
+        item.classList.remove("active");
+
+    });
+
+
+    const indexes={
+        plants:0,
+        livestock:1,
+        diseases:2
+    };
+
+
+    const items=
+    document.querySelectorAll(
+        ".bottom-bar .nav-item"
+    );
+
+
+    if(items[indexes[tabName]]){
+
+        items[indexes[tabName]]
+        .classList.add("active");
+
+    }
+
+}
+
+
+/* ==========================================================
+   DETAILS
+========================================================== */
+
+function toggleDetails(button){
+
+    const details=
+    button.parentElement
+    .querySelector(".item-details");
+
+
+    details.classList.toggle("open");
+
+
+    if(details.classList.contains("open")){
+
+        button.textContent="Close";
+
+        button.classList.add("open-btn");
+
+    }
+
+    else{
+
+        button.textContent="View Details";
+
+        button.classList.remove("open-btn");
+
+    }
+
+}
+
+
+/* ==========================================================
+   CALENDAR
+========================================================== */
+
+function generateCalendar(){
+
+    const year=
+    calendarDate.getFullYear();
+
+    const month=
+    calendarDate.getMonth();
+
+
+    const grid=
+    document.getElementById(
+        "calendarGrid"
+    );
+
+
+    const label=
+    document.getElementById(
+        "monthLabel"
+    );
+
+
+    const months=[
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+    ];
+
+
+    label.textContent=
+    `${months[month]} ${year}`;
+
+
+    grid.innerHTML="";
+
+
+    const weekdays=[
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+    ];
+
+
+    weekdays.forEach(day=>{
+
+        grid.innerHTML+=`
+            <div class="day day-label">
+                ${day}
+            </div>
+        `;
+
+    });
+
+
+    const firstDay=
+    new Date(
+        year,
+        month,
+        1
+    ).getDay();
+
+
+    const daysInMonth=
+    new Date(
+        year,
+        month+1,
+        0
+    ).getDate();
+
+
+    for(
+        let i=0;
+        i<firstDay;
+        i++
+    ){
+
+        grid.innerHTML+=
+        `<div class="day empty"></div>`;
+
+    }
+
+
+    const today=
+    new Date();
+
+
+    for(
+        let day=1;
+        day<=daysInMonth;
+        day++
+    ){
+
+        const date=
+        new Date(
+            year,
+            month,
+            day
+        );
+
+
+        let classes="day";
+
+
+        if(
+            date.getDay()===0 ||
+            date.getDay()===6
+        ){
+
+            classes+=" weekend";
+
         }
 
-        // ─── RENDER DISEASES ──────────────────────────────────
-        function renderDiseases() {
-            let plantHtml = '';
-            for (const d of PLANT_DISEASES) {
-                const detailId = 'pd-' + d.name.replace(/\s/g, '');
-                plantHtml += `
-                    <div class="item-card" style="border-left-color:#d32f2f;">
-                        <div class="item-header">
-                            <span class="emoji">${d.emoji}</span>
-                            <div class="item-info">
-                                <h4>${d.name} <span style="font-size:10px;color:#888;">(${d.affected})</span></h4>
-                                <div class="sub">Sanhi: ${d.cause}</div>
-                            </div>
-                            <span class="badge disease-badge">⚠️</span>
-                        </div>
-                        <button class="toggle-btn" onclick="toggleDetails('${detailId}')">📋 Ipakita ang Detalye</button>
-                        <div class="item-details" id="${detailId}">
-                            <div class="detail-grid">
-                                <span class="label">🧬 Sanhi:</span><span class="value">${d.cause}</span>
-                                <span class="label">🩺 Sintomas:</span><span class="value">${d.symptoms}</span>
-                            </div>
-                            <div class="section disease-section">
-                                <h5><i class="fas fa-flask"></i> Gamot / Treatment:</h5>
-                                <ul><li>${d.medicine}</li></ul>
-                            </div>
-                            <div class="section">
-                                <h5><i class="fas fa-shield-alt"></i> Prevention:</h5>
-                                <ul><li>${d.prevention}</li></ul>
-                            </div>
-                            <div class="section update-section">
-                                <h5><i class="fas fa-exclamation-triangle" style="color:#b71c1c;"></i> Update mula sa Gobyerno:</h5>
-                                <ul><li>${d.alert}</li></ul>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            plantDiseaseRecs.innerHTML = plantHtml || '<div class="loading"><p>Walang sakit na naitala</p></div>';
-            plantDiseaseCount.textContent = `(${PLANT_DISEASES.length} sakit)`;
 
-            let animalHtml = '';
-            for (const d of ANIMAL_DISEASES) {
-                const detailId = 'ad-' + d.name.replace(/\s/g, '');
-                animalHtml += `
-                    <div class="item-card" style="border-left-color:#d32f2f;">
-                        <div class="item-header">
-                            <span class="emoji">${d.emoji}</span>
-                            <div class="item-info">
-                                <h4>${d.name} <span style="font-size:10px;color:#888;">(${d.affected})</span></h4>
-                                <div class="sub">Apektado: ${d.affected}</div>
-                            </div>
-                            <span class="badge disease-badge">⚠️</span>
-                        </div>
-                        <button class="toggle-btn" onclick="toggleDetails('${detailId}')">📋 Ipakita ang Detalye</button>
-                        <div class="item-details" id="${detailId}">
-                            <div class="detail-grid">
-                                <span class="label">🩺 Sintomas:</span><span class="value">${d.symptoms}</span>
-                            </div>
-                            <div class="section disease-section">
-                                <h5><i class="fas fa-flask"></i> Gamot / Treatment:</h5>
-                                <ul><li>${d.medicine}</li></ul>
-                            </div>
-                            <div class="section">
-                                <h5><i class="fas fa-shield-alt"></i> Prevention:</h5>
-                                <ul><li>${d.prevention}</li></ul>
-                            </div>
-                            <div class="section update-section">
-                                <h5><i class="fas fa-exclamation-triangle" style="color:#b71c1c;"></i> Update mula sa Gobyerno:</h5>
-                                <ul><li>${d.alert}</li></ul>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            animalDiseaseRecs.innerHTML = animalHtml || '<div class="loading"><p>Walang sakit na naitala</p></div>';
-            animalDiseaseCount.textContent = `(${ANIMAL_DISEASES.length} sakit)`;
+        if(
+            day===today.getDate() &&
+            month===today.getMonth() &&
+            year===today.getFullYear()
+        ){
+
+            classes+=" today";
+
         }
 
-        // ─── FETCH GOVERNMENT DISEASE UPDATES (ONLINE) ──────
-        function fetchGovernmentDiseaseUpdates() {
-            // Update timestamp
-            const now = new Date();
-            lastUpdateTime.textContent = 'Huling update: ' + now.toLocaleString('tl-PH', { 
-                month: 'long', day: 'numeric', year: 'numeric', 
-                hour: '2-digit', minute: '2-digit' 
-            });
 
-            // Simulate fetching from government API
-            // In production, this would call actual endpoints like:
-            // - https://api.da.gov.ph/disease-updates
-            // - https://www.bai.gov.ph/api/outbreaks
-            // - https://pagasa.dost.gov.ph/api/agriculture-alerts
+        /*
+          Example planting/harvest highlighting.
+          This is calendar visualization only.
+        */
 
-            const updates = [
-                { source: 'Department of Agriculture', message: 'Bagong outbreak ng ASF sa Luzon - I-report agad ang mga sintomas' },
-                { source: 'BAI - Bureau of Animal Industry', message: 'Newcastle Disease monitoring sa Mindanao - Magbakuna ng manok' },
-                { source: 'DA - Agricultural Services', message: 'Rice Blast alert sa mga palayan - Gumamit ng certified seeds' },
-                { source: 'PAGASA', message: 'Weather advisory: Mataas na risk ng fungal diseases sa mga pananim' },
-            ];
+        if(day%11===0){
 
-            let govHtml = '';
-            for (const update of updates) {
-                govHtml += `
-                    <div style="background:white; padding:8px 12px; border-radius:8px; margin-bottom:6px; border-left:3px solid #0d47a1;">
-                        <strong style="font-size:11px; color:#0d47a1;">📢 ${update.source}</strong>
-                        <p style="font-size:11px; color:#333; margin-top:2px;">${update.message}</p>
-                    </div>
-                `;
-            }
-            govUpdates.innerHTML = govHtml;
+            classes+=" planting";
 
-            // Update disease alerts based on government data
-            for (const update of updates) {
-                if (update.message.includes('ASF')) {
-                    for (const d of ANIMAL_DISEASES) {
-                        if (d.name.includes('ASF')) {
-                            d.alert = '⚠️ ' + update.message + ' (' + now.toLocaleDateString('tl-PH') + ')';
-                        }
-                    }
-                }
-                if (update.message.includes('Newcastle')) {
-                    for (const d of ANIMAL_DISEASES) {
-                        if (d.name.includes('Newcastle')) {
-                            d.alert = '⚠️ ' + update.message + ' (' + now.toLocaleDateString('tl-PH') + ')';
-                        }
-                    }
-                }
-                if (update.message.includes('Rice Blast')) {
-                    for (const d of PLANT_DISEASES) {
-                        if (d.name.includes('Rice Blast')) {
-                            d.alert = '⚠️ ' + update.message + ' (' + now.toLocaleDateString('tl-PH') + ')';
-                        }
-                    }
-                }
-                if (update.message.includes('fungal')) {
-                    for (const d of PLANT_DISEASES) {
-                        if (d.name.includes('Downy Mildew')) {
-                            d.alert = '⚠️ ' + update.message + ' (' + now.toLocaleDateString('tl-PH') + ')';
-                        }
-                    }
-                }
-            }
-
-            renderDiseases();
-            document.getElementById('updateBadge').textContent = '🔄 Na-update: ' + now.toLocaleTimeString('tl-PH', { hour: '2-digit', minute: '2-digit' });
         }
 
-        // ─── UPDATE SEASONAL GUIDE ──────────────────────────
-        function updateSeasonalGuide() {
-            const month = new Date().getMonth();
-            let currentSeason = 'wet';
-            if (month >= 10 || month <= 1) currentSeason = 'cool';
-            else if (month >= 2 && month <= 4) currentSeason = 'dry';
-            else currentSeason = 'wet';
-            
-            document.querySelectorAll('.season-card').forEach(card => {
-                card.classList.toggle('active', card.dataset.season === currentSeason);
-            });
+
+        if(day%17===0){
+
+            classes+=" harvest";
+
         }
 
-        // ─── TOGGLE DETAILS ────────────────────────────────
-        window.toggleDetails = function(detailId) {
-            const details = document.getElementById(detailId);
-            const btn = details.parentElement.querySelector('.toggle-btn');
-            if (details.classList.contains('open')) {
-                details.classList.remove('open');
-                btn.textContent = '📋 Ipakita ang Detalye';
-                btn.classList.remove('open-btn');
-            } else {
-                details.classList.add('open');
-                btn.textContent = '📋 Itago ang Detalye';
-                btn.classList.add('open-btn');
-            }
-        };
 
-        // ─── UPDATE TIMESTAMP ─────────────────────────────
-        function updateTimestamp() {
-            const now = new Date();
-            updateTime.textContent = now.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        grid.innerHTML+=`
+
+            <div class="${classes}">
+                ${day}
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+function changeMonth(direction){
+
+    calendarDate.setMonth(
+        calendarDate.getMonth()+direction
+    );
+
+
+    generateCalendar();
+
+}
+
+
+/* ==========================================================
+   PLANT FILTER
+========================================================== */
+
+document.querySelectorAll(
+    "#plantFilter .filter-btn"
+).forEach(button=>{
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            document.querySelectorAll(
+                "#plantFilter .filter-btn"
+            ).forEach(btn=>{
+                btn.classList.remove("active");
+            });
+
+
+            button.classList.add("active");
+
+
+            loadPlants(
+                button.dataset.filter
+            );
+
+        }
+    );
+
+});
+
+
+/* ==========================================================
+   LIVESTOCK FILTER
+========================================================== */
+
+document.querySelectorAll(
+    "#livestockFilter .filter-btn"
+).forEach(button=>{
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            document.querySelectorAll(
+                "#livestockFilter .filter-btn"
+            ).forEach(btn=>{
+                btn.classList.remove("active");
+            });
+
+
+            button.classList.add("active");
+
+
+            loadLivestock(
+                button.dataset.filter
+            );
+
+        }
+    );
+
+});
+
+
+/* ==========================================================
+   TAB BUTTONS
+========================================================== */
+
+document.querySelectorAll(
+    ".tab-nav button"
+).forEach(button=>{
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            switchTab(
+                button.dataset.tab
+            );
+
+        }
+    );
+
+});
+
+
+/* ==========================================================
+   SCROLL TOP
+========================================================== */
+
+window.addEventListener(
+    "scroll",
+    ()=>{
+
+        const button=
+        document.getElementById(
+            "scrollTop"
+        );
+
+
+        if(window.scrollY>300){
+
+            button.classList.add("show");
+
         }
 
-        // ─── FILTER HANDLERS ──────────────────────────────
-        document.querySelectorAll('#plantFilter .filter-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('#plantFilter .filter-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const weather = getCurrentWeather();
-                recommendPlants(weather, this.dataset.filter);
-            });
-        });
+        else{
 
-        document.querySelectorAll('#livestockFilter .filter-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('#livestockFilter .filter-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                recommendLivestock();
-            });
-        });
+            button.classList.remove("show");
 
-        // ─── SEASONAL GUIDE CLICK ──────────────────────────
-        document.querySelectorAll('.season-card').forEach(card => {
-            card.addEventListener('click', function() {
-                const season = this.dataset.season;
-                document.querySelectorAll('#plantFilter .filter-btn').forEach(b => b.classList.remove('active'));
-                document.querySelector(`#plantFilter .filter-btn[data-filter="${season}"]`)?.classList.add('active');
-                const weather = getCurrentWeather();
-                recommendPlants(weather, season);
-            });
-        });
+        }
 
-        // ─── SCROLL TOP ──────────────────────────────────────
-        window.addEventListener('scroll', function() {
-            scrollBtn.classList.toggle('show', window.scrollY > 300);
-        });
+    }
+);
 
-        // ─── START ─────────────────────────────────────────
-        generateCalendar(currentMonth, currentYear, calendarGrid, monthLabel);
-        
-        plantRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang rekomendasyon!</p></div>`;
-        livestockRecs.innerHTML = `<div class="loading"><i class="fas fa-satellite-dish"></i><p>I-On ang GPS para makita ang pinakamainam na hayop!</p></div>`;
-        
-        // Initial disease render
-        renderDiseases();
-        fetchGovernmentDiseaseUpdates();
-        
-        // Auto-update every 30 seconds
-        setInterval(() => {
-            fetchGovernmentDiseaseUpdates();
-            updateTimestamp();
-        }, 30000);
-        
-        setTimeout(() => {
-            if (!userLat && navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => {
-                        userLat = pos.coords.latitude;
-                        userLng = pos.coords.longitude;
-                        gpsBanner.style.display = 'none';
-                        gpsCoords.textContent = `📍 ${userLat.toFixed(6)}°N, ${userLng.toFixed(6)}°E`;
-                        address.textContent = '📍 Nakuha ang lokasyon';
-                        getWeatherForLocation(userLat, userLng);
-                        updateSeasonalGuide();
-                        recommendLivestock();
-                        renderDiseases();
-                        fetchGovernmentDiseaseUpdates();
-                    },
-                    () => {},
-                    { enableHighAccuracy: true, timeout: 5000 }
-                );
-            }
-        }, 1000);
-        
-        setInterval(updateTimestamp, 5000);
-        
-        console.log('🌾 PlantAdvisor PH - Complete Guide with Online Disease Updates');
-        console.log('📚 Loaded: ' + PLANT_DB.length + ' plants, ' + LIVESTOCK_DB.length + ' livestock');
-        console.log('🩺 Diseases: ' + PLANT_DISEASES.length + ' plant, ' + ANIMAL_DISEASES.length + ' animal');
-        console.log('🔄 Auto-updating every 30 seconds from government sources');
 
-    })();
+/* ==========================================================
+   INITIALIZE
+========================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    ()=>{
+
+        updateTime();
+
+        setInterval(
+            updateTime,
+            1000
+        );
+
+
+        generateCalendar();
+
+        loadPlants("all");
+
+        loadLivestock("all");
+
+        loadDiseases();
+
+        loadGovernmentUpdates();
+
+        updateSeason();
+
+    }
+);
+
 </script>
 
 </body>
 </html>
+```
