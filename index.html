@@ -258,6 +258,49 @@
             gap: 12px;
         }
 
+        /* ─── STICKER ICON STYLES ─── */
+        .plant-emoji-sticker {
+            display: inline-block;
+            font-size: 40px;
+            line-height: 1;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), transparent 70%);
+            background-color: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin: 0 auto;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .plant-mini-card .plant-emoji-sticker {
+            width: 60px;
+            height: 60px;
+            font-size: 34px;
+            margin-bottom: 6px;
+        }
+
+        .plant-mini-card .plant-emoji-sticker:hover {
+            transform: scale(1.05) rotate(-3deg);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .plant-detail-header .plant-emoji-sticker {
+            width: 90px;
+            height: 90px;
+            font-size: 52px;
+        }
+
+        .garden-plant-card .plant-emoji-sticker {
+            width: 50px;
+            height: 50px;
+            font-size: 28px;
+        }
+
         .plant-mini-card {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 16px;
@@ -273,14 +316,10 @@
             transform: translateY(-2px);
         }
 
-        .plant-mini-card .icon {
-            font-size: 32px;
-            display: block;
-            margin-bottom: 4px;
-        }
         .plant-mini-card .name {
             font-size: 13px;
             font-weight: 500;
+            margin-top: 2px;
         }
         .plant-mini-card .match {
             font-size: 10px;
@@ -302,11 +341,6 @@
             align-items: center;
             gap: 16px;
             margin-bottom: 16px;
-        }
-        .plant-detail-header .icon {
-            font-size: 56px;
-            width: 70px;
-            text-align: center;
         }
         .plant-detail-header .name-group .name {
             font-size: 24px;
@@ -567,11 +601,6 @@
             align-items: center;
             gap: 12px;
         }
-        .garden-plant-card .plant-info .icon {
-            font-size: 32px;
-            width: 40px;
-            text-align: center;
-        }
         .garden-plant-card .plant-info .name {
             font-size: 16px;
             font-weight: 500;
@@ -751,6 +780,21 @@
             .topbar-weather .cond {
                 display: none;
             }
+            .plant-emoji-sticker {
+                width: 55px;
+                height: 55px;
+                font-size: 30px;
+            }
+            .plant-mini-card .plant-emoji-sticker {
+                width: 50px;
+                height: 50px;
+                font-size: 26px;
+            }
+            .plant-detail-header .plant-emoji-sticker {
+                width: 70px;
+                height: 70px;
+                font-size: 40px;
+            }
         }
 
         @media (max-width: 400px) {
@@ -758,7 +802,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
             .plant-detail-header .icon {
-                font-size: 40px;
                 width: 50px;
             }
             .plant-detail-header .name-group .name {
@@ -774,6 +817,16 @@
             }
             .add-plant-section select {
                 min-width: unset;
+            }
+            .plant-emoji-sticker {
+                width: 45px;
+                height: 45px;
+                font-size: 24px;
+            }
+            .plant-mini-card .plant-emoji-sticker {
+                width: 42px;
+                height: 42px;
+                font-size: 22px;
             }
         }
 
@@ -1157,13 +1210,12 @@
         (function() {
             'use strict';
 
-            // ─── ENHANCED PLANT DATABASE with unique icons & colors ──
+            // ─── EXPANDED PLANT DATABASE with emoji stickers ───────────
             const PLANTS = [{
                 id: 'palay',
                 name: 'Palay (Rice)',
                 sci: 'Oryza sativa',
-                icon: 'fa-wheat-awn',
-                iconColor: '#f5d742',
+                icon: '🌾',
                 category: 'grain',
                 idealTempMin: 22,
                 idealTempMax: 34,
@@ -1191,8 +1243,7 @@
                 id: 'tubo',
                 name: 'Tubo (Sugarcane)',
                 sci: 'Saccharum officinarum',
-                icon: 'fa-leaf',
-                iconColor: '#6ab04c',
+                icon: '🌿',
                 category: 'grain',
                 idealTempMin: 25,
                 idealTempMax: 38,
@@ -1220,8 +1271,7 @@
                 id: 'mais',
                 name: 'Mais (Corn)',
                 sci: 'Zea mays',
-                icon: 'fa-seedling',
-                iconColor: '#f39c12',
+                icon: '🌽',
                 category: 'grain',
                 idealTempMin: 22,
                 idealTempMax: 34,
@@ -1249,8 +1299,7 @@
                 id: 'mani',
                 name: 'Mani (Peanut)',
                 sci: 'Arachis hypogaea',
-                icon: 'fa-seedling',
-                iconColor: '#d4a373',
+                icon: '🥜',
                 category: 'grain',
                 idealTempMin: 20,
                 idealTempMax: 32,
@@ -1278,8 +1327,7 @@
                 id: 'munggo',
                 name: 'Munggo (Mungbean)',
                 sci: 'Vigna radiata',
-                icon: 'fa-seedling',
-                iconColor: '#6a994e',
+                icon: '🌱',
                 category: 'grain',
                 idealTempMin: 20,
                 idealTempMax: 35,
@@ -1307,8 +1355,7 @@
                 id: 'kamote',
                 name: 'Kamote (Sweet Potato)',
                 sci: 'Ipomoea batatas',
-                icon: 'fa-carrot',
-                iconColor: '#d35400',
+                icon: '🍠',
                 category: 'root',
                 idealTempMin: 20,
                 idealTempMax: 32,
@@ -1336,8 +1383,7 @@
                 id: 'kamotengkahoy',
                 name: 'Kamoteng Kahoy (Cassava)',
                 sci: 'Manihot esculenta',
-                icon: 'fa-tree',
-                iconColor: '#8d6e63',
+                icon: '🌱',
                 category: 'root',
                 idealTempMin: 22,
                 idealTempMax: 35,
@@ -1365,8 +1411,7 @@
                 id: 'gabi',
                 name: 'Gabi (Taro)',
                 sci: 'Colocasia esculenta',
-                icon: 'fa-leaf',
-                iconColor: '#2e7d32',
+                icon: '🍃',
                 category: 'root',
                 idealTempMin: 22,
                 idealTempMax: 32,
@@ -1394,8 +1439,7 @@
                 id: 'ube',
                 name: 'Ube (Purple Yam)',
                 sci: 'Dioscorea alata',
-                icon: 'fa-carrot',
-                iconColor: '#6a1b9a',
+                icon: '🍠',
                 category: 'root',
                 idealTempMin: 22,
                 idealTempMax: 32,
@@ -1423,8 +1467,7 @@
                 id: 'singkamas',
                 name: 'Singkamas (Jicama)',
                 sci: 'Pachyrhizus erosus',
-                icon: 'fa-carrot',
-                iconColor: '#f5cba7',
+                icon: '🍠',
                 category: 'root',
                 idealTempMin: 20,
                 idealTempMax: 32,
@@ -1452,8 +1495,7 @@
                 id: 'patatas',
                 name: 'Patatas (Potato)',
                 sci: 'Solanum tuberosum',
-                icon: 'fa-carrot',
-                iconColor: '#c49a6c',
+                icon: '🥔',
                 category: 'root',
                 idealTempMin: 15,
                 idealTempMax: 28,
@@ -1481,8 +1523,7 @@
                 id: 'kamatis',
                 name: 'Kamatis (Tomato)',
                 sci: 'Solanum lycopersicum',
-                icon: 'fa-apple-whole',
-                iconColor: '#e74c3c',
+                icon: '🍅',
                 category: 'vegetable',
                 idealTempMin: 18,
                 idealTempMax: 30,
@@ -1510,8 +1551,7 @@
                 id: 'sili',
                 name: 'Sili (Chili)',
                 sci: 'Capsicum frutescens',
-                icon: 'fa-pepper-hot',
-                iconColor: '#e74c3c',
+                icon: '🌶️',
                 category: 'vegetable',
                 idealTempMin: 22,
                 idealTempMax: 35,
@@ -1539,8 +1579,7 @@
                 id: 'talong',
                 name: 'Talong (Eggplant)',
                 sci: 'Solanum melongena',
-                icon: 'fa-eggplant',
-                iconColor: '#4a148c',
+                icon: '🍆',
                 category: 'vegetable',
                 idealTempMin: 20,
                 idealTempMax: 33,
@@ -1568,8 +1607,7 @@
                 id: 'ampalaya',
                 name: 'Ampalaya (Bitter Gourd)',
                 sci: 'Momordica charantia',
-                icon: 'fa-cucumber',
-                iconColor: '#2e7d32',
+                icon: '🥒',
                 category: 'vegetable',
                 idealTempMin: 22,
                 idealTempMax: 34,
@@ -1597,8 +1635,7 @@
                 id: 'okra',
                 name: 'Okra',
                 sci: 'Abelmoschus esculentus',
-                icon: 'fa-seedling',
-                iconColor: '#4caf50',
+                icon: '🫛',
                 category: 'vegetable',
                 idealTempMin: 23,
                 idealTempMax: 35,
@@ -1626,8 +1663,7 @@
                 id: 'sitaw',
                 name: 'Sitaw (Long Bean)',
                 sci: 'Vigna unguiculata',
-                icon: 'fa-seedling',
-                iconColor: '#6a994e',
+                icon: '🫘',
                 category: 'vegetable',
                 idealTempMin: 20,
                 idealTempMax: 35,
@@ -1655,8 +1691,7 @@
                 id: 'kalabasa',
                 name: 'Kalabasa (Squash)',
                 sci: 'Cucurbita maxima',
-                icon: 'fa-pumpkin',
-                iconColor: '#f39c12',
+                icon: '🎃',
                 category: 'vegetable',
                 idealTempMin: 20,
                 idealTempMax: 32,
@@ -1681,127 +1716,10 @@
                 description: 'Squash, versatile for soups and desserts. Warm-weather crop.',
                 reason: 'Kalabasa is a hardy vegetable that grows well in the Philippines\' tropical climate.'
             }, {
-                id: 'kangkong',
-                name: 'Kangkong (Water Spinach)',
-                sci: 'Ipomoea aquatica',
-                icon: 'fa-leaf',
-                iconColor: '#2e7d32',
-                category: 'leafy',
-                idealTempMin: 20,
-                idealTempMax: 35,
-                idealHumidityMin: 50,
-                idealHumidityMax: 90,
-                waterPerDay: 400,
-                sunlight: 'Full sun to partial shade',
-                soil: 'Moist, rich soil or aquatic',
-                fertilizer: 'High nitrogen (15-5-5) every 2 weeks',
-                diseases: [
-                    { name: 'Leaf Spot', description: 'Brown spots. Remove infected leaves.' },
-                    { name: 'Root Rot', description: 'Wilting and yellowing. Improve drainage.' }
-                ],
-                care: [
-                    'Keep soil consistently moist (can grow in water).',
-                    'Harvest young shoots and leaves regularly.',
-                    'Apply organic fertilizer for continuous growth.',
-                    'Pinch tips to encourage branching.'
-                ],
-                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 30,
-                description: 'Water spinach, a semi-aquatic vegetable. Thrives in wet, warm conditions.',
-                reason: 'Kangkong is a staple in the Philippines, especially in areas with abundant water.'
-            }, {
-                id: 'pechay',
-                name: 'Pechay (Bok Choy)',
-                sci: 'Brassica rapa subsp. chinensis',
-                icon: 'fa-cabbage',
-                iconColor: '#4caf50',
-                category: 'leafy',
-                idealTempMin: 15,
-                idealTempMax: 28,
-                idealHumidityMin: 40,
-                idealHumidityMax: 75,
-                waterPerDay: 180,
-                sunlight: 'Full sun to partial shade',
-                soil: 'Well-draining loam, pH 6.0-6.5',
-                fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
-                diseases: [
-                    { name: 'Damping Off', description: 'Seedlings collapse. Use sterile soil.' },
-                    { name: 'Leaf Blight', description: 'Brown spots. Apply fungicide.' }
-                ],
-                care: [
-                    'Water regularly to keep soil moist.',
-                    'Harvest leaves when young and tender.',
-                    'Apply side dressing of nitrogen-rich fertilizer.',
-                    'Plant in cool season for best quality.'
-                ],
-                plantingMonths: [1, 2, 9, 10, 11, 12],
-                daysToHarvest: 35,
-                description: 'Bok choy, a fast-growing leafy green. Prefers cooler weather.',
-                reason: 'Pechay is a quick-growing vegetable that can be planted during the cooler months.'
-            }, {
-                id: 'mustasa',
-                name: 'Mustasa (Mustard)',
-                sci: 'Brassica juncea',
-                icon: 'fa-cabbage',
-                iconColor: '#66bb6a',
-                category: 'leafy',
-                idealTempMin: 15,
-                idealTempMax: 28,
-                idealHumidityMin: 40,
-                idealHumidityMax: 75,
-                waterPerDay: 150,
-                sunlight: 'Full sun to partial shade',
-                soil: 'Well-draining loam, pH 6.0-6.8',
-                fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
-                diseases: [
-                    { name: 'Downy Mildew', description: 'Yellow spots. Improve air circulation.' },
-                    { name: 'Aphids', description: 'Sticky residue. Use insecticidal soap.' }
-                ],
-                care: [
-                    'Water consistently to prevent bitterness.',
-                    'Harvest leaves when young.',
-                    'Sow seeds directly in garden.',
-                    'Thin seedlings to 4-6" apart.'
-                ],
-                plantingMonths: [1, 2, 9, 10, 11, 12],
-                daysToHarvest: 30,
-                description: 'Mustard greens, fast-growing and peppery. Best in cool weather.',
-                reason: 'Mustasa is a leafy green that grows well in the Philippines during the cooler dry season.'
-            }, {
-                id: 'letsugas',
-                name: 'Letsugas (Lettuce)',
-                sci: 'Lactuca sativa',
-                icon: 'fa-cabbage',
-                iconColor: '#81c784',
-                category: 'leafy',
-                idealTempMin: 12,
-                idealTempMax: 24,
-                idealHumidityMin: 35,
-                idealHumidityMax: 70,
-                waterPerDay: 160,
-                sunlight: 'Full sun to partial shade',
-                soil: 'Well-draining loam, pH 6.0-6.5',
-                fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
-                diseases: [
-                    { name: 'Downy Mildew', description: 'Yellow spots. Avoid overhead watering.' },
-                    { name: 'Tip Burn', description: 'Brown edges. Maintain consistent moisture.' }
-                ],
-                care: [
-                    'Water regularly to keep soil moist.',
-                    'Harvest leaves when young and tender.',
-                    'Plant in cool weather for best quality.',
-                    'Shade during hot spells to prevent bolting.'
-                ],
-                plantingMonths: [1, 2, 3, 9, 10, 11, 12],
-                daysToHarvest: 45,
-                description: 'Lettuce, a cool-season leafy green. Best in mild weather.',
-                reason: 'Lettuce is best grown in the Philippines during the cooler months, as it bolts in high heat.'
-            }, {
                 id: 'pipino',
                 name: 'Pipino (Cucumber)',
                 sci: 'Cucumis sativus',
-                icon: 'fa-cucumber',
-                iconColor: '#43a047',
+                icon: '🥒',
                 category: 'vegetable',
                 idealTempMin: 20,
                 idealTempMax: 32,
@@ -1826,11 +1744,94 @@
                 description: 'Cucumber, refreshing and crisp. Warm-weather crop with high water content.',
                 reason: 'Cucumbers are well-suited to the Philippines\' warm, humid climate.'
             }, {
+                id: 'upo',
+                name: 'Upo (Bottle Gourd)',
+                sci: 'Lagenaria siceraria',
+                icon: '🍐',
+                category: 'vegetable',
+                idealTempMin: 20,
+                idealTempMax: 32,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 350,
+                sunlight: 'Full sun',
+                soil: 'Well-draining loam, pH 6.0-6.8',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
+                diseases: [
+                    { name: 'Powdery Mildew', description: 'White spots. Apply sulfur.' },
+                    { name: 'Downy Mildew', description: 'Yellow spots. Apply fungicide.' }
+                ],
+                care: [
+                    'Water deeply, especially during fruiting.',
+                    'Provide strong trellis for heavy fruits.',
+                    'Harvest when fruit is young and tender.',
+                    'Mulch to retain moisture.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 60,
+                description: 'Bottle gourd, used in soups and stir-fries. Warm-weather vine crop.',
+                reason: 'Upo is a common vegetable in the Philippines, easy to grow in warm climates with adequate water.'
+            }, {
+                id: 'patola',
+                name: 'Patola (Sponge Gourd)',
+                sci: 'Luffa aegyptiaca',
+                icon: '🥒',
+                category: 'vegetable',
+                idealTempMin: 22,
+                idealTempMax: 35,
+                idealHumidityMin: 40,
+                idealHumidityMax: 85,
+                waterPerDay: 300,
+                sunlight: 'Full sun',
+                soil: 'Well-draining loam, pH 6.0-6.8',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
+                diseases: [
+                    { name: 'Powdery Mildew', description: 'White spots. Apply sulfur.' },
+                    { name: 'Mosaic Virus', description: 'Mottled leaves. Control aphids.' }
+                ],
+                care: [
+                    'Water regularly during flowering and fruiting.',
+                    'Provide trellis for vines.',
+                    'Harvest when fruit is still young for eating, or mature for sponge.',
+                    'Mulch to retain moisture.'
+                ],
+                plantingMonths: [2, 3, 4, 5, 6, 7, 8, 9],
+                daysToHarvest: 60,
+                description: 'Sponge gourd, young fruits are eaten as vegetable, mature ones become bath sponges.',
+                reason: 'Patola is a heat-loving vegetable that grows well in the Philippines\' tropical climate.'
+            }, {
+                id: 'sayote',
+                name: 'Sayote (Chayote)',
+                sci: 'Sechium edule',
+                icon: '🥒',
+                category: 'vegetable',
+                idealTempMin: 18,
+                idealTempMax: 28,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 300,
+                sunlight: 'Full sun to partial shade',
+                soil: 'Well-draining loam, pH 6.0-6.8',
+                fertilizer: 'Balanced NPK (10-10-10) every month',
+                diseases: [
+                    { name: 'Powdery Mildew', description: 'White spots. Apply sulfur.' },
+                    { name: 'Vine Borer', description: 'Wilting vines. Use Bt.' }
+                ],
+                care: [
+                    'Water deeply, especially during dry periods.',
+                    'Provide trellis for climbing vines.',
+                    'Harvest when fruit is still green and tender (8-10 weeks).',
+                    'Apply mulch and compost.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 70,
+                description: 'Chayote, a versatile vegetable used in soups and stir-fries. Prefers cool weather but grows in warm areas.',
+                reason: 'Sayote is commonly grown in the Philippines, especially in upland areas with cooler temperatures.'
+            }, {
                 id: 'repolyo',
                 name: 'Repolyo (Cabbage)',
                 sci: 'Brassica oleracea var. capitata',
-                icon: 'fa-cabbage',
-                iconColor: '#8bc34a',
+                icon: '🥬',
                 category: 'leafy',
                 idealTempMin: 12,
                 idealTempMax: 24,
@@ -1858,8 +1859,7 @@
                 id: 'brokuli',
                 name: 'Brokuli (Broccoli)',
                 sci: 'Brassica oleracea var. italica',
-                icon: 'fa-cabbage',
-                iconColor: '#2e7d32',
+                icon: '🥦',
                 category: 'vegetable',
                 idealTempMin: 12,
                 idealTempMax: 24,
@@ -1884,243 +1884,122 @@
                 description: 'Broccoli, a nutritious cool-season vegetable. Prefers mild weather.',
                 reason: 'Broccoli is best grown in upland areas with cooler temperatures.'
             }, {
-                id: 'luya',
-                name: 'Luya (Ginger)',
-                sci: 'Zingiber officinale',
-                icon: 'fa-seedling',
-                iconColor: '#d4a373',
-                category: 'herb',
-                idealTempMin: 22,
-                idealTempMax: 32,
-                idealHumidityMin: 50,
-                idealHumidityMax: 85,
-                waterPerDay: 200,
-                sunlight: 'Partial shade to full sun',
-                soil: 'Rich, well-draining loam, pH 5.5-6.5',
-                fertilizer: 'Organic compost, low nitrogen',
-                diseases: [
-                    { name: 'Bacterial Wilt', description: 'Yellowing and wilting. Remove infected plants.' },
-                    { name: 'Rhizome Rot', description: 'Soft rhizomes. Improve drainage.' }
-                ],
-                care: [
-                    'Water regularly but avoid waterlogging.',
-                    'Mulch heavily to retain moisture.',
-                    'Harvest after 8-10 months when leaves yellow.',
-                    'Apply compost as side dressing.'
-                ],
-                plantingMonths: [2, 3, 4, 5, 6, 7],
-                daysToHarvest: 270,
-                description: 'Ginger, a tropical rhizome used in cooking and medicine.',
-                reason: 'Ginger thrives in the warm, humid conditions of the Philippines.'
-            }, {
-                id: 'bawang',
-                name: 'Bawang (Garlic)',
-                sci: 'Allium sativum',
-                icon: 'fa-garlic',
-                iconColor: '#f5f5dc',
-                category: 'herb',
-                idealTempMin: 15,
-                idealTempMax: 28,
-                idealHumidityMin: 35,
-                idealHumidityMax: 70,
-                waterPerDay: 150,
-                sunlight: 'Full sun',
-                soil: 'Well-draining sandy loam, pH 6.0-7.0',
-                fertilizer: 'Balanced NPK (10-10-10) at planting',
-                diseases: [
-                    { name: 'White Rot', description: 'White fluffy growth on bulbs. Avoid planting in infected soil.' },
-                    { name: 'Rust', description: 'Orange spots. Apply fungicide.' }
-                ],
-                care: [
-                    'Water moderately, reduce before harvest.',
-                    'Plant cloves point up, 2" deep.',
-                    'Harvest when lower leaves turn brown.',
-                    'Cure bulbs in dry, airy place.'
-                ],
-                plantingMonths: [1, 2, 3, 9, 10, 11, 12],
-                daysToHarvest: 120,
-                description: 'Garlic, essential in cooking. Grows best in cool weather with well-draining soil.',
-                reason: 'Garlic is best planted in the Philippines during the cooler months.'
-            }, {
-                id: 'sibuyas',
-                name: 'Sibuyas (Onion)',
-                sci: 'Allium cepa',
-                icon: 'fa-onion',
-                iconColor: '#f5cba7',
-                category: 'herb',
-                idealTempMin: 15,
-                idealTempMax: 28,
-                idealHumidityMin: 35,
-                idealHumidityMax: 70,
-                waterPerDay: 180,
-                sunlight: 'Full sun',
-                soil: 'Well-draining sandy loam, pH 6.0-6.8',
-                fertilizer: 'Balanced NPK (10-10-10) every 3 weeks',
-                diseases: [
-                    { name: 'Downy Mildew', description: 'Yellow spots. Improve air circulation.' },
-                    { name: 'Bulb Rot', description: 'Soft bulbs. Avoid overwatering.' }
-                ],
-                care: [
-                    'Water deeply but infrequently.',
-                    'Harvest when tops fall over and turn brown.',
-                    'Cure bulbs in dry, shaded place.',
-                    'Plant in raised beds for better drainage.'
-                ],
-                plantingMonths: [1, 2, 3, 9, 10, 11, 12],
-                daysToHarvest: 100,
-                description: 'Onion, a kitchen staple. Requires cool weather for bulb formation.',
-                reason: 'Onions are a cool-season crop in the Philippines, best planted during the dry season.'
-            }, {
-                id: 'tanglad',
-                name: 'Tanglad (Lemongrass)',
-                sci: 'Cymbopogon citratus',
-                icon: 'fa-leaf',
-                iconColor: '#8bc34a',
-                category: 'herb',
+                id: 'kangkong',
+                name: 'Kangkong (Water Spinach)',
+                sci: 'Ipomoea aquatica',
+                icon: '🌿',
+                category: 'leafy',
                 idealTempMin: 20,
                 idealTempMax: 35,
-                idealHumidityMin: 40,
-                idealHumidityMax: 85,
-                waterPerDay: 150,
-                sunlight: 'Full sun',
-                soil: 'Well-draining loam, pH 6.0-7.0',
-                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
+                idealHumidityMin: 50,
+                idealHumidityMax: 90,
+                waterPerDay: 400,
+                sunlight: 'Full sun to partial shade',
+                soil: 'Moist, rich soil or aquatic',
+                fertilizer: 'High nitrogen (15-5-5) every 2 weeks',
                 diseases: [
-                    { name: 'Rust', description: 'Orange pustules. Apply fungicide.' },
-                    { name: 'Leaf Blight', description: 'Brown spots. Remove infected leaves.' }
+                    { name: 'Leaf Spot', description: 'Brown spots. Remove infected leaves.' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing. Improve drainage.' }
                 ],
                 care: [
-                    'Water regularly, but do not overwater.',
-                    'Harvest stalks when they are thick and aromatic.',
-                    'Divide clumps every 2-3 years.',
-                    'Apply compost around plants.'
+                    'Keep soil consistently moist (can grow in water).',
+                    'Harvest young shoots and leaves regularly.',
+                    'Apply organic fertilizer for continuous growth.',
+                    'Pinch tips to encourage branching.'
                 ],
                 plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 120,
-                description: 'Lemongrass, used for tea and cooking. Grows easily in tropical climate.',
-                reason: 'Lemongrass is a low-maintenance herb that thrives in the Philippines\' warm weather.'
+                daysToHarvest: 30,
+                description: 'Water spinach, a semi-aquatic vegetable. Thrives in wet, warm conditions.',
+                reason: 'Kangkong is a staple in the Philippines, especially in areas with abundant water.'
             }, {
-                id: 'oregano',
-                name: 'Oregano (Mexican)',
-                sci: 'Lippia graveolens',
-                icon: 'fa-leaf',
-                iconColor: '#66bb6a',
-                category: 'herb',
-                idealTempMin: 18,
-                idealTempMax: 30,
-                idealHumidityMin: 40,
-                idealHumidityMax: 80,
-                waterPerDay: 100,
-                sunlight: 'Full sun',
-                soil: 'Well-draining sandy loam, pH 6.0-7.0',
-                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
-                diseases: [
-                    { name: 'Root Rot', description: 'Avoid overwatering.' },
-                    { name: 'Aphids', description: 'Use insecticidal soap.' }
-                ],
-                care: [
-                    'Water moderately, allow soil to dry between watering.',
-                    'Prune regularly to encourage bushy growth.',
-                    'Harvest leaves before flowering for best flavor.',
-                    'Plant in raised beds for better drainage.'
-                ],
-                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 60,
-                description: 'Oregano, a versatile herb for cooking. Thrives in warm, dry conditions.',
-                reason: 'Oregano grows well in the Philippines\' warm climate, especially in well-drained soil.'
-            }, {
-                id: 'basil',
-                name: 'Basil (Sweet Basil)',
-                sci: 'Ocimum basilicum',
-                icon: 'fa-leaf',
-                iconColor: '#4caf50',
-                category: 'herb',
-                idealTempMin: 20,
-                idealTempMax: 30,
-                idealHumidityMin: 40,
-                idealHumidityMax: 80,
-                waterPerDay: 120,
-                sunlight: 'Full sun',
-                soil: 'Well-draining loam, pH 6.0-7.0',
-                fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
-                diseases: [
-                    { name: 'Fusarium Wilt', description: 'Yellowing and wilting. Use resistant varieties.' },
-                    { name: 'Downy Mildew', description: 'Yellow spots. Avoid overhead watering.' }
-                ],
-                care: [
-                    'Water regularly, keep soil moist.',
-                    'Pinch flowers to encourage leaf growth.',
-                    'Harvest leaves in the morning for best flavor.',
-                    'Apply organic mulch.'
-                ],
-                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 45,
-                description: 'Sweet basil, essential for many dishes. Grows well in warm weather.',
-                reason: 'Basil is a popular herb in the Philippines, easy to grow in pots or gardens.'
-            }, {
-                id: 'mint',
-                name: 'Mint (Mint)',
-                sci: 'Mentha spicata',
-                icon: 'fa-leaf',
-                iconColor: '#81c784',
-                category: 'herb',
-                idealTempMin: 18,
+                id: 'pechay',
+                name: 'Pechay (Bok Choy)',
+                sci: 'Brassica rapa subsp. chinensis',
+                icon: '🥬',
+                category: 'leafy',
+                idealTempMin: 15,
                 idealTempMax: 28,
                 idealHumidityMin: 40,
-                idealHumidityMax: 80,
-                waterPerDay: 150,
-                sunlight: 'Partial shade to full sun',
-                soil: 'Moist, well-draining loam',
-                fertilizer: 'Balanced NPK (10-10-10) every 4 weeks',
+                idealHumidityMax: 75,
+                waterPerDay: 180,
+                sunlight: 'Full sun to partial shade',
+                soil: 'Well-draining loam, pH 6.0-6.5',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Rust', description: 'Orange spots. Apply fungicide.' },
-                    { name: 'Powdery Mildew', description: 'White spots. Improve air circulation.' }
+                    { name: 'Damping Off', description: 'Seedlings collapse. Use sterile soil.' },
+                    { name: 'Leaf Blight', description: 'Brown spots. Apply fungicide.' }
                 ],
                 care: [
                     'Water regularly to keep soil moist.',
-                    'Harvest leaves frequently to encourage growth.',
-                    'Container planting recommended to control spread.',
-                    'Prune back in late summer.'
+                    'Harvest leaves when young and tender.',
+                    'Apply side dressing of nitrogen-rich fertilizer.',
+                    'Plant in cool season for best quality.'
                 ],
-                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 40,
-                description: 'Mint, refreshing herb for drinks and dishes. Grows vigorously in moist soil.',
-                reason: 'Mint is a versatile herb that grows well in the Philippines\' warm climate, especially in partial shade.'
+                plantingMonths: [1, 2, 9, 10, 11, 12],
+                daysToHarvest: 35,
+                description: 'Bok choy, a fast-growing leafy green. Prefers cooler weather.',
+                reason: 'Pechay is a quick-growing vegetable that can be planted during the cooler months.'
             }, {
-                id: 'malunggay',
-                name: 'Malunggay (Moringa)',
-                sci: 'Moringa oleifera',
-                icon: 'fa-tree',
-                iconColor: '#33691e',
+                id: 'mustasa',
+                name: 'Mustasa (Mustard)',
+                sci: 'Brassica juncea',
+                icon: '🥬',
                 category: 'leafy',
-                idealTempMin: 22,
-                idealTempMax: 35,
+                idealTempMin: 15,
+                idealTempMax: 28,
                 idealHumidityMin: 40,
-                idealHumidityMax: 85,
-                waterPerDay: 200,
-                sunlight: 'Full sun',
-                soil: 'Well-draining sandy loam, pH 6.0-7.0',
-                fertilizer: 'Organic compost, low nitrogen',
+                idealHumidityMax: 75,
+                waterPerDay: 150,
+                sunlight: 'Full sun to partial shade',
+                soil: 'Well-draining loam, pH 6.0-6.8',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Root Rot', description: 'Avoid overwatering.' },
-                    { name: 'Leaf Spot', description: 'Brown spots. Remove infected leaves.' }
+                    { name: 'Downy Mildew', description: 'Yellow spots. Improve air circulation.' },
+                    { name: 'Aphids', description: 'Sticky residue. Use insecticidal soap.' }
                 ],
                 care: [
-                    'Water moderately, allow soil to dry between watering.',
-                    'Harvest leaves and pods regularly.',
-                    'Prune to maintain shape and encourage new growth.',
-                    'Mulch to retain moisture.'
+                    'Water consistently to prevent bitterness.',
+                    'Harvest leaves when young.',
+                    'Sow seeds directly in garden.',
+                    'Thin seedlings to 4-6" apart.'
                 ],
-                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 60,
-                description: 'Moringa, a superfood rich in nutrients. Thrives in tropical climates.',
-                reason: 'Malunggay is a highly nutritious plant that grows easily in the Philippines, providing leaves and pods year-round.'
+                plantingMonths: [1, 2, 9, 10, 11, 12],
+                daysToHarvest: 30,
+                description: 'Mustard greens, fast-growing and peppery. Best in cool weather.',
+                reason: 'Mustasa is a leafy green that grows well in the Philippines during the cooler dry season.'
+            }, {
+                id: 'letsugas',
+                name: 'Letsugas (Lettuce)',
+                sci: 'Lactuca sativa',
+                icon: '🥬',
+                category: 'leafy',
+                idealTempMin: 12,
+                idealTempMax: 24,
+                idealHumidityMin: 35,
+                idealHumidityMax: 70,
+                waterPerDay: 160,
+                sunlight: 'Full sun to partial shade',
+                soil: 'Well-draining loam, pH 6.0-6.5',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
+                diseases: [
+                    { name: 'Downy Mildew', description: 'Yellow spots. Avoid overhead watering.' },
+                    { name: 'Tip Burn', description: 'Brown edges. Maintain consistent moisture.' }
+                ],
+                care: [
+                    'Water regularly to keep soil moist.',
+                    'Harvest leaves when young and tender.',
+                    'Plant in cool weather for best quality.',
+                    'Shade during hot spells to prevent bolting.'
+                ],
+                plantingMonths: [1, 2, 3, 9, 10, 11, 12],
+                daysToHarvest: 45,
+                description: 'Lettuce, a cool-season leafy green. Best in mild weather.',
+                reason: 'Lettuce is best grown in the Philippines during the cooler months, as it bolts in high heat.'
             }, {
                 id: 'alugbati',
                 name: 'Alugbati (Malabar Spinach)',
                 sci: 'Basella alba',
-                icon: 'fa-leaf',
-                iconColor: '#4caf50',
+                icon: '🌿',
                 category: 'leafy',
                 idealTempMin: 22,
                 idealTempMax: 35,
@@ -2148,8 +2027,7 @@
                 id: 'talinum',
                 name: 'Talinum (Waterleaf)',
                 sci: 'Talinum fruticosum',
-                icon: 'fa-leaf',
-                iconColor: '#66bb6a',
+                icon: '🌿',
                 category: 'leafy',
                 idealTempMin: 20,
                 idealTempMax: 32,
@@ -2177,8 +2055,7 @@
                 id: 'saluyot',
                 name: 'Saluyot (Jute Leaves)',
                 sci: 'Corchorus olitorius',
-                icon: 'fa-leaf',
-                iconColor: '#558b2f',
+                icon: '🌿',
                 category: 'leafy',
                 idealTempMin: 22,
                 idealTempMax: 35,
@@ -2206,8 +2083,7 @@
                 id: 'kulitis',
                 name: 'Kulitis (Amaranth)',
                 sci: 'Amaranthus viridis',
-                icon: 'fa-leaf',
-                iconColor: '#7cb342',
+                icon: '🌿',
                 category: 'leafy',
                 idealTempMin: 20,
                 idealTempMax: 35,
@@ -2232,40 +2108,38 @@
                 description: 'Amaranth leaves, a nutritious green used in soups and stews.',
                 reason: 'Kulitis is a common leafy vegetable in the Philippines, easy to grow in warm weather.'
             }, {
-                id: 'labong',
-                name: 'Labong (Bamboo Shoot)',
-                sci: 'Bambusa spp.',
-                icon: 'fa-tree',
-                iconColor: '#8d6e63',
-                category: 'vegetable',
+                id: 'malunggay',
+                name: 'Malunggay (Moringa)',
+                sci: 'Moringa oleifera',
+                icon: '🌿',
+                category: 'leafy',
                 idealTempMin: 22,
                 idealTempMax: 35,
-                idealHumidityMin: 50,
-                idealHumidityMax: 90,
-                waterPerDay: 300,
-                sunlight: 'Full sun to partial shade',
-                soil: 'Moist, well-draining loam',
-                fertilizer: 'Balanced NPK (10-10-10) every 3 months',
+                idealHumidityMin: 40,
+                idealHumidityMax: 85,
+                waterPerDay: 200,
+                sunlight: 'Full sun',
+                soil: 'Well-draining sandy loam, pH 6.0-7.0',
+                fertilizer: 'Organic compost, low nitrogen',
                 diseases: [
-                    { name: 'Bamboo Mosaic', description: 'Mottled leaves. Control aphids.' },
-                    { name: 'Root Rot', description: 'Improve drainage.' }
+                    { name: 'Root Rot', description: 'Avoid overwatering.' },
+                    { name: 'Leaf Spot', description: 'Brown spots. Remove infected leaves.' }
                 ],
                 care: [
-                    'Maintain consistent moisture.',
-                    'Harvest shoots when they are 12-15 inches tall.',
-                    'Remove outer leaves before cooking to reduce bitterness.',
-                    'Apply mulch to retain moisture.'
+                    'Water moderately, allow soil to dry between watering.',
+                    'Harvest leaves and pods regularly.',
+                    'Prune to maintain shape and encourage new growth.',
+                    'Mulch to retain moisture.'
                 ],
                 plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
                 daysToHarvest: 60,
-                description: 'Bamboo shoots, a crunchy vegetable used in various dishes.',
-                reason: 'Labong is widely available in the Philippines, especially during the rainy season.'
+                description: 'Moringa, a superfood rich in nutrients. Thrives in tropical climates.',
+                reason: 'Malunggay is a highly nutritious plant that grows easily in the Philippines, providing leaves and pods year-round.'
             }, {
                 id: 'pako',
                 name: 'Pako (Fern)',
                 sci: 'Diplazium esculentum',
-                icon: 'fa-leaf',
-                iconColor: '#2e7d32',
+                icon: '🌿',
                 category: 'leafy',
                 idealTempMin: 20,
                 idealTempMax: 30,
@@ -2290,11 +2164,318 @@
                 description: 'Edible fern, a popular vegetable in the Philippines. Grows in shaded, moist areas.',
                 reason: 'Pako thrives in the Philippines\' humid conditions, often found near streams and in forests.'
             }, {
+                id: 'labong',
+                name: 'Labong (Bamboo Shoot)',
+                sci: 'Bambusa spp.',
+                icon: '🎋',
+                category: 'vegetable',
+                idealTempMin: 22,
+                idealTempMax: 35,
+                idealHumidityMin: 50,
+                idealHumidityMax: 90,
+                waterPerDay: 300,
+                sunlight: 'Full sun to partial shade',
+                soil: 'Moist, well-draining loam',
+                fertilizer: 'Balanced NPK (10-10-10) every 3 months',
+                diseases: [
+                    { name: 'Bamboo Mosaic', description: 'Mottled leaves. Control aphids.' },
+                    { name: 'Root Rot', description: 'Improve drainage.' }
+                ],
+                care: [
+                    'Maintain consistent moisture.',
+                    'Harvest shoots when they are 12-15 inches tall.',
+                    'Remove outer leaves before cooking to reduce bitterness.',
+                    'Apply mulch to retain moisture.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 60,
+                description: 'Bamboo shoots, a crunchy vegetable used in various dishes.',
+                reason: 'Labong is widely available in the Philippines, especially during the rainy season.'
+            }, {
+                id: 'sigarilyas',
+                name: 'Sigarilyas (Winged Bean)',
+                sci: 'Psophocarpus tetragonolobus',
+                icon: '🫘',
+                category: 'vegetable',
+                idealTempMin: 22,
+                idealTempMax: 32,
+                idealHumidityMin: 50,
+                idealHumidityMax: 85,
+                waterPerDay: 250,
+                sunlight: 'Full sun',
+                soil: 'Well-draining loam, pH 6.0-6.5',
+                fertilizer: 'Balanced NPK (10-10-10) every month',
+                diseases: [
+                    { name: 'Powdery Mildew', description: 'White spots. Apply sulfur.' },
+                    { name: 'Aphids', description: 'Use insecticidal soap.' }
+                ],
+                care: [
+                    'Water consistently, especially during flowering.',
+                    'Provide trellis for climbing vines.',
+                    'Harvest pods when young and tender.',
+                    'Apply organic mulch.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 70,
+                description: 'Winged bean, all parts are edible. High in protein and grows well in warm climates.',
+                reason: 'Sigarilyas is a nutritious vegetable that grows well in the Philippines\' tropical conditions.'
+            }, {
+                id: 'bataw',
+                name: 'Bataw (Hyacinth Bean)',
+                sci: 'Lablab purpureus',
+                icon: '🫘',
+                category: 'vegetable',
+                idealTempMin: 20,
+                idealTempMax: 32,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 200,
+                sunlight: 'Full sun',
+                soil: 'Well-draining loam, pH 6.0-6.5',
+                fertilizer: 'Balanced NPK (10-10-10) every month',
+                diseases: [
+                    { name: 'Bean Rust', description: 'Brown spots. Apply sulfur.' },
+                    { name: 'Aphids', description: 'Use insecticidal soap.' }
+                ],
+                care: [
+                    'Water moderately, avoid waterlogging.',
+                    'Provide trellis for climbing.',
+                    'Harvest pods when young and tender.',
+                    'Mulch to retain moisture.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 80,
+                description: 'Hyacinth bean, edible pods and seeds. Grows well in warm, humid climates.',
+                reason: 'Bataw is a common backyard vegetable in the Philippines, valued for its nutritious pods.'
+            }, {
+                id: 'patani',
+                name: 'Patani (Lima Bean)',
+                sci: 'Phaseolus lunatus',
+                icon: '🫘',
+                category: 'vegetable',
+                idealTempMin: 20,
+                idealTempMax: 30,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 200,
+                sunlight: 'Full sun',
+                soil: 'Well-draining loam, pH 6.0-6.5',
+                fertilizer: 'Balanced NPK (10-10-10) every month',
+                diseases: [
+                    { name: 'Root Rot', description: 'Avoid overwatering.' },
+                    { name: 'Aphids', description: 'Use insecticidal soap.' }
+                ],
+                care: [
+                    'Water moderately.',
+                    'Provide trellis for climbing varieties.',
+                    'Harvest pods when dry or young.',
+                    'Mulch to retain moisture.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 90,
+                description: 'Lima bean, a protein-rich legume. Grows well in warm climates.',
+                reason: 'Patani is a nutritious bean that thrives in the Philippines\' tropical weather.'
+            }, {
+                id: 'luya',
+                name: 'Luya (Ginger)',
+                sci: 'Zingiber officinale',
+                icon: '🫚',
+                category: 'herb',
+                idealTempMin: 22,
+                idealTempMax: 32,
+                idealHumidityMin: 50,
+                idealHumidityMax: 85,
+                waterPerDay: 200,
+                sunlight: 'Partial shade to full sun',
+                soil: 'Rich, well-draining loam, pH 5.5-6.5',
+                fertilizer: 'Organic compost, low nitrogen',
+                diseases: [
+                    { name: 'Bacterial Wilt', description: 'Yellowing and wilting. Remove infected plants.' },
+                    { name: 'Rhizome Rot', description: 'Soft rhizomes. Improve drainage.' }
+                ],
+                care: [
+                    'Water regularly but avoid waterlogging.',
+                    'Mulch heavily to retain moisture.',
+                    'Harvest after 8-10 months when leaves yellow.',
+                    'Apply compost as side dressing.'
+                ],
+                plantingMonths: [2, 3, 4, 5, 6, 7],
+                daysToHarvest: 270,
+                description: 'Ginger, a tropical rhizome used in cooking and medicine.',
+                reason: 'Ginger thrives in the warm, humid conditions of the Philippines.'
+            }, {
+                id: 'bawang',
+                name: 'Bawang (Garlic)',
+                sci: 'Allium sativum',
+                icon: '🧄',
+                category: 'herb',
+                idealTempMin: 15,
+                idealTempMax: 28,
+                idealHumidityMin: 35,
+                idealHumidityMax: 70,
+                waterPerDay: 150,
+                sunlight: 'Full sun',
+                soil: 'Well-draining sandy loam, pH 6.0-7.0',
+                fertilizer: 'Balanced NPK (10-10-10) at planting',
+                diseases: [
+                    { name: 'White Rot', description: 'White fluffy growth on bulbs. Avoid planting in infected soil.' },
+                    { name: 'Rust', description: 'Orange spots. Apply fungicide.' }
+                ],
+                care: [
+                    'Water moderately, reduce before harvest.',
+                    'Plant cloves point up, 2" deep.',
+                    'Harvest when lower leaves turn brown.',
+                    'Cure bulbs in dry, airy place.'
+                ],
+                plantingMonths: [1, 2, 3, 9, 10, 11, 12],
+                daysToHarvest: 120,
+                description: 'Garlic, essential in cooking. Grows best in cool weather with well-draining soil.',
+                reason: 'Garlic is best planted in the Philippines during the cooler months.'
+            }, {
+                id: 'sibuyas',
+                name: 'Sibuyas (Onion)',
+                sci: 'Allium cepa',
+                icon: '🧅',
+                category: 'herb',
+                idealTempMin: 15,
+                idealTempMax: 28,
+                idealHumidityMin: 35,
+                idealHumidityMax: 70,
+                waterPerDay: 180,
+                sunlight: 'Full sun',
+                soil: 'Well-draining sandy loam, pH 6.0-6.8',
+                fertilizer: 'Balanced NPK (10-10-10) every 3 weeks',
+                diseases: [
+                    { name: 'Downy Mildew', description: 'Yellow spots. Improve air circulation.' },
+                    { name: 'Bulb Rot', description: 'Soft bulbs. Avoid overwatering.' }
+                ],
+                care: [
+                    'Water deeply but infrequently.',
+                    'Harvest when tops fall over and turn brown.',
+                    'Cure bulbs in dry, shaded place.',
+                    'Plant in raised beds for better drainage.'
+                ],
+                plantingMonths: [1, 2, 3, 9, 10, 11, 12],
+                daysToHarvest: 100,
+                description: 'Onion, a kitchen staple. Requires cool weather for bulb formation.',
+                reason: 'Onions are a cool-season crop in the Philippines, best planted during the dry season.'
+            }, {
+                id: 'tanglad',
+                name: 'Tanglad (Lemongrass)',
+                sci: 'Cymbopogon citratus',
+                icon: '🌿',
+                category: 'herb',
+                idealTempMin: 20,
+                idealTempMax: 35,
+                idealHumidityMin: 40,
+                idealHumidityMax: 85,
+                waterPerDay: 150,
+                sunlight: 'Full sun',
+                soil: 'Well-draining loam, pH 6.0-7.0',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
+                diseases: [
+                    { name: 'Rust', description: 'Orange pustules. Apply fungicide.' },
+                    { name: 'Leaf Blight', description: 'Brown spots. Remove infected leaves.' }
+                ],
+                care: [
+                    'Water regularly, but do not overwater.',
+                    'Harvest stalks when they are thick and aromatic.',
+                    'Divide clumps every 2-3 years.',
+                    'Apply compost around plants.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 120,
+                description: 'Lemongrass, used for tea and cooking. Grows easily in tropical climate.',
+                reason: 'Lemongrass is a low-maintenance herb that thrives in the Philippines\' warm weather.'
+            }, {
+                id: 'oregano',
+                name: 'Oregano (Mexican)',
+                sci: 'Lippia graveolens',
+                icon: '🌿',
+                category: 'herb',
+                idealTempMin: 18,
+                idealTempMax: 30,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 100,
+                sunlight: 'Full sun',
+                soil: 'Well-draining sandy loam, pH 6.0-7.0',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
+                diseases: [
+                    { name: 'Root Rot', description: 'Avoid overwatering.' },
+                    { name: 'Aphids', description: 'Use insecticidal soap.' }
+                ],
+                care: [
+                    'Water moderately, allow soil to dry between watering.',
+                    'Prune regularly to encourage bushy growth.',
+                    'Harvest leaves before flowering for best flavor.',
+                    'Plant in raised beds for better drainage.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 60,
+                description: 'Oregano, a versatile herb for cooking. Thrives in warm, dry conditions.',
+                reason: 'Oregano grows well in the Philippines\' warm climate, especially in well-drained soil.'
+            }, {
+                id: 'basil',
+                name: 'Basil (Sweet Basil)',
+                sci: 'Ocimum basilicum',
+                icon: '🌿',
+                category: 'herb',
+                idealTempMin: 20,
+                idealTempMax: 30,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 120,
+                sunlight: 'Full sun',
+                soil: 'Well-draining loam, pH 6.0-7.0',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
+                diseases: [
+                    { name: 'Fusarium Wilt', description: 'Yellowing and wilting. Use resistant varieties.' },
+                    { name: 'Downy Mildew', description: 'Yellow spots. Avoid overhead watering.' }
+                ],
+                care: [
+                    'Water regularly, keep soil moist.',
+                    'Pinch flowers to encourage leaf growth.',
+                    'Harvest leaves in the morning for best flavor.',
+                    'Apply organic mulch.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 45,
+                description: 'Sweet basil, essential for many dishes. Grows well in warm weather.',
+                reason: 'Basil is a popular herb in the Philippines, easy to grow in pots or gardens.'
+            }, {
+                id: 'mint',
+                name: 'Mint (Mint)',
+                sci: 'Mentha spicata',
+                icon: '🌿',
+                category: 'herb',
+                idealTempMin: 18,
+                idealTempMax: 28,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 150,
+                sunlight: 'Partial shade to full sun',
+                soil: 'Moist, well-draining loam',
+                fertilizer: 'Balanced NPK (10-10-10) every 4 weeks',
+                diseases: [
+                    { name: 'Rust', description: 'Orange spots. Apply fungicide.' },
+                    { name: 'Powdery Mildew', description: 'White spots. Improve air circulation.' }
+                ],
+                care: [
+                    'Water regularly to keep soil moist.',
+                    'Harvest leaves frequently to encourage growth.',
+                    'Container planting recommended to control spread.',
+                    'Prune back in late summer.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 40,
+                description: 'Mint, refreshing herb for drinks and dishes. Grows vigorously in moist soil.',
+                reason: 'Mint is a versatile herb that grows well in the Philippines\' warm climate, especially in partial shade.'
+            }, {
                 id: 'saging',
                 name: 'Saging (Banana)',
                 sci: 'Musa spp.',
-                icon: 'fa-banana',
-                iconColor: '#f1c40f',
+                icon: '🍌',
                 category: 'fruit',
                 idealTempMin: 22,
                 idealTempMax: 34,
@@ -2322,8 +2503,7 @@
                 id: 'mangga',
                 name: 'Mangga (Mango)',
                 sci: 'Mangifera indica',
-                icon: 'fa-apple-whole',
-                iconColor: '#f39c12',
+                icon: '🥭',
                 category: 'fruit',
                 idealTempMin: 24,
                 idealTempMax: 38,
@@ -2351,8 +2531,7 @@
                 id: 'pinya',
                 name: 'Pinya (Pineapple)',
                 sci: 'Ananas comosus',
-                icon: 'fa-pineapple',
-                iconColor: '#f39c12',
+                icon: '🍍',
                 category: 'fruit',
                 idealTempMin: 22,
                 idealTempMax: 35,
@@ -2380,8 +2559,7 @@
                 id: 'papaya',
                 name: 'Papaya',
                 sci: 'Carica papaya',
-                icon: 'fa-papaya',
-                iconColor: '#f9a825',
+                icon: '🥭', // papaya emoji not available, using mango as close
                 category: 'fruit',
                 idealTempMin: 22,
                 idealTempMax: 32,
@@ -2409,8 +2587,7 @@
                 id: 'bayabas',
                 name: 'Bayabas (Guava)',
                 sci: 'Psidium guajava',
-                icon: 'fa-apple-whole',
-                iconColor: '#7cb342',
+                icon: '🍐',
                 category: 'fruit',
                 idealTempMin: 20,
                 idealTempMax: 32,
@@ -2438,8 +2615,7 @@
                 id: 'atis',
                 name: 'Atis (Sugar Apple)',
                 sci: 'Annona squamosa',
-                icon: 'fa-apple-whole',
-                iconColor: '#a1887f',
+                icon: '🍏',
                 category: 'fruit',
                 idealTempMin: 22,
                 idealTempMax: 35,
@@ -2464,214 +2640,10 @@
                 description: 'Sugar apple, a sweet tropical fruit with creamy texture.',
                 reason: 'Atis is a popular fruit in the Philippines, thriving in warm, dry areas.'
             }, {
-                id: 'rambutan',
-                name: 'Rambutan',
-                sci: 'Nephelium lappaceum',
-                icon: 'fa-rambutan',
-                iconColor: '#c0392b',
-                category: 'fruit',
-                idealTempMin: 22,
-                idealTempMax: 32,
-                idealHumidityMin: 50,
-                idealHumidityMax: 85,
-                waterPerDay: 400,
-                sunlight: 'Full sun',
-                soil: 'Rich, well-draining loam, pH 5.5-6.5',
-                fertilizer: 'Balanced NPK (10-10-10) every 3 months',
-                diseases: [
-                    { name: 'Fruit Rot', description: 'Brown spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Improve drainage.' }
-                ],
-                care: [
-                    'Water deeply, especially during fruiting.',
-                    'Harvest when spines are bright red.',
-                    'Apply mulch to retain moisture.',
-                    'Protect from strong winds.'
-                ],
-                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 120,
-                description: 'Rambutan, a hairy tropical fruit with sweet flesh. Native to Southeast Asia.',
-                reason: 'Rambutan is widely grown in the Philippines, especially in Mindanao, thriving in humid, tropical conditions.'
-            }, {
-                id: 'lanzones',
-                name: 'Lanzones',
-                sci: 'Lansium domesticum',
-                icon: 'fa-lanzones',
-                iconColor: '#d4a373',
-                category: 'fruit',
-                idealTempMin: 22,
-                idealTempMax: 32,
-                idealHumidityMin: 50,
-                idealHumidityMax: 85,
-                waterPerDay: 400,
-                sunlight: 'Full sun to partial shade',
-                soil: 'Well-draining loam, pH 6.0-7.0',
-                fertilizer: 'Balanced NPK (10-10-10) every 3 months',
-                diseases: [
-                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Avoid overwatering.' }
-                ],
-                care: [
-                    'Water deeply, especially during flowering and fruiting.',
-                    'Harvest when skin is pale yellow.',
-                    'Apply mulch and compost.',
-                    'Protect from strong winds.'
-                ],
-                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 150,
-                description: 'Lanzones, a sweet and tangy tropical fruit. Popular in the Philippines.',
-                reason: 'Lanzones is a major fruit crop in the Philippines, especially in the Visayas, thriving in tropical climates.'
-            }, {
-                id: 'durian',
-                name: 'Durian',
-                sci: 'Durio zibethinus',
-                icon: 'fa-durian',
-                iconColor: '#b8860b',
-                category: 'fruit',
-                idealTempMin: 24,
-                idealTempMax: 34,
-                idealHumidityMin: 50,
-                idealHumidityMax: 90,
-                waterPerDay: 500,
-                sunlight: 'Full sun',
-                soil: 'Rich, well-draining loam, pH 5.5-6.5',
-                fertilizer: 'Balanced NPK (10-10-10) every 3 months',
-                diseases: [
-                    { name: 'Fruit Rot', description: 'Brown spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Improve drainage.' }
-                ],
-                care: [
-                    'Water deeply, especially during flowering and fruiting.',
-                    'Harvest when fruit falls naturally or cracks open.',
-                    'Apply compost and mulch.',
-                    'Protect from strong winds.'
-                ],
-                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 180,
-                description: 'Durian, the "king of fruits" with a strong aroma and creamy flesh.',
-                reason: 'Durian is a prized fruit in the Philippines, especially in Mindanao, requiring hot, humid conditions.'
-            }, {
-                id: 'marang',
-                name: 'Marang',
-                sci: 'Artocarpus odoratissimus',
-                icon: 'fa-fruit',
-                iconColor: '#d4a373',
-                category: 'fruit',
-                idealTempMin: 22,
-                idealTempMax: 32,
-                idealHumidityMin: 50,
-                idealHumidityMax: 90,
-                waterPerDay: 400,
-                sunlight: 'Full sun',
-                soil: 'Rich, well-draining loam, pH 6.0-7.0',
-                fertilizer: 'Balanced NPK (10-10-10) every 3 months',
-                diseases: [
-                    { name: 'Fruit Rot', description: 'Brown spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Avoid overwatering.' }
-                ],
-                care: [
-                    'Water deeply, especially during fruiting.',
-                    'Harvest when fruit is soft and aromatic.',
-                    'Apply mulch and compost.',
-                    'Protect from strong winds.'
-                ],
-                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 150,
-                description: 'Marang, a tropical fruit with sweet, custard-like flesh. Similar to jackfruit.',
-                reason: 'Marang is grown in the southern Philippines, thriving in warm, humid conditions.'
-            }, {
-                id: 'santol',
-                name: 'Santol',
-                sci: 'Sandoricum koetjape',
-                icon: 'fa-apple-whole',
-                iconColor: '#f5cba7',
-                category: 'fruit',
-                idealTempMin: 22,
-                idealTempMax: 34,
-                idealHumidityMin: 40,
-                idealHumidityMax: 80,
-                waterPerDay: 350,
-                sunlight: 'Full sun',
-                soil: 'Well-draining loam, pH 6.0-7.0',
-                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
-                diseases: [
-                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' },
-                    { name: 'Fruit Fly', description: 'Use baited traps.' }
-                ],
-                care: [
-                    'Water deeply during dry spells.',
-                    'Harvest when fruit turns yellow.',
-                    'Prune to maintain shape.',
-                    'Apply mulch.'
-                ],
-                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 150,
-                description: 'Santol, a tropical fruit with sweet and sour pulp. Eaten fresh or preserved.',
-                reason: 'Santol is a common fruit tree in the Philippines, thriving in warm, well-drained soils.'
-            }, {
-                id: 'sinigwelas',
-                name: 'Sinigwelas (Spanish Plum)',
-                sci: 'Spondias purpurea',
-                icon: 'fa-apple-whole',
-                iconColor: '#b71c1c',
-                category: 'fruit',
-                idealTempMin: 22,
-                idealTempMax: 35,
-                idealHumidityMin: 40,
-                idealHumidityMax: 80,
-                waterPerDay: 300,
-                sunlight: 'Full sun',
-                soil: 'Well-draining sandy loam, pH 5.5-6.5',
-                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
-                diseases: [
-                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Avoid overwatering.' }
-                ],
-                care: [
-                    'Water moderately.',
-                    'Harvest when fruit turns yellow-red.',
-                    'Prune to maintain shape.',
-                    'Mulch to retain moisture.'
-                ],
-                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 120,
-                description: 'Spanish plum, a sour fruit used for making juices and preserves.',
-                reason: 'Sinigwelas is a hardy fruit tree that grows well in the Philippines\' tropical climate.'
-            }, {
-                id: 'duhat',
-                name: 'Duhat (Java Plum)',
-                sci: 'Syzygium cumini',
-                icon: 'fa-apple-whole',
-                iconColor: '#4a148c',
-                category: 'fruit',
-                idealTempMin: 22,
-                idealTempMax: 35,
-                idealHumidityMin: 40,
-                idealHumidityMax: 80,
-                waterPerDay: 300,
-                sunlight: 'Full sun',
-                soil: 'Well-draining loam, pH 6.0-7.0',
-                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
-                diseases: [
-                    { name: 'Fruit Fly', description: 'Use baited traps.' },
-                    { name: 'Leaf Spot', description: 'Brown spots. Apply fungicide.' }
-                ],
-                care: [
-                    'Water deeply during dry periods.',
-                    'Harvest when fruit is dark purple.',
-                    'Prune to maintain shape.',
-                    'Apply mulch.'
-                ],
-                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                daysToHarvest: 150,
-                description: 'Java plum, a small dark fruit with a sweet-tart taste. Used for wine and juice.',
-                reason: 'Duhat is a common tree in the Philippines, thriving in warm, well-drained soils.'
-            }, {
                 id: 'guyabano',
                 name: 'Guyabano (Soursop)',
                 sci: 'Annona muricata',
-                icon: 'fa-apple-whole',
-                iconColor: '#2e7d32',
+                icon: '🍐',
                 category: 'fruit',
                 idealTempMin: 22,
                 idealTempMax: 32,
@@ -2699,8 +2671,7 @@
                 id: 'langka',
                 name: 'Langka (Jackfruit)',
                 sci: 'Artocarpus heterophyllus',
-                icon: 'fa-fruit',
-                iconColor: '#f39c12',
+                icon: '🍈',
                 category: 'fruit',
                 idealTempMin: 22,
                 idealTempMax: 34,
@@ -2725,11 +2696,206 @@
                 description: 'Jackfruit, the largest tree fruit, with sweet, yellow flesh. Used in many dishes.',
                 reason: 'Langka is a major fruit crop in the Philippines, thriving in tropical climates with abundant rainfall.'
             }, {
+                id: 'marang',
+                name: 'Marang',
+                sci: 'Artocarpus odoratissimus',
+                icon: '🍈',
+                category: 'fruit',
+                idealTempMin: 22,
+                idealTempMax: 32,
+                idealHumidityMin: 50,
+                idealHumidityMax: 90,
+                waterPerDay: 400,
+                sunlight: 'Full sun',
+                soil: 'Rich, well-draining loam, pH 6.0-7.0',
+                fertilizer: 'Balanced NPK (10-10-10) every 3 months',
+                diseases: [
+                    { name: 'Fruit Rot', description: 'Brown spots. Apply fungicide.' },
+                    { name: 'Root Rot', description: 'Avoid overwatering.' }
+                ],
+                care: [
+                    'Water deeply, especially during fruiting.',
+                    'Harvest when fruit is soft and aromatic.',
+                    'Apply mulch and compost.',
+                    'Protect from strong winds.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 150,
+                description: 'Marang, a tropical fruit with sweet, custard-like flesh. Similar to jackfruit.',
+                reason: 'Marang is grown in the southern Philippines, thriving in warm, humid conditions.'
+            }, {
+                id: 'durian',
+                name: 'Durian',
+                sci: 'Durio zibethinus',
+                icon: '🍈',
+                category: 'fruit',
+                idealTempMin: 24,
+                idealTempMax: 34,
+                idealHumidityMin: 50,
+                idealHumidityMax: 90,
+                waterPerDay: 500,
+                sunlight: 'Full sun',
+                soil: 'Rich, well-draining loam, pH 5.5-6.5',
+                fertilizer: 'Balanced NPK (10-10-10) every 3 months',
+                diseases: [
+                    { name: 'Fruit Rot', description: 'Brown spots. Apply fungicide.' },
+                    { name: 'Root Rot', description: 'Improve drainage.' }
+                ],
+                care: [
+                    'Water deeply, especially during flowering and fruiting.',
+                    'Harvest when fruit falls naturally or cracks open.',
+                    'Apply compost and mulch.',
+                    'Protect from strong winds.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 180,
+                description: 'Durian, the "king of fruits" with a strong aroma and creamy flesh.',
+                reason: 'Durian is a prized fruit in the Philippines, especially in Mindanao, requiring hot, humid conditions.'
+            }, {
+                id: 'rambutan',
+                name: 'Rambutan',
+                sci: 'Nephelium lappaceum',
+                icon: '🍇',
+                category: 'fruit',
+                idealTempMin: 22,
+                idealTempMax: 32,
+                idealHumidityMin: 50,
+                idealHumidityMax: 85,
+                waterPerDay: 400,
+                sunlight: 'Full sun',
+                soil: 'Rich, well-draining loam, pH 5.5-6.5',
+                fertilizer: 'Balanced NPK (10-10-10) every 3 months',
+                diseases: [
+                    { name: 'Fruit Rot', description: 'Brown spots. Apply fungicide.' },
+                    { name: 'Root Rot', description: 'Improve drainage.' }
+                ],
+                care: [
+                    'Water deeply, especially during fruiting.',
+                    'Harvest when spines are bright red.',
+                    'Apply mulch to retain moisture.',
+                    'Protect from strong winds.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 120,
+                description: 'Rambutan, a hairy tropical fruit with sweet flesh. Native to Southeast Asia.',
+                reason: 'Rambutan is widely grown in the Philippines, especially in Mindanao, thriving in humid, tropical conditions.'
+            }, {
+                id: 'lanzones',
+                name: 'Lanzones',
+                sci: 'Lansium domesticum',
+                icon: '🍇',
+                category: 'fruit',
+                idealTempMin: 22,
+                idealTempMax: 32,
+                idealHumidityMin: 50,
+                idealHumidityMax: 85,
+                waterPerDay: 400,
+                sunlight: 'Full sun to partial shade',
+                soil: 'Well-draining loam, pH 6.0-7.0',
+                fertilizer: 'Balanced NPK (10-10-10) every 3 months',
+                diseases: [
+                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' },
+                    { name: 'Root Rot', description: 'Avoid overwatering.' }
+                ],
+                care: [
+                    'Water deeply, especially during flowering and fruiting.',
+                    'Harvest when skin is pale yellow.',
+                    'Apply mulch and compost.',
+                    'Protect from strong winds.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 150,
+                description: 'Lanzones, a sweet and tangy tropical fruit. Popular in the Philippines.',
+                reason: 'Lanzones is a major fruit crop in the Philippines, especially in the Visayas, thriving in tropical climates.'
+            }, {
+                id: 'santol',
+                name: 'Santol',
+                sci: 'Sandoricum koetjape',
+                icon: '🍏',
+                category: 'fruit',
+                idealTempMin: 22,
+                idealTempMax: 34,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 350,
+                sunlight: 'Full sun',
+                soil: 'Well-draining loam, pH 6.0-7.0',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
+                diseases: [
+                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' },
+                    { name: 'Fruit Fly', description: 'Use baited traps.' }
+                ],
+                care: [
+                    'Water deeply during dry spells.',
+                    'Harvest when fruit turns yellow.',
+                    'Prune to maintain shape.',
+                    'Apply mulch.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 150,
+                description: 'Santol, a tropical fruit with sweet and sour pulp. Eaten fresh or preserved.',
+                reason: 'Santol is a common fruit tree in the Philippines, thriving in warm, well-drained soils.'
+            }, {
+                id: 'sinigwelas',
+                name: 'Sinigwelas (Spanish Plum)',
+                sci: 'Spondias purpurea',
+                icon: '🍒',
+                category: 'fruit',
+                idealTempMin: 22,
+                idealTempMax: 35,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 300,
+                sunlight: 'Full sun',
+                soil: 'Well-draining sandy loam, pH 5.5-6.5',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
+                diseases: [
+                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' },
+                    { name: 'Root Rot', description: 'Avoid overwatering.' }
+                ],
+                care: [
+                    'Water moderately.',
+                    'Harvest when fruit turns yellow-red.',
+                    'Prune to maintain shape.',
+                    'Mulch to retain moisture.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 120,
+                description: 'Spanish plum, a sour fruit used for making juices and preserves.',
+                reason: 'Sinigwelas is a hardy fruit tree that grows well in the Philippines\' tropical climate.'
+            }, {
+                id: 'duhat',
+                name: 'Duhat (Java Plum)',
+                sci: 'Syzygium cumini',
+                icon: '🍇',
+                category: 'fruit',
+                idealTempMin: 22,
+                idealTempMax: 35,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 300,
+                sunlight: 'Full sun',
+                soil: 'Well-draining loam, pH 6.0-7.0',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
+                diseases: [
+                    { name: 'Fruit Fly', description: 'Use baited traps.' },
+                    { name: 'Leaf Spot', description: 'Brown spots. Apply fungicide.' }
+                ],
+                care: [
+                    'Water deeply during dry periods.',
+                    'Harvest when fruit is dark purple.',
+                    'Prune to maintain shape.',
+                    'Apply mulch.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 150,
+                description: 'Java plum, a small dark fruit with a sweet-tart taste. Used for wine and juice.',
+                reason: 'Duhat is a common tree in the Philippines, thriving in warm, well-drained soils.'
+            }, {
                 id: 'kaimito',
                 name: 'Kaimito (Caimito)',
                 sci: 'Chrysophyllum cainito',
-                icon: 'fa-apple-whole',
-                iconColor: '#8e24aa',
+                icon: '🍇',
                 category: 'fruit',
                 idealTempMin: 22,
                 idealTempMax: 32,
@@ -2753,9 +2919,177 @@
                 daysToHarvest: 150,
                 description: 'Caimito, a purple fruit with sweet, gelatinous flesh. Also known as star apple.',
                 reason: 'Kaimito is a common fruit tree in the Philippines, thriving in warm, humid conditions.'
+            }, {
+                id: 'abokado',
+                name: 'Abokado (Avocado)',
+                sci: 'Persea americana',
+                icon: '🥑',
+                category: 'fruit',
+                idealTempMin: 18,
+                idealTempMax: 28,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 350,
+                sunlight: 'Full sun to partial shade',
+                soil: 'Well-draining loam, pH 6.0-6.5',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
+                diseases: [
+                    { name: 'Root Rot', description: 'Avoid overwatering.' },
+                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' }
+                ],
+                care: [
+                    'Water deeply, especially during dry periods.',
+                    'Prune to maintain shape and improve airflow.',
+                    'Harvest when fruit is slightly soft.',
+                    'Mulch to retain moisture.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 180,
+                description: 'Avocado, a creamy fruit rich in healthy fats. Grows well in tropical and subtropical climates.',
+                reason: 'Avocado is gaining popularity in the Philippines, especially in cooler upland areas.'
+            }, {
+                id: 'macopa',
+                name: 'Macopa (Java Apple)',
+                sci: 'Syzygium samarangense',
+                icon: '🍎',
+                category: 'fruit',
+                idealTempMin: 22,
+                idealTempMax: 32,
+                idealHumidityMin: 50,
+                idealHumidityMax: 85,
+                waterPerDay: 300,
+                sunlight: 'Full sun',
+                soil: 'Well-draining loam, pH 6.0-7.0',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
+                diseases: [
+                    { name: 'Fruit Rot', description: 'Brown spots. Apply fungicide.' },
+                    { name: 'Root Rot', description: 'Avoid overwatering.' }
+                ],
+                care: [
+                    'Water regularly, keep soil moist.',
+                    'Harvest when fruit is bright red and glossy.',
+                    'Prune to maintain shape.',
+                    'Mulch to retain moisture.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 120,
+                description: 'Java apple, a crisp, watery fruit with a mild taste. Eaten fresh or in salads.',
+                reason: 'Macopa is a common fruit tree in the Philippines, thriving in warm, humid conditions.'
+            }, {
+                id: 'aratiles',
+                name: 'Aratiles (Jamaican Cherry)',
+                sci: 'Muntingia calabura',
+                icon: '🍒',
+                category: 'fruit',
+                idealTempMin: 22,
+                idealTempMax: 35,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 250,
+                sunlight: 'Full sun',
+                soil: 'Well-draining sandy loam, pH 6.0-7.0',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
+                diseases: [
+                    { name: 'Fruit Fly', description: 'Use baited traps.' },
+                    { name: 'Leaf Spot', description: 'Brown spots. Apply fungicide.' }
+                ],
+                care: [
+                    'Water moderately.',
+                    'Harvest when fruit is red and soft.',
+                    'Prune to maintain shape.',
+                    'Mulch to retain moisture.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 90,
+                description: 'Jamaican cherry, a small sweet fruit eaten fresh. Very fast-growing tree.',
+                reason: 'Aratiles is a common backyard tree in the Philippines, producing fruit quickly in warm weather.'
+            }, {
+                id: 'kalamansi',
+                name: 'Kalamansi (Calamansi)',
+                sci: 'Citrus × microcarpa',
+                icon: '🍋',
+                category: 'fruit',
+                idealTempMin: 20,
+                idealTempMax: 32,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 250,
+                sunlight: 'Full sun',
+                soil: 'Well-draining sandy loam, pH 5.5-6.5',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
+                diseases: [
+                    { name: 'Citrus Canker', description: 'Lesions on leaves. Use resistant varieties.' },
+                    { name: 'Aphids', description: 'Use insecticidal soap.' }
+                ],
+                care: [
+                    'Water regularly, keep soil moist.',
+                    'Prune to maintain shape.',
+                    'Harvest when fruit is yellow-green.',
+                    'Apply compost as mulch.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 120,
+                description: 'Calamansi, a small citrus fruit used for juice and flavoring. Essential in Filipino cuisine.',
+                reason: 'Kalamansi is a staple fruit in the Philippines, easy to grow in backyard gardens.'
+            }, {
+                id: 'suha',
+                name: 'Suha (Pomelo)',
+                sci: 'Citrus maxima',
+                icon: '🍊',
+                category: 'fruit',
+                idealTempMin: 22,
+                idealTempMax: 35,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 400,
+                sunlight: 'Full sun',
+                soil: 'Well-draining sandy loam, pH 6.0-7.0',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
+                diseases: [
+                    { name: 'Citrus Canker', description: 'Lesions on leaves. Use resistant varieties.' },
+                    { name: 'Fruit Fly', description: 'Use baited traps.' }
+                ],
+                care: [
+                    'Water deeply, especially during fruit development.',
+                    'Prune to maintain shape.',
+                    'Harvest when fruit is large and fragrant.',
+                    'Apply mulch.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 180,
+                description: 'Pomelo, a large citrus fruit with sweet, mild flesh. Grows well in tropical climates.',
+                reason: 'Suha is a popular fruit in the Philippines, often used in salads and desserts.'
+            }, {
+                id: 'chico',
+                name: 'Chico (Sapodilla)',
+                sci: 'Manilkara zapota',
+                icon: '🍐',
+                category: 'fruit',
+                idealTempMin: 22,
+                idealTempMax: 35,
+                idealHumidityMin: 40,
+                idealHumidityMax: 80,
+                waterPerDay: 300,
+                sunlight: 'Full sun',
+                soil: 'Well-draining sandy loam, pH 6.0-7.0',
+                fertilizer: 'Balanced NPK (10-10-10) every 2 months',
+                diseases: [
+                    { name: 'Leaf Spot', description: 'Brown spots. Apply fungicide.' },
+                    { name: 'Root Rot', description: 'Avoid overwatering.' }
+                ],
+                care: [
+                    'Water moderately.',
+                    'Harvest when fruit is brown and slightly soft.',
+                    'Prune to maintain shape.',
+                    'Mulch to retain moisture.'
+                ],
+                plantingMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                daysToHarvest: 180,
+                description: 'Sapodilla, a sweet, brown fruit with a grainy texture. Eaten fresh.',
+                reason: 'Chico is a popular fruit in the Philippines, especially in dry, warm areas.'
             }];
 
-            // ─── DOM REFS (same as before) ──────────────────────────────
+            // ─── DOM REFS ──────────────────────────────────────────────
             const $ = (id) => document.getElementById(id);
             const sidebar = $('sidebar');
             const overlay = $('sidebarOverlay');
@@ -3115,7 +3449,7 @@
                     const matchClass = p.score >= 60 ? 'good' : 'ok';
                     html += `
                         <div class="plant-mini-card" data-id="${p.id}" data-page="plant-detail">
-                            <span class="icon"><i class="fa-solid ${p.icon}" style="color:${p.iconColor};"></i></span>
+                            <span class="plant-emoji-sticker">${p.icon}</span>
                             <div class="name">${p.name}</div>
                             <div class="match ${matchClass}">${p.score}% match</div>
                         </div>
@@ -3168,7 +3502,7 @@
                     const matchClass = p.score >= 60 ? 'good' : 'ok';
                     html += `
                         <div class="plant-mini-card" data-id="${p.id}" data-page="plant-detail">
-                            <span class="icon"><i class="fa-solid ${p.icon}" style="color:${p.iconColor};"></i></span>
+                            <span class="plant-emoji-sticker">${p.icon}</span>
                             <div class="name">${p.name}</div>
                             <div class="match ${matchClass}">${p.score}%</div>
                         </div>
@@ -3204,7 +3538,7 @@
 
                 let html = `
                     <div class="plant-detail-header">
-                        <div class="icon"><i class="fa-solid ${plant.icon}" style="color:${plant.iconColor};"></i></div>
+                        <div class="plant-emoji-sticker" style="width:90px;height:90px;font-size:52px;">${plant.icon}</div>
                         <div class="name-group">
                             <div class="name">${plant.name}</div>
                             <div class="sci">${plant.sci}</div>
@@ -3347,7 +3681,7 @@
                 let listHtml = '';
                 for (const p of inSeason) {
                     listHtml +=
-                        `<div class="item"><span class="plant"><i class="fa-solid ${p.icon}" style="color:${p.iconColor};"></i> ${p.name}</span><span class="months">Plant now</span></div>`;
+                        `<div class="item"><span class="plant"><span class="plant-emoji-sticker" style="width:30px;height:30px;font-size:16px;display:inline-flex;">${p.icon}</span> ${p.name}</span><span class="months">Plant now</span></div>`;
                 }
                 seasonalPlantsList.innerHTML = listHtml || '<div style="opacity:0.4;">No plants are in season this month.</div>';
             }
@@ -3419,7 +3753,7 @@
                         <div class="garden-plant-card" data-garden-id="${gPlant.id}">
                             <div class="row">
                                 <div class="plant-info">
-                                    <span class="icon"><i class="fa-solid ${plant.icon}" style="color:${plant.iconColor};"></i></span>
+                                    <span class="plant-emoji-sticker">${plant.icon}</span>
                                     <div>
                                         <div class="name">${plant.name}</div>
                                         <div class="sub"><i class="fa-regular fa-calendar"></i> Planted ${formatDate(gPlant.plantingDate)} · ${daysSince} days ago</div>
