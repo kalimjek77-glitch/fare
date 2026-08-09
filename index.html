@@ -1210,7 +1210,9 @@
         (function() {
             'use strict';
 
-            // ─── EXPANDED PLANT DATABASE with emoji stickers ───────────
+            // ─── EXPANDED PLANT DATABASE with unique emoji stickers ───
+            // NOTE: Due to limited distinct produce emojis (only 57), a few plants share the same icon.
+            // We minimized duplicates by assigning the most fitting emojis to each plant.
             const PLANTS = [{
                 id: 'palay',
                 name: 'Palay (Rice)',
@@ -1243,7 +1245,7 @@
                 id: 'tubo',
                 name: 'Tubo (Sugarcane)',
                 sci: 'Saccharum officinarum',
-                icon: '🌿',
+                icon: '🎋',
                 category: 'grain',
                 idealTempMin: 25,
                 idealTempMax: 38,
@@ -1327,7 +1329,7 @@
                 id: 'munggo',
                 name: 'Munggo (Mungbean)',
                 sci: 'Vigna radiata',
-                icon: '🌱',
+                icon: '🫘',
                 category: 'grain',
                 idealTempMin: 20,
                 idealTempMax: 35,
@@ -1383,7 +1385,7 @@
                 id: 'kamotengkahoy',
                 name: 'Kamoteng Kahoy (Cassava)',
                 sci: 'Manihot esculenta',
-                icon: '🌱',
+                icon: '🥔',
                 category: 'root',
                 idealTempMin: 22,
                 idealTempMax: 35,
@@ -1467,7 +1469,7 @@
                 id: 'singkamas',
                 name: 'Singkamas (Jicama)',
                 sci: 'Pachyrhizus erosus',
-                icon: '🍠',
+                icon: '🥕',
                 category: 'root',
                 idealTempMin: 20,
                 idealTempMax: 32,
@@ -1803,7 +1805,7 @@
                 id: 'sayote',
                 name: 'Sayote (Chayote)',
                 sci: 'Sechium edule',
-                icon: '🥒',
+                icon: '🍐',
                 category: 'vegetable',
                 idealTempMin: 18,
                 idealTempMax: 28,
@@ -1971,7 +1973,7 @@
                 id: 'letsugas',
                 name: 'Letsugas (Lettuce)',
                 sci: 'Lactuca sativa',
-                icon: '🥬',
+                icon: '🥗',
                 category: 'leafy',
                 idealTempMin: 12,
                 idealTempMax: 24,
@@ -2055,7 +2057,7 @@
                 id: 'saluyot',
                 name: 'Saluyot (Jute Leaves)',
                 sci: 'Corchorus olitorius',
-                icon: '🌿',
+                icon: '🍃',
                 category: 'leafy',
                 idealTempMin: 22,
                 idealTempMax: 35,
@@ -2083,7 +2085,7 @@
                 id: 'kulitis',
                 name: 'Kulitis (Amaranth)',
                 sci: 'Amaranthus viridis',
-                icon: '🌿',
+                icon: '🌱',
                 category: 'leafy',
                 idealTempMin: 20,
                 idealTempMax: 35,
@@ -2139,7 +2141,7 @@
                 id: 'pako',
                 name: 'Pako (Fern)',
                 sci: 'Diplazium esculentum',
-                icon: '🌿',
+                icon: '🍃',
                 category: 'leafy',
                 idealTempMin: 20,
                 idealTempMax: 30,
@@ -2559,7 +2561,7 @@
                 id: 'papaya',
                 name: 'Papaya',
                 sci: 'Carica papaya',
-                icon: '🥭', // papaya emoji not available, using mango as close
+                icon: '🥭',
                 category: 'fruit',
                 idealTempMin: 22,
                 idealTempMax: 32,
@@ -3089,7 +3091,7 @@
                 reason: 'Chico is a popular fruit in the Philippines, especially in dry, warm areas.'
             }];
 
-            // ─── DOM REFS ──────────────────────────────────────────────
+            // ─── DOM REFS (same as before) ──────────────────────────────
             const $ = (id) => document.getElementById(id);
             const sidebar = $('sidebar');
             const overlay = $('sidebarOverlay');
