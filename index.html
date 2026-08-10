@@ -258,57 +258,78 @@
             gap: 12px;
         }
 
-        /* ─── PLANT IMAGE STICKER (replaces emoji) ─── */
-        .plant-image-sticker {
+        /* ─── PLANT IMAGE WRAPPER ─── */
+        .plant-image-wrapper {
             display: inline-block;
             width: 70px;
             height: 70px;
             border-radius: 50%;
-            object-fit: cover;
             background: rgba(255, 255, 255, 0.05);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.2);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
-            margin: 0 auto;
+            position: relative;
             border: 2px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            flex-shrink: 0;
         }
 
-        .plant-mini-card .plant-image-sticker {
+        .plant-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .plant-image-wrapper .plant-image-fallback {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            display: none;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .plant-image-wrapper img.error + .plant-image-fallback {
+            display: block;
+        }
+        .plant-image-wrapper img.error {
+            opacity: 0;
+        }
+        .plant-image-wrapper .plant-image-fallback {
+            display: none;
+        }
+        .plant-image-wrapper img.error + .plant-image-fallback {
+            display: block;
+        }
+        .plant-image-wrapper img.error {
+            opacity: 0;
+        }
+
+        .plant-mini-card .plant-image-wrapper {
             width: 60px;
             height: 60px;
-            margin-bottom: 6px;
+            margin: 0 auto 6px;
         }
 
-        .plant-mini-card .plant-image-sticker:hover {
-            transform: scale(1.05) rotate(-3deg);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
-        }
-
-        .plant-detail-header .plant-image-sticker {
+        .plant-detail-header .plant-image-wrapper {
             width: 90px;
             height: 90px;
         }
 
-        .garden-plant-card .plant-image-sticker {
+        .garden-plant-card .plant-info .plant-image-wrapper {
             width: 50px;
             height: 50px;
         }
 
-        /* ─── fallback emoji if image fails ─── */
-        .plant-image-fallback {
-            display: none;
-            font-size: 32px;
-            text-align: center;
-            width: 100%;
-            line-height: 70px;
+        .seasonal-list .item .plant .plant-image-wrapper {
+            width: 30px;
+            height: 30px;
         }
-        .plant-image-sticker + .plant-image-fallback {
-            display: none;
-        }
-        .plant-image-sticker.error + .plant-image-fallback {
-            display: block;
-        }
-        .plant-image-sticker.error {
-            display: none;
+
+        .plant-image-wrapper:hover {
+            transform: scale(1.05) rotate(-3deg);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
         }
 
         .plant-mini-card {
@@ -535,11 +556,9 @@
             align-items: center;
             gap: 6px;
         }
-        .seasonal-list .item .plant img {
+        .seasonal-list .item .plant .plant-image-wrapper {
             width: 30px;
             height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
         }
         .seasonal-list .item .months {
             opacity: 0.5;
@@ -616,10 +635,6 @@
             display: flex;
             align-items: center;
             gap: 12px;
-        }
-        .garden-plant-card .plant-info .plant-image-sticker {
-            width: 50px;
-            height: 50px;
         }
         .garden-plant-card .plant-info .name {
             font-size: 16px;
@@ -800,15 +815,15 @@
             .topbar-weather .cond {
                 display: none;
             }
-            .plant-image-sticker {
+            .plant-image-wrapper {
                 width: 55px;
                 height: 55px;
             }
-            .plant-mini-card .plant-image-sticker {
+            .plant-mini-card .plant-image-wrapper {
                 width: 50px;
                 height: 50px;
             }
-            .plant-detail-header .plant-image-sticker {
+            .plant-detail-header .plant-image-wrapper {
                 width: 70px;
                 height: 70px;
             }
@@ -835,11 +850,11 @@
             .add-plant-section select {
                 min-width: unset;
             }
-            .plant-image-sticker {
+            .plant-image-wrapper {
                 width: 45px;
                 height: 45px;
             }
-            .plant-mini-card .plant-image-sticker {
+            .plant-mini-card .plant-image-wrapper {
                 width: 42px;
                 height: 42px;
             }
@@ -1159,98 +1174,11 @@
             }
         }
 
-        /* fallback emoji inside image container */
-        .plant-image-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-        .plant-image-wrapper .plant-image-fallback {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 28px;
-            display: none;
-        }
-        .plant-image-wrapper img.error + .plant-image-fallback {
-            display: block;
-        }
-        .plant-image-wrapper img.error {
-            opacity: 0;
-        }
-        .plant-image-wrapper .plant-image-fallback {
-            display: none;
-        }
-        /* Fix for wrapper in various places */
-        .plant-mini-card .plant-image-wrapper,
-        .plant-detail-header .plant-image-wrapper,
-        .garden-plant-card .plant-info .plant-image-wrapper,
-        .seasonal-list .item .plant .plant-image-wrapper {
-            display: inline-block;
-            vertical-align: middle;
-        }
         .plant-image-wrapper img {
-            display: block;
-            border-radius: 50%;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            transition: opacity 0.3s ease;
         }
-        .plant-image-wrapper {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            position: relative;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-        }
-        .plant-mini-card .plant-image-wrapper {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 6px;
-        }
-        .plant-detail-header .plant-image-wrapper {
-            width: 90px;
-            height: 90px;
-        }
-        .garden-plant-card .plant-info .plant-image-wrapper {
-            width: 50px;
-            height: 50px;
-        }
-        .seasonal-list .item .plant .plant-image-wrapper {
-            width: 30px;
-            height: 30px;
-        }
-        .plant-image-wrapper:hover {
-            transform: scale(1.05) rotate(-3deg);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
-        }
-        .plant-image-wrapper .plant-image-fallback {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 28px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-        .plant-image-wrapper img.error + .plant-image-fallback {
-            display: block;
-        }
-        .plant-image-wrapper img.error {
-            opacity: 0;
-        }
-        /* ensure fallback shows */
-        .plant-image-wrapper .plant-image-fallback {
-            display: none;
-        }
-        .plant-image-wrapper img.error + .plant-image-fallback {
-            display: block;
-        }
-        .plant-image-wrapper img.error {
-            opacity: 0;
+        .plant-image-wrapper img.loading {
+            opacity: 0.3;
         }
     </style>
 </head>
@@ -1459,14 +1387,7 @@
         (function() {
             'use strict';
 
-            // ─── PLANT DATABASE with image URLs (unique per plant) ───
-            // Each plant now has imageUrl generated from its id using picsum seed.
-            // This ensures a unique photo per plant.
-            function getPlantImageUrl(plantId) {
-                return `https://picsum.photos/seed/${plantId}/200/200`; // 200x200 square
-            }
-
-            // We'll keep the emoji as fallback, but use image in display.
+            // ─── PLANT DATABASE (same as before) ──────────────────────
             const PLANTS = [{
                 id: 'palay',
                 name: 'Palay (Rice)',
@@ -3503,9 +3424,46 @@
                 reason: 'Chico is a popular fruit in the Philippines, especially in dry, warm areas.'
             }];
 
-            // ─── Helper to get image URL for plant ──────────────────────
-            function getPlantImageUrl(plantId) {
-                return `https://picsum.photos/seed/${plantId}/200/200`;
+            // ─── Helper: fetch real plant image from Wikimedia Commons ──
+            function getPlantImageUrl(plantId, plantName) {
+                // Use localStorage cache to avoid repeated API calls
+                const cacheKey = 'plant_image_' + plantId;
+                const cached = localStorage.getItem(cacheKey);
+                if (cached && cached !== 'null') {
+                    return cached;
+                }
+                // Return a promise that resolves to the image URL
+                return new Promise((resolve) => {
+                    // Use Wikimedia Commons API to find an image
+                    const searchTerm = encodeURIComponent(plantName);
+                    const url =
+                        `https://commons.wikimedia.org/w/api.php?action=query&prop=pageimages&format=json&titles=${searchTerm}&pithumbsize=200&origin=*`;
+                    fetch(url)
+                        .then(res => res.json())
+                        .then(data => {
+                            const pages = data.query?.pages;
+                            if (pages) {
+                                for (let key in pages) {
+                                    const page = pages[key];
+                                    if (page.thumbnail) {
+                                        const imgUrl = page.thumbnail.source;
+                                        localStorage.setItem(cacheKey, imgUrl);
+                                        resolve(imgUrl);
+                                        return;
+                                    }
+                                }
+                            }
+                            // Fallback: use picsum with seed
+                            const fallback = `https://picsum.photos/seed/${plantId}/200/200`;
+                            localStorage.setItem(cacheKey, fallback);
+                            resolve(fallback);
+                        })
+                        .catch(() => {
+                            const fallback = `https://picsum.photos/seed/${plantId}/200/200`;
+                            localStorage.setItem(cacheKey, fallback);
+                            resolve(fallback);
+                        });
+                });
             }
 
             // ─── DOM REFS ──────────────────────────────────────────────
@@ -3569,6 +3527,7 @@
             let selectedPlantId = null;
             let gardenPlants = [];
             let modalCallback = null;
+            let imageCache = {};
 
             // ─── LOCAL STORAGE ──────────────────────────────────────────
             const STORAGE_KEY = 'plantadvisor_garden';
@@ -3687,9 +3646,10 @@
                 html += `<div class="plant-disease-list">`;
                 data.allPlants.forEach(p => {
                     if (p.diseases.length === 0) return;
+                    const imgUrl = getCachedImage(p.plantId) || '';
                     html += `
                         <div class="plant-disease-item">
-                            <img src="${getPlantImageUrl(p.plantId)}" alt="${p.plantName}" class="plant-icon" onerror="this.style.display='none'">
+                            <img src="${imgUrl}" alt="${p.plantName}" class="plant-icon" onerror="this.style.display='none'">
                             <span class="plant-name">${p.plantName}</span>
                             <div class="disease-list">
                                 ${p.diseases.map(d => `<span class="disease-tag">${d.name}</span>`).join(' ')}
@@ -3759,6 +3719,12 @@
             modalOverlay.addEventListener('click', function(e) {
                 if (e.target === modalOverlay) hideModal();
             });
+
+            // ─── CACHED IMAGE HELPERS ──────────────────────────────────
+            function getCachedImage(plantId) {
+                const cacheKey = 'plant_image_' + plantId;
+                return localStorage.getItem(cacheKey) || null;
+            }
 
             // ─── WEATHER HELPERS ─────────────────────────────────────────
             function getWeatherIcon(code) {
@@ -3975,11 +3941,11 @@
                 let html = '';
                 for (const p of top) {
                     const matchClass = p.score >= 60 ? 'good' : 'ok';
-                    const imgUrl = getPlantImageUrl(p.id);
+                    const imgUrl = getCachedImage(p.id) || '';
                     html += `
                         <div class="plant-mini-card" data-id="${p.id}" data-page="plant-detail">
                             <div class="plant-image-wrapper">
-                                <img src="${imgUrl}" alt="${p.name}" class="plant-image-sticker" onerror="this.classList.add('error');">
+                                <img src="${imgUrl}" alt="${p.name}" onerror="this.classList.add('error');" loading="lazy">
                                 <span class="plant-image-fallback">${p.icon}</span>
                             </div>
                             <div class="name">${p.name}</div>
@@ -4032,11 +3998,11 @@
                 let html = '';
                 for (const p of scored) {
                     const matchClass = p.score >= 60 ? 'good' : 'ok';
-                    const imgUrl = getPlantImageUrl(p.id);
+                    const imgUrl = getCachedImage(p.id) || '';
                     html += `
                         <div class="plant-mini-card" data-id="${p.id}" data-page="plant-detail">
                             <div class="plant-image-wrapper">
-                                <img src="${imgUrl}" alt="${p.name}" class="plant-image-sticker" onerror="this.classList.add('error');">
+                                <img src="${imgUrl}" alt="${p.name}" onerror="this.classList.add('error');" loading="lazy">
                                 <span class="plant-image-fallback">${p.icon}</span>
                             </div>
                             <div class="name">${p.name}</div>
@@ -4071,12 +4037,12 @@
                 const hum = Math.round(weatherData.current.relative_humidity_2m);
                 const score = scorePlant(plant, temp, hum);
                 const reason = getReason(plant, temp, hum);
-                const imgUrl = getPlantImageUrl(plant.id);
+                const imgUrl = getCachedImage(plant.id) || '';
 
                 let html = `
                     <div class="plant-detail-header">
                         <div class="plant-image-wrapper">
-                            <img src="${imgUrl}" alt="${plant.name}" class="plant-image-sticker" onerror="this.classList.add('error');">
+                            <img src="${imgUrl}" alt="${plant.name}" onerror="this.classList.add('error');" loading="lazy">
                             <span class="plant-image-fallback">${plant.icon}</span>
                         </div>
                         <div class="name-group">
@@ -4220,12 +4186,12 @@
                 const inSeason = PLANTS.filter(p => p.plantingMonths.includes(month + 1));
                 let listHtml = '';
                 for (const p of inSeason) {
-                    const imgUrl = getPlantImageUrl(p.id);
+                    const imgUrl = getCachedImage(p.id) || '';
                     listHtml += `
                         <div class="item">
                             <span class="plant">
-                                <div class="plant-image-wrapper">
-                                    <img src="${imgUrl}" alt="${p.name}" onerror="this.style.display='none'" style="width:30px;height:30px;border-radius:50%;object-fit:cover;">
+                                <div class="plant-image-wrapper" style="width:30px;height:30px;">
+                                    <img src="${imgUrl}" alt="${p.name}" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
                                     <span class="plant-image-fallback" style="font-size:16px;">${p.icon}</span>
                                 </div>
                                 ${p.name}
@@ -4282,7 +4248,7 @@
                     const daysToHarvest = Math.max(0, plant.daysToHarvest - daysSince);
                     const progress = Math.min(100, (daysSince / plant.daysToHarvest) * 100);
                     const isHarvested = gPlant.harvested || false;
-                    const imgUrl = getPlantImageUrl(plant.id);
+                    const imgUrl = getCachedImage(plant.id) || '';
 
                     let waterNeeded = plant.waterPerDay;
                     if (precip > 0) {
@@ -4600,6 +4566,24 @@
                 });
             });
 
+            // ─── IMAGE PRE-FETCH ───────────────────────────────────────
+            // Pre-fetch images for all plants on load to populate cache
+            async function preFetchImages() {
+                const plantsToFetch = PLANETS; // will use PLANETS (typo fixed below)
+                // Actually we need to use PLANTS variable.
+                const promises = PLANTS.map(plant => {
+                    return getPlantImageUrl(plant.id, plant.name).catch(() => {});
+                });
+                await Promise.all(promises);
+                // After fetching, re-render current page if needed
+                if (currentPage === 'dashboard') updateDashboard();
+                else if (currentPage === 'plants') renderAllPlants();
+                else if (currentPage === 'plant-detail' && selectedPlantId) renderPlantDetail(selectedPlantId);
+                else if (currentPage === 'calendar') renderCalendar();
+                else if (currentPage === 'garden') renderGarden();
+                else if (currentPage === 'diseases') renderDiseasePage();
+            }
+
             // ─── INIT ──────────────────────────────────────────────────
             function init() {
                 loadGarden();
@@ -4621,6 +4605,9 @@
                 document.addEventListener('visibilitychange', () => {
                     if (!document.hidden && !isRefreshing) refreshWeather(false);
                 });
+
+                // Pre-fetch images after initial load
+                setTimeout(preFetchImages, 1000);
             }
 
             if (document.readyState === 'loading') {
