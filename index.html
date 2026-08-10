@@ -1562,7 +1562,7 @@
         (function() {
             'use strict';
 
-            // ─── PLANT DATABASE (same as before) ──────────────────────
+            // ─── PLANT DATABASE with ACCURATE scientific names ──────
             const PLANTS = [{
                 id: 'palay',
                 name: 'Palay (Rice)',
@@ -1812,7 +1812,7 @@
                 id: 'ube',
                 name: 'Ube (Purple Yam)',
                 sci: 'Dioscorea alata',
-                icon: '🍆',
+                icon: '🍠', // Changed from '🍆' to '🍠' for purple yam
                 category: 'root',
                 idealTempMin: 22,
                 idealTempMax: 32,
@@ -3604,58 +3604,73 @@
                 return new Promise((resolve) => {
                     const cacheKey = 'plant_image_' + plantId;
                     const cached = localStorage.getItem(cacheKey);
-                    if (cached && cached !== 'null') {
+                    if (cached && cached !== 'null' && cached !== '') {
                         resolve(cached);
                         return;
                     }
-                    const searchTerm = encodeURIComponent(sciName);
-                    const url =
-                        `https://commons.wikimedia.org/w/api.php?action=query&prop=pageimages&format=json&titles=${searchTerm}&pithumbsize=300&origin=*`;
-                    fetch(url)
-                        .then(res => res.json())
-                        .then(data => {
-                            const pages = data.query?.pages;
-                            if (pages) {
-                                for (let key in pages) {
-                                    const page = pages[key];
-                                    if (page.thumbnail) {
-                                        const imgUrl = page.thumbnail.source;
-                                        localStorage.setItem(cacheKey, imgUrl);
-                                        resolve(imgUrl);
-                                        return;
-                                    }
-                                }
-                            }
-                            const fallbackSearch = encodeURIComponent(plantName);
-                            const fallbackUrl =
-                                `https://commons.wikimedia.org/w/api.php?action=query&prop=pageimages&format=json&titles=${fallbackSearch}&pithumbsize=300&origin=*`;
-                            fetch(fallbackUrl)
-                                .then(res2 => res2.json())
-                                .then(data2 => {
-                                    const pages2 = data2.query?.pages;
-                                    if (pages2) {
-                                        for (let key in pages2) {
-                                            const page2 = pages2[key];
-                                            if (page2.thumbnail) {
-                                                const imgUrl2 = page2.thumbnail.source;
-                                                localStorage.setItem(cacheKey, imgUrl2);
-                                                resolve(imgUrl2);
-                                                return;
-                                            }
-                                        }
-                                    }
-                                    localStorage.setItem(cacheKey, '');
-                                    resolve('');
-                                })
-                                .catch(() => {
-                                    localStorage.setItem(cacheKey, '');
-                                    resolve('');
-                                });
-                        })
-                        .catch(() => {
+
+                    // Use scientific name with genus and species for best results
+                    let searchTerms = [];
+
+                    // Primary: use scientific name
+                    if (sciName) {
+                        searchTerms.push(sciName);
+                    }
+
+                    // Secondary: use common name
+                    if (plantName) {
+                        // Clean up common name - remove parenthetical info for better search
+                        let cleanName = plantName.replace(/\([^)]*\)/g, '').trim();
+                        if (cleanName) searchTerms.push(cleanName);
+                        // Also try the full name
+                        searchTerms.push(plantName);
+                    }
+
+                    // Also try with the ID as last resort
+                    searchTerms.push(plantId);
+
+                    // Try each search term sequentially
+                    trySearch(0);
+
+                    function trySearch(index) {
+                        if (index >= searchTerms.length) {
+                            // All failed - use a generic plant image or empty (will show fallback emoji)
                             localStorage.setItem(cacheKey, '');
                             resolve('');
-                        });
+                            return;
+                        }
+
+                        const term = searchTerms[index];
+                        const searchTerm = encodeURIComponent(term);
+                        const url =
+                            `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${searchTerm}&gsrnamespace=0|6|14|100|106&prop=pageimages&pithumbsize=300&format=json&origin=*`;
+
+                        fetch(url)
+                            .then(res => {
+                                if (!res.ok) throw new Error('Network error');
+                                return res.json();
+                            })
+                            .then(data => {
+                                const pages = data.query?.pages;
+                                if (pages) {
+                                    for (let key in pages) {
+                                        const page = pages[key];
+                                        if (page.thumbnail && page.thumbnail.source) {
+                                            const imgUrl = page.thumbnail.source;
+                                            localStorage.setItem(cacheKey, imgUrl);
+                                            resolve(imgUrl);
+                                            return;
+                                        }
+                                    }
+                                }
+                                // No thumbnail found, try next term
+                                trySearch(index + 1);
+                            })
+                            .catch(() => {
+                                // Error, try next term
+                                trySearch(index + 1);
+                            });
+                    }
                 });
             }
 
@@ -3758,6 +3773,12 @@
                 try {
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(gardenPlants));
                 } catch (e) { console.warn('Save failed:', e); }
+            }
+
+            // ─── CACHED IMAGE HELPERS ──────────────────────────────────
+            function getCachedImage(plantId) {
+                const cacheKey = 'plant_image_' + plantId;
+                return localStorage.getItem(cacheKey) || '';
             }
 
             // ─── DISEASE HELPERS ──────────────────────────────────────
@@ -3908,12 +3929,6 @@
             modalOverlay.addEventListener('click', function(e) {
                 if (e.target === modalOverlay) hideModal();
             });
-
-            // ─── CACHED IMAGE HELPERS ──────────────────────────────────
-            function getCachedImage(plantId) {
-                const cacheKey = 'plant_image_' + plantId;
-                return localStorage.getItem(cacheKey) || '';
-            }
 
             // ─── WEATHER HELPERS ─────────────────────────────────────────
             function getWeatherIcon(code) {
@@ -4417,7 +4432,6 @@
                 const now = new Date();
                 const todayStr = now.toDateString();
 
-                // Reminders
                 let reminders = [];
 
                 for (const gPlant of gardenPlants) {
@@ -4429,9 +4443,7 @@
                     const progress = Math.min(100, (daysSince / plant.daysToHarvest) * 100);
                     const isHarvested = gPlant.harvested || false;
 
-                    // Water needs based on weather (temp affects water needs)
                     let waterNeeded = plant.waterPerDay;
-                    // Adjust water based on temperature: higher temp -> more water
                     if (temp > 30) waterNeeded = Math.round(waterNeeded * 1.2);
                     else if (temp < 20) waterNeeded = Math.round(waterNeeded * 0.8);
                     if (precip > 0) {
@@ -4448,8 +4460,6 @@
                         plantingDate;
                     const daysSinceFert = daysBetween(lastFert, now);
                     const fertDue = daysSinceFert >= fertInterval;
-                    const fertDueDate = new Date(lastFert);
-                    fertDueDate.setDate(fertDueDate.getDate() + fertInterval);
 
                     if (!isHarvested) {
                         if (!wateredToday) {
@@ -4515,7 +4525,6 @@
                 gardenList.innerHTML = html;
                 gardenCount.textContent = `${gardenPlants.length} plants`;
 
-                // Show reminders
                 if (reminders.length > 0) {
                     gardenReminders.innerHTML = `<div style="display:flex; flex-wrap:wrap; gap:6px;">` +
                         reminders.map(r => `<span class="reminder-badge">${r}</span>`).join('') +
@@ -4525,7 +4534,6 @@
                         `<span style="font-size:13px; opacity:0.5;">✅ All plants are up to date! No pending reminders.</span>`;
                 }
 
-                // Attach event listeners
                 gardenList.querySelectorAll('.water-btn').forEach(btn => {
                     btn.addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -4569,7 +4577,6 @@
                 if (!gPlant) return;
                 const plant = PLANTS.find(p => p.id === gPlant.plantId);
                 if (!plant) return;
-                // Set plant info
                 historyPlantName.textContent = plant.name;
                 const imgUrl = getCachedImage(plant.id) || '';
                 historyPlantImg.src = imgUrl;
@@ -4578,7 +4585,6 @@
                     historyPlantFallback.style.display = 'block'; };
                 historyPlantFallback.textContent = plant.icon;
 
-                // Build calendar for current month
                 const now = new Date();
                 const year = now.getFullYear();
                 const month = now.getMonth();
@@ -4597,7 +4603,6 @@
                     gridHtml += `<div class="day-cell"></div>`;
                 }
 
-                // Gather events: water and fertilize
                 const waterSet = new Set(gPlant.wateredDates.map(d => new Date(d).toDateString()));
                 const fertSet = new Set(gPlant.fertilizedDates.map(d => new Date(d).toDateString()));
 
@@ -4615,7 +4620,6 @@
                 }
                 historyCalendarGrid.innerHTML = gridHtml;
 
-                // Event list
                 let events = [];
                 gPlant.wateredDates.forEach(d => {
                     events.push({ date: new Date(d), type: 'water' });
@@ -4891,7 +4895,6 @@
                     if (!isRefreshing) refreshWeather(false);
                 }, 300000);
 
-                // Garden auto-update every minute (for real-time progress)
                 if (gardenUpdateInterval) clearInterval(gardenUpdateInterval);
                 gardenUpdateInterval = setInterval(() => {
                     if (currentPage === 'garden' && !isRefreshing) {
