@@ -365,6 +365,11 @@
             color: #ffd54f;
             opacity: 1;
         }
+        .plant-mini-card .match.perfect {
+            color: #4caf50;
+            opacity: 1;
+            font-weight: 600;
+        }
 
         /* ─── PLANT DETAIL ─── */
         .plant-detail-header {
@@ -1562,7 +1567,7 @@
         (function() {
             'use strict';
 
-            // ─── PLANT DATABASE with ACCURATE scientific names ──────
+            // ─── PLANT DATABASE ──────────────────────────────────────
             const PLANTS = [{
                 id: 'palay',
                 name: 'Palay (Rice)',
@@ -1812,7 +1817,7 @@
                 id: 'ube',
                 name: 'Ube (Purple Yam)',
                 sci: 'Dioscorea alata',
-                icon: '🍠', // Changed from '🍆' to '🍠' for purple yam
+                icon: '🍠',
                 category: 'root',
                 idealTempMin: 22,
                 idealTempMax: 32,
@@ -3599,7 +3604,8 @@
                 reason: 'Chico is a popular fruit in the Philippines, especially in dry, warm areas.'
             }];
 
-            // ─── Helper: fetch real plant image from Wikimedia Commons ──
+            // ─── HELPER: Fetch real plant image from Wikimedia Commons ──
+            // Uses scientific name for better accuracy
             function getPlantImageUrl(plantId, plantName, sciName) {
                 return new Promise((resolve) => {
                     const cacheKey = 'plant_image_' + plantId;
@@ -3609,42 +3615,27 @@
                         return;
                     }
 
-                    // Use scientific name with genus and species for best results
                     let searchTerms = [];
-
-                    // Primary: use scientific name
-                    if (sciName) {
-                        searchTerms.push(sciName);
-                    }
-
-                    // Secondary: use common name
+                    if (sciName) searchTerms.push(sciName);
                     if (plantName) {
-                        // Clean up common name - remove parenthetical info for better search
                         let cleanName = plantName.replace(/\([^)]*\)/g, '').trim();
                         if (cleanName) searchTerms.push(cleanName);
-                        // Also try the full name
                         searchTerms.push(plantName);
                     }
-
-                    // Also try with the ID as last resort
                     searchTerms.push(plantId);
 
-                    // Try each search term sequentially
                     trySearch(0);
 
                     function trySearch(index) {
                         if (index >= searchTerms.length) {
-                            // All failed - use a generic plant image or empty (will show fallback emoji)
                             localStorage.setItem(cacheKey, '');
                             resolve('');
                             return;
                         }
-
                         const term = searchTerms[index];
                         const searchTerm = encodeURIComponent(term);
                         const url =
                             `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${searchTerm}&gsrnamespace=0|6|14|100|106&prop=pageimages&pithumbsize=300&format=json&origin=*`;
-
                         fetch(url)
                             .then(res => {
                                 if (!res.ok) throw new Error('Network error');
@@ -3663,11 +3654,9 @@
                                         }
                                     }
                                 }
-                                // No thumbnail found, try next term
                                 trySearch(index + 1);
                             })
                             .catch(() => {
-                                // Error, try next term
                                 trySearch(index + 1);
                             });
                     }
@@ -3999,32 +3988,40 @@
                 return map[code] || 'Unknown';
             }
 
-            // ─── SCORING ─────────────────────────────────────────────────
+            // ─── ACCURATE SCORING ──────────────────────────────────────
             function scorePlant(plant, temp, humidity) {
                 let score = 0;
-                if (temp >= plant.idealTempMin && temp <= plant.idealTempMax) score += 40;
-                else if (temp >= plant.idealTempMin - 3 && temp <= plant.idealTempMax + 3) score += 20;
-                else if (temp >= plant.idealTempMin - 6 && temp <= plant.idealTempMax + 6) score += 8;
-                if (humidity >= plant.idealHumidityMin && humidity <= plant.idealHumidityMax) score += 30;
-                else if (humidity >= plant.idealHumidityMin - 10 && humidity <= plant.idealHumidityMax + 10) score += 15;
-                else if (humidity >= plant.idealHumidityMin - 20 && humidity <= plant.idealHumidityMax + 20) score += 5;
+                // Temperature: max 40
+                if (temp >= plant.idealTempMin && temp <= plant.idealTempMax) {
+                    score += 40;
+                } else if (temp >= plant.idealTempMin - 3 && temp <= plant.idealTempMax + 3) {
+                    score += 20;
+                } else if (temp >= plant.idealTempMin - 6 && temp <= plant.idealTempMax + 6) {
+                    score += 8;
+                }
+
+                // Humidity: max 40
+                if (humidity >= plant.idealHumidityMin && humidity <= plant.idealHumidityMax) {
+                    score += 40;
+                } else if (humidity >= plant.idealHumidityMin - 10 && humidity <= plant.idealHumidityMax + 10) {
+                    score += 20;
+                } else if (humidity >= plant.idealHumidityMin - 20 && humidity <= plant.idealHumidityMax + 20) {
+                    score += 10;
+                }
+
+                // Season: max 20
                 const month = new Date().getMonth() + 1;
-                if (plant.plantingMonths.includes(month)) score += 20;
+                if (plant.plantingMonths.includes(month)) {
+                    score += 20;
+                }
                 return Math.min(100, score);
             }
 
-            function getReason(plant, temp, humidity) {
-                let reason = plant.reason || '';
-                const tempMatch = (temp >= plant.idealTempMin && temp <= plant.idealTempMax) ? 'ideal temperature' :
-                    (temp >= plant.idealTempMin - 5 && temp <= plant.idealTempMax + 5) ? 'acceptable temperature' :
-                    'temperature may be marginal';
-                const humMatch = (humidity >= plant.idealHumidityMin && humidity <= plant.idealHumidityMax) ? 'ideal humidity' :
-                    (humidity >= plant.idealHumidityMin - 10 && humidity <= plant.idealHumidityMax + 10) ? 'acceptable humidity' :
-                    'humidity may be marginal';
-                const season = new Date().getMonth() + 1;
-                const inSeason = plant.plantingMonths.includes(season) ? 'currently in planting season' :
-                    'not in peak planting season';
-                return `${reason} Additionally, with current conditions (${temp}°C, ${humidity}% humidity), this plant has ${tempMatch} and ${humMatch}. It is ${inSeason}.`;
+            function getMatchLabel(score) {
+                if (score >= 95) return { text: 'Perfect', cls: 'perfect' };
+                if (score >= 80) return { text: 'Excellent', cls: 'good' };
+                if (score >= 60) return { text: 'Good', cls: 'ok' };
+                return { text: 'Fair', cls: '' };
             }
 
             // ─── ROUTING ──────────────────────────────────────────────────
@@ -4140,7 +4137,7 @@
 
                 let html = '';
                 for (const p of top) {
-                    const matchClass = p.score >= 60 ? 'good' : 'ok';
+                    const label = getMatchLabel(p.score);
                     const imgUrl = getCachedImage(p.id) || '';
                     html += `
                         <div class="plant-mini-card" data-id="${p.id}" data-page="plant-detail">
@@ -4149,7 +4146,7 @@
                                 <span class="plant-image-fallback">${p.icon}</span>
                             </div>
                             <div class="name">${p.name}</div>
-                            <div class="match ${matchClass}">${p.score}% match</div>
+                            <div class="match ${label.cls}">${label.text} (${p.score}%)</div>
                         </div>
                     `;
                 }
@@ -4192,7 +4189,7 @@
                 scored.sort((a, b) => b.score - a.score);
                 let html = '';
                 for (const p of scored) {
-                    const matchClass = p.score >= 60 ? 'good' : 'ok';
+                    const label = getMatchLabel(p.score);
                     const imgUrl = getCachedImage(p.id) || '';
                     html += `
                         <div class="plant-mini-card" data-id="${p.id}" data-page="plant-detail">
@@ -4201,7 +4198,7 @@
                                 <span class="plant-image-fallback">${p.icon}</span>
                             </div>
                             <div class="name">${p.name}</div>
-                            <div class="match ${matchClass}">${p.score}%</div>
+                            <div class="match ${label.cls}">${label.text} (${p.score}%)</div>
                         </div>
                     `;
                 }
@@ -4230,6 +4227,7 @@
                 const temp = Math.round(weatherData.current.temperature_2m);
                 const hum = Math.round(weatherData.current.relative_humidity_2m);
                 const score = scorePlant(plant, temp, hum);
+                const label = getMatchLabel(score);
                 const reason = getReason(plant, temp, hum);
                 const imgUrl = getCachedImage(plant.id) || '';
 
@@ -4242,7 +4240,7 @@
                         <div class="name-group">
                             <div class="name">${plant.name}</div>
                             <div class="sci">${plant.sci}</div>
-                            <div class="reason"><i class="fa-solid fa-star"></i> ${score}% match · ${reason}</div>
+                            <div class="reason"><i class="fa-solid fa-star"></i> ${label.text} match (${score}%) · ${reason}</div>
                         </div>
                     </div>
                     <div class="card">
@@ -4283,6 +4281,20 @@
                     </div>
                 `;
                 plantDetailContainer.innerHTML = html;
+            }
+
+            function getReason(plant, temp, humidity) {
+                let reason = plant.reason || '';
+                const tempMatch = (temp >= plant.idealTempMin && temp <= plant.idealTempMax) ? 'ideal temperature' :
+                    (temp >= plant.idealTempMin - 3 && temp <= plant.idealTempMax + 3) ? 'close to ideal temperature' :
+                    'temperature may be marginal';
+                const humMatch = (humidity >= plant.idealHumidityMin && humidity <= plant.idealHumidityMax) ? 'ideal humidity' :
+                    (humidity >= plant.idealHumidityMin - 10 && humidity <= plant.idealHumidityMax + 10) ? 'close to ideal humidity' :
+                    'humidity may be marginal';
+                const month = new Date().getMonth() + 1;
+                const inSeason = plant.plantingMonths.includes(month) ? 'currently in planting season' :
+                    'not in peak planting season';
+                return `${reason} Additionally, with current conditions (${temp}°C, ${humidity}% humidity), this plant has ${tempMatch} and ${humMatch}. It is ${inSeason}.`;
             }
 
             function generateCalendar(plant) {
