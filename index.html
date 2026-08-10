@@ -3425,19 +3425,19 @@
             }];
 
             // ─── Helper: fetch real plant image from Wikimedia Commons ──
-            function getPlantImageUrl(plantId, plantName) {
-                // Use localStorage cache to avoid repeated API calls
-                const cacheKey = 'plant_image_' + plantId;
-                const cached = localStorage.getItem(cacheKey);
-                if (cached && cached !== 'null') {
-                    return cached;
-                }
-                // Return a promise that resolves to the image URL
+            // Use scientific name for better accuracy
+            function getPlantImageUrl(plantId, plantName, sciName) {
                 return new Promise((resolve) => {
-                    // Use Wikimedia Commons API to find an image
-                    const searchTerm = encodeURIComponent(plantName);
+                    const cacheKey = 'plant_image_' + plantId;
+                    const cached = localStorage.getItem(cacheKey);
+                    if (cached && cached !== 'null') {
+                        resolve(cached);
+                        return;
+                    }
+                    // Use scientific name for search
+                    const searchTerm = encodeURIComponent(sciName);
                     const url =
-                        `https://commons.wikimedia.org/w/api.php?action=query&prop=pageimages&format=json&titles=${searchTerm}&pithumbsize=200&origin=*`;
+                        `https://commons.wikimedia.org/w/api.php?action=query&prop=pageimages&format=json&titles=${searchTerm}&pithumbsize=300&origin=*`;
                     fetch(url)
                         .then(res => res.json())
                         .then(data => {
@@ -3453,15 +3453,37 @@
                                     }
                                 }
                             }
-                            // Fallback: use picsum with seed
-                            const fallback = `https://picsum.photos/seed/${plantId}/200/200`;
-                            localStorage.setItem(cacheKey, fallback);
-                            resolve(fallback);
+                            // Fallback: try with common name
+                            const fallbackSearch = encodeURIComponent(plantName);
+                            const fallbackUrl =
+                                `https://commons.wikimedia.org/w/api.php?action=query&prop=pageimages&format=json&titles=${fallbackSearch}&pithumbsize=300&origin=*`;
+                            fetch(fallbackUrl)
+                                .then(res2 => res2.json())
+                                .then(data2 => {
+                                    const pages2 = data2.query?.pages;
+                                    if (pages2) {
+                                        for (let key in pages2) {
+                                            const page2 = pages2[key];
+                                            if (page2.thumbnail) {
+                                                const imgUrl2 = page2.thumbnail.source;
+                                                localStorage.setItem(cacheKey, imgUrl2);
+                                                resolve(imgUrl2);
+                                                return;
+                                            }
+                                        }
+                                    }
+                                    // Final fallback: use a placeholder with the emoji
+                                    localStorage.setItem(cacheKey, '');
+                                    resolve('');
+                                })
+                                .catch(() => {
+                                    localStorage.setItem(cacheKey, '');
+                                    resolve('');
+                                });
                         })
                         .catch(() => {
-                            const fallback = `https://picsum.photos/seed/${plantId}/200/200`;
-                            localStorage.setItem(cacheKey, fallback);
-                            resolve(fallback);
+                            localStorage.setItem(cacheKey, '');
+                            resolve('');
                         });
                 });
             }
@@ -3723,7 +3745,7 @@
             // ─── CACHED IMAGE HELPERS ──────────────────────────────────
             function getCachedImage(plantId) {
                 const cacheKey = 'plant_image_' + plantId;
-                return localStorage.getItem(cacheKey) || null;
+                return localStorage.getItem(cacheKey) || '';
             }
 
             // ─── WEATHER HELPERS ─────────────────────────────────────────
@@ -4567,15 +4589,12 @@
             });
 
             // ─── IMAGE PRE-FETCH ───────────────────────────────────────
-            // Pre-fetch images for all plants on load to populate cache
             async function preFetchImages() {
-                const plantsToFetch = PLANETS; // will use PLANETS (typo fixed below)
-                // Actually we need to use PLANTS variable.
                 const promises = PLANTS.map(plant => {
-                    return getPlantImageUrl(plant.id, plant.name).catch(() => {});
+                    return getPlantImageUrl(plant.id, plant.name, plant.sci).catch(() => {});
                 });
                 await Promise.all(promises);
-                // After fetching, re-render current page if needed
+                // Re-render current page after cache is populated
                 if (currentPage === 'dashboard') updateDashboard();
                 else if (currentPage === 'plants') renderAllPlants();
                 else if (currentPage === 'plant-detail' && selectedPlantId) renderPlantDetail(selectedPlantId);
@@ -4607,7 +4626,7 @@
                 });
 
                 // Pre-fetch images after initial load
-                setTimeout(preFetchImages, 1000);
+                setTimeout(preFetchImages, 1500);
             }
 
             if (document.readyState === 'loading') {
