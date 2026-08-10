@@ -1029,32 +1029,69 @@
             padding: 12px 16px;
             border: 1px solid rgba(255, 255, 255, 0.04);
             margin-bottom: 10px;
+        }
+        .disease-card .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 4px;
         }
         .disease-card .name {
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 15px;
         }
         .disease-card .count {
             background: rgba(76, 175, 80, 0.1);
             padding: 2px 12px;
             border-radius: 30px;
-            font-size: 12px;
+            font-size: 11px;
             color: #81c784;
+            white-space: nowrap;
         }
-        .disease-card .treatment {
-            font-size: 13px;
-            opacity: 0.7;
-            width: 100%;
-            margin-top: 4px;
+        .disease-card .affected-plants {
+            font-size: 12px;
+            opacity: 0.6;
+            margin: 4px 0 6px 0;
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .disease-card .affected-plants strong {
+            opacity: 0.8;
+            font-weight: 500;
+        }
+        .disease-card .remedies {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-top: 6px;
+            font-size: 12px;
+        }
+        .disease-card .remedies .item {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 4px 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            text-align: center;
+        }
+        .disease-card .remedies .item .label {
+            font-size: 9px;
+            text-transform: uppercase;
+            opacity: 0.4;
+            letter-spacing: 0.5px;
+        }
+        .disease-card .remedies .item .value {
+            font-size: 11px;
+            font-weight: 500;
+            word-break: break-word;
         }
         .plant-disease-list {
             display: grid;
             grid-template-columns: 1fr;
             gap: 8px;
+            margin-top: 8px;
         }
         .plant-disease-item {
             background: rgba(255, 255, 255, 0.02);
@@ -1071,11 +1108,13 @@
         .plant-disease-item .plant-name {
             font-weight: 500;
             flex: 1;
+            font-size: 14px;
         }
         .plant-disease-item .disease-list {
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
+            justify-content: flex-end;
         }
         .plant-disease-item .disease-list .disease-tag {
             font-size: 11px;
@@ -1087,6 +1126,19 @@
             border-radius: 30px;
             font-size: 12px;
             border: 1px solid rgba(255, 193, 7, 0.1);
+        }
+        @media (max-width: 600px) {
+            .disease-card .remedies {
+                grid-template-columns: 1fr;
+            }
+            .plant-disease-item {
+                flex-wrap: wrap;
+            }
+            .plant-disease-item .disease-list {
+                width: 100%;
+                justify-content: flex-start;
+                padding-left: 38px;
+            }
         }
     </style>
 </head>
@@ -1107,7 +1159,7 @@
             <a href="#garden" data-page="garden"><span class="icon"><i class="fa-solid fa-seedling"></i></span> My Garden</a>
             <a href="#plants" data-page="plants"><span class="icon"><i class="fa-solid fa-leaf"></i></span> All Plants</a>
             <a href="#calendar" data-page="calendar"><span class="icon"><i class="fa-solid fa-calendar-days"></i></span> Planting Calendar</a>
-            <a href="#diseases" data-page="diseases"><span class="icon"><i class="fa-solid fa-bug"></i></span> Sakit & Bulong</a>
+            <a href="#diseases" data-page="diseases"><span class="icon"><i class="fa-solid fa-bug"></i></span> Diseases & Remedies</a>
             <a href="#about" data-page="about"><span class="icon"><i class="fa-solid fa-circle-info"></i></span> About</a>
         </nav>
         <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 12px; opacity:0.3;">
@@ -1245,11 +1297,11 @@
             </div>
         </div>
 
-        <!-- Diseases & Remedies (Sakit & Bulong) -->
+        <!-- Diseases & Remedies -->
         <div class="page" id="page-diseases">
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title"><i class="fa-solid fa-bug icon"></i> Sakit & Bulong</span>
+                    <span class="card-title"><i class="fa-solid fa-bug icon"></i> Diseases & Remedies</span>
                     <span style="font-size:12px; opacity:0.4;" id="diseaseUpdateTime">Loading…</span>
                 </div>
                 <div style="margin-bottom:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
@@ -1312,8 +1364,11 @@
                 soil: 'Clay loam, water-retentive, pH 5.5-6.5',
                 fertilizer: 'Nitrogen-rich (16-16-16) at planting, then 2 more splits',
                 diseases: [
-                    { name: 'Rice Blast', description: 'Diamond-shaped lesions. Use resistant varieties and avoid excess nitrogen.' },
-                    { name: 'Bacterial Leaf Blight', description: 'Yellowish lesions. Drain fields and apply copper-based bactericide.' }
+                    { name: 'Rice Blast', description: 'Diamond-shaped lesions on leaves.', medicine: 'Triazole fungicides (Propiconazole)',
+                        fertilizer: 'Avoid excess nitrogen application', pesticide: 'None' },
+                    { name: 'Bacterial Leaf Blight', description: 'Yellowish lesions that spread from leaf tips.',
+                        medicine: 'Copper-based bactericide (Copper oxychloride)', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'None' }
                 ],
                 care: [
                     'Keep fields flooded during vegetative stage.',
@@ -1340,8 +1395,11 @@
                 soil: 'Well-draining loam, pH 6.0-7.5',
                 fertilizer: 'High nitrogen (14-14-14) at planting, then side-dress with urea',
                 diseases: [
-                    { name: 'Smut', description: 'Black whip-like growth. Remove infected stalks and use disease-free setts.' },
-                    { name: 'Red Rot', description: 'Red lesions inside stalks. Avoid waterlogging and use resistant varieties.' }
+                    { name: 'Smut', description: 'Black whip-like growth emerging from stalks.',
+                        medicine: 'Fungicide seed treatment (Carboxin + Thiram)', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'None' },
+                    { name: 'Red Rot', description: 'Red lesions inside stalks causing them to dry.',
+                        medicine: 'Fungicide (Carbendazim)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Plant setts horizontally in furrows.',
@@ -1368,8 +1426,11 @@
                 soil: 'Well-draining loam, pH 5.8-6.5',
                 fertilizer: 'High nitrogen (14-14-14) at planting, side-dress at knee-high',
                 diseases: [
-                    { name: 'Corn Rust', description: 'Orange pustules. Apply fungicide.' },
-                    { name: 'Stem Borer', description: 'Wilting and holes in stalks. Use Bt or insecticide.' }
+                    { name: 'Corn Rust', description: 'Orange pustules on leaves and stalks.',
+                        medicine: 'Fungicide (Azoxystrobin)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Stem Borer', description: 'Wilting and holes in stalks.',
+                        medicine: 'Bacillus thuringiensis (Bt)', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Insecticide (Cypermethrin)' }
                 ],
                 care: [
                     'Plant seeds 1-2 inches deep, 8-12 inches apart.',
@@ -1396,8 +1457,10 @@
                 soil: 'Well-draining sandy loam, pH 5.5-6.5',
                 fertilizer: 'Calcium-rich, low nitrogen (0-10-20)',
                 diseases: [
-                    { name: 'Leaf Spot', description: 'Brown spots. Apply fungicide.' },
-                    { name: 'Rust', description: 'Orange pustules. Use resistant varieties.' }
+                    { name: 'Leaf Spot', description: 'Brown spots on leaves.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Rust', description: 'Orange pustules on lower leaves.', medicine: 'Fungicide (Mancozeb/Sulfur)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Plant seeds 2 inches deep, 4-6 inches apart.',
@@ -1424,8 +1487,11 @@
                 soil: 'Well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Low nitrogen (0-20-20) at planting',
                 diseases: [
-                    { name: 'Powdery Mildew', description: 'White powdery spots. Apply sulfur.' },
-                    { name: 'Yellow Mosaic', description: 'Yellow patches. Control whiteflies.' }
+                    { name: 'Powdery Mildew', description: 'White powdery spots on leaves.',
+                        medicine: 'Fungicide (Sulfur)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Yellow Mosaic', description: 'Yellow patches on leaves. Spread by whiteflies.',
+                        medicine: 'None (vector control)', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Insecticide (Imidacloprid) for whiteflies' }
                 ],
                 care: [
                     'Plant seeds 1-2 inches deep.',
@@ -1452,8 +1518,10 @@
                 soil: 'Well-draining sandy loam, pH 5.5-6.5',
                 fertilizer: 'Low nitrogen, high potassium (5-10-10)',
                 diseases: [
-                    { name: 'Leaf Spot', description: 'Brown spots. Remove infected leaves.' },
-                    { name: 'Root Rot', description: 'Soft, decayed roots. Improve drainage and rotate crops.' }
+                    { name: 'Leaf Spot', description: 'Brown spots on leaves.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Soft, decayed roots.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Improve drainage, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Plant cuttings (slips) in ridges.',
@@ -1480,8 +1548,11 @@
                 soil: 'Well-draining sandy loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (14-14-14) at planting',
                 diseases: [
-                    { name: 'Cassava Mosaic', description: 'Mottled leaves. Use resistant varieties and control whiteflies.' },
-                    { name: 'Root Rot', description: 'Soft, brown roots. Improve drainage and avoid overwatering.' }
+                    { name: 'Cassava Mosaic', description: 'Mottled leaves. Spread by whiteflies.',
+                        medicine: 'None (vector control)', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Insecticide (Imidacloprid) for whiteflies' },
+                    { name: 'Root Rot', description: 'Soft, brown roots.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Improve drainage, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Plant stem cuttings 2-3 inches deep.',
@@ -1508,8 +1579,10 @@
                 soil: 'Moist, rich loam or aquatic',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Leaf Blight', description: 'Water-soaked spots. Use resistant varieties.' },
-                    { name: 'Root Rot', description: 'Soft corms. Avoid water stagnation.' }
+                    { name: 'Leaf Blight', description: 'Water-soaked spots on leaves.',
+                        medicine: 'Copper-based bactericide', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Soft corms.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid water stagnation, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Plant in flooded or moist soil.',
@@ -1525,7 +1598,7 @@
                 id: 'ube',
                 name: 'Ube (Purple Yam)',
                 sci: 'Dioscorea alata',
-                icon: '🍆', // unique
+                icon: '🍆',
                 category: 'root',
                 idealTempMin: 22,
                 idealTempMax: 32,
@@ -1536,8 +1609,10 @@
                 soil: 'Well-draining loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Anthracnose', description: 'Dark lesions on vines. Apply fungicide.' },
-                    { name: 'Root Knot', description: 'Swollen roots. Use nematode-resistant varieties.' }
+                    { name: 'Anthracnose', description: 'Dark lesions on vines.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Knot', description: 'Swollen roots caused by nematodes.',
+                        medicine: 'Nematicide (Carbofuran)', fertilizer: 'Add organic matter', pesticide: 'Nematicide' }
                 ],
                 care: [
                     'Plant tuber pieces with buds.',
@@ -1564,8 +1639,10 @@
                 soil: 'Well-draining sandy loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) at planting',
                 diseases: [
-                    { name: 'Root Rot', description: 'Soft rot. Avoid overwatering.' },
-                    { name: 'Leaf Spot', description: 'Brown spots. Apply fungicide.' }
+                    { name: 'Root Rot', description: 'Soft rot.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' },
+                    { name: 'Leaf Spot', description: 'Brown spots.', medicine: 'Fungicide (Chlorothalonil)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Plant seeds or tubers in well-drained soil.',
@@ -1592,8 +1669,10 @@
                 soil: 'Well-draining loam, pH 5.5-6.5',
                 fertilizer: 'High potassium (12-12-17) at planting',
                 diseases: [
-                    { name: 'Late Blight', description: 'Dark spots on leaves. Apply fungicide.' },
-                    { name: 'Scab', description: 'Scabby spots on tubers. Maintain soil pH above 5.5.' }
+                    { name: 'Late Blight', description: 'Dark spots on leaves.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Scab', description: 'Scabby spots on tubers.', medicine: 'None (manage pH)',
+                        fertilizer: 'Maintain soil pH above 5.5', pesticide: 'None' }
                 ],
                 care: [
                     'Plant seed tubers 3-4 inches deep.',
@@ -1620,8 +1699,10 @@
                 soil: 'Loamy, well-draining, pH 6.0-6.8',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Early Blight', description: 'Dark spots. Remove infected leaves and apply fungicide.' },
-                    { name: 'Fruit Rot', description: 'Water-soaked spots. Improve air circulation.' }
+                    { name: 'Early Blight', description: 'Dark spots with concentric rings.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Fruit Rot', description: 'Water-soaked spots on fruit.',
+                        medicine: 'Fungicide (Copper-based)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply 2-3x per week.',
@@ -1648,8 +1729,11 @@
                 soil: 'Sandy loam, well-draining, pH 5.5-7.0',
                 fertilizer: 'High potassium (5-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Powdery Mildew', description: 'White spots. Apply sulfur.' },
-                    { name: 'Leaf Curl', description: 'Leaves curl and yellow. Control aphids.' }
+                    { name: 'Powdery Mildew', description: 'White powdery spots.',
+                        medicine: 'Fungicide (Sulfur)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Leaf Curl', description: 'Leaves curl and yellow. Spread by aphids.',
+                        medicine: 'None (vector control)', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Insecticide (Imidacloprid)' }
                 ],
                 care: [
                     'Water when top 2" soil is dry.',
@@ -1676,8 +1760,11 @@
                 soil: 'Rich, well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Fruit Borer', description: 'Small holes. Use neem oil or Bt.' },
-                    { name: 'Wilt', description: 'Drooping plants. Remove infected and rotate crops.' }
+                    { name: 'Fruit Borer', description: 'Small holes in fruit.',
+                        medicine: 'Bacillus thuringiensis (Bt)', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Insecticide (Spinosad)' },
+                    { name: 'Wilt', description: 'Drooping plants.', medicine: 'Bio-fungicide (Trichoderma)',
+                        fertilizer: 'Remove infected plants, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply and consistently.',
@@ -1704,8 +1791,11 @@
                 soil: 'Well-draining loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) monthly',
                 diseases: [
-                    { name: 'Mosaic Virus', description: 'Yellow-green mottling. Control aphids.' },
-                    { name: 'Downy Mildew', description: 'Yellow spots. Improve air circulation.' }
+                    { name: 'Mosaic Virus', description: 'Yellow-green mottling. Spread by aphids.',
+                        medicine: 'None (vector control)', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Insecticide (Imidacloprid)' },
+                    { name: 'Downy Mildew', description: 'Yellow spots on leaves.',
+                        medicine: 'Fungicide (Metalaxyl)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water regularly, especially during fruiting.',
@@ -1732,8 +1822,11 @@
                 soil: 'Well-draining sandy loam, pH 6.0-6.8',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 weeks',
                 diseases: [
-                    { name: 'Yellow Vein Mosaic', description: 'Yellow veins. Control whiteflies.' },
-                    { name: 'Fusarium Wilt', description: 'Yellowing and wilting. Use resistant varieties.' }
+                    { name: 'Yellow Vein Mosaic', description: 'Yellow veins. Spread by whiteflies.',
+                        medicine: 'None (vector control)', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Insecticide (Imidacloprid) for whiteflies' },
+                    { name: 'Fusarium Wilt', description: 'Yellowing and wilting.',
+                        medicine: 'Bio-fungicide (Trichoderma)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply once a week.',
@@ -1760,8 +1853,11 @@
                 soil: 'Well-draining loam, pH 6.0-6.5',
                 fertilizer: 'Low nitrogen (5-10-10) at planting',
                 diseases: [
-                    { name: 'Bean Rust', description: 'Brown spots. Apply sulfur.' },
-                    { name: 'Aphids', description: 'Sticky residue. Use insecticidal soap.' }
+                    { name: 'Bean Rust', description: 'Brown spots on leaves.', medicine: 'Fungicide (Sulfur)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Aphids', description: 'Sticky residue and curled leaves.',
+                        medicine: 'Insecticidal soap', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Imidacloprid or insecticidal soap' }
                 ],
                 care: [
                     'Water deeply once a week.',
@@ -1788,8 +1884,10 @@
                 soil: 'Rich, well-draining loam, pH 6.0-6.8',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 weeks',
                 diseases: [
-                    { name: 'Powdery Mildew', description: 'White spots. Apply sulfur.' },
-                    { name: 'Squash Vine Borer', description: 'Wilting vines. Use Bt.' }
+                    { name: 'Powdery Mildew', description: 'White spots on leaves.',
+                        medicine: 'Fungicide (Sulfur)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Squash Vine Borer', description: 'Wilting vines.', medicine: 'Bacillus thuringiensis (Bt)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'Insecticide (Spinosad)' }
                 ],
                 care: [
                     'Water deeply at base.',
@@ -1816,8 +1914,10 @@
                 soil: 'Rich, well-draining loam, pH 6.0-6.8',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Downy Mildew', description: 'Yellow spots. Apply fungicide.' },
-                    { name: 'Powdery Mildew', description: 'White spots. Improve air circulation.' }
+                    { name: 'Downy Mildew', description: 'Yellow spots on leaves.',
+                        medicine: 'Fungicide (Metalaxyl)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Powdery Mildew', description: 'White spots on leaves.',
+                        medicine: 'Fungicide (Sulfur)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water consistently to keep soil moist.',
@@ -1844,8 +1944,10 @@
                 soil: 'Well-draining loam, pH 6.0-6.8',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Powdery Mildew', description: 'White spots. Apply sulfur.' },
-                    { name: 'Downy Mildew', description: 'Yellow spots. Apply fungicide.' }
+                    { name: 'Powdery Mildew', description: 'White spots on leaves.',
+                        medicine: 'Fungicide (Sulfur)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Downy Mildew', description: 'Yellow spots on leaves.',
+                        medicine: 'Fungicide (Metalaxyl)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply, especially during fruiting.',
@@ -1861,7 +1963,7 @@
                 id: 'patola',
                 name: 'Patola (Sponge Gourd)',
                 sci: 'Luffa aegyptiaca',
-                icon: '🫘', // unique
+                icon: '🫘',
                 category: 'vegetable',
                 idealTempMin: 22,
                 idealTempMax: 35,
@@ -1872,8 +1974,11 @@
                 soil: 'Well-draining loam, pH 6.0-6.8',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Powdery Mildew', description: 'White spots. Apply sulfur.' },
-                    { name: 'Mosaic Virus', description: 'Mottled leaves. Control aphids.' }
+                    { name: 'Powdery Mildew', description: 'White spots on leaves.',
+                        medicine: 'Fungicide (Sulfur)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Mosaic Virus', description: 'Mottled leaves. Spread by aphids.',
+                        medicine: 'None (vector control)', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Insecticide (Imidacloprid)' }
                 ],
                 care: [
                     'Water regularly during flowering and fruiting.',
@@ -1900,8 +2005,10 @@
                 soil: 'Well-draining loam, pH 6.0-6.8',
                 fertilizer: 'Balanced NPK (10-10-10) every month',
                 diseases: [
-                    { name: 'Powdery Mildew', description: 'White spots. Apply sulfur.' },
-                    { name: 'Vine Borer', description: 'Wilting vines. Use Bt.' }
+                    { name: 'Powdery Mildew', description: 'White spots on leaves.',
+                        medicine: 'Fungicide (Sulfur)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Vine Borer', description: 'Wilting vines.', medicine: 'Bacillus thuringiensis (Bt)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'Insecticide (Spinosad)' }
                 ],
                 care: [
                     'Water deeply, especially during dry periods.',
@@ -1928,8 +2035,10 @@
                 soil: 'Well-draining loam, pH 6.0-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 weeks',
                 diseases: [
-                    { name: 'Clubroot', description: 'Swollen roots. Use resistant varieties and avoid acidic soil.' },
-                    { name: 'Black Rot', description: 'Yellow V-shaped lesions. Use disease-free seed.' }
+                    { name: 'Clubroot', description: 'Swollen roots.', medicine: 'Lime (Calcium carbonate)',
+                        fertilizer: 'Apply balanced NPK, adjust pH', pesticide: 'None' },
+                    { name: 'Black Rot', description: 'Yellow V-shaped lesions on leaves.',
+                        medicine: 'Copper-based bactericide', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water consistently, especially during head formation.',
@@ -1956,8 +2065,11 @@
                 soil: 'Well-draining loam, pH 6.0-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Downy Mildew', description: 'Yellow spots. Apply fungicide.' },
-                    { name: 'Blackleg', description: 'Dark lesions on stems. Use disease-free seed.' }
+                    { name: 'Downy Mildew', description: 'Yellow spots on leaves.',
+                        medicine: 'Fungicide (Metalaxyl)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Blackleg', description: 'Dark lesions on stems.',
+                        medicine: 'Copper-based fungicide/bactericide', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'None' }
                 ],
                 care: [
                     'Water regularly, keep soil moist.',
@@ -1984,8 +2096,10 @@
                 soil: 'Moist, rich soil or aquatic',
                 fertilizer: 'High nitrogen (15-5-5) every 2 weeks',
                 diseases: [
-                    { name: 'Leaf Spot', description: 'Brown spots. Remove infected leaves.' },
-                    { name: 'Root Rot', description: 'Wilting and yellowing. Improve drainage.' }
+                    { name: 'Leaf Spot', description: 'Brown spots on leaves.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Improve drainage, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Keep soil consistently moist (can grow in water).',
@@ -2012,8 +2126,10 @@
                 soil: 'Well-draining loam, pH 6.0-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Damping Off', description: 'Seedlings collapse. Use sterile soil.' },
-                    { name: 'Leaf Blight', description: 'Brown spots. Apply fungicide.' }
+                    { name: 'Damping Off', description: 'Seedlings collapse.', medicine: 'Fungicide (Metalaxyl)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Leaf Blight', description: 'Brown spots on leaves.',
+                        medicine: 'Copper-based bactericide', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water regularly to keep soil moist.',
@@ -2040,8 +2156,11 @@
                 soil: 'Well-draining loam, pH 6.0-6.8',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Downy Mildew', description: 'Yellow spots. Improve air circulation.' },
-                    { name: 'Aphids', description: 'Sticky residue. Use insecticidal soap.' }
+                    { name: 'Downy Mildew', description: 'Yellow spots on leaves.',
+                        medicine: 'Fungicide (Metalaxyl)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Aphids', description: 'Sticky residue and curled leaves.',
+                        medicine: 'Insecticidal soap', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Imidacloprid or insecticidal soap' }
                 ],
                 care: [
                     'Water consistently to prevent bitterness.',
@@ -2068,8 +2187,10 @@
                 soil: 'Well-draining loam, pH 6.0-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Downy Mildew', description: 'Yellow spots. Avoid overhead watering.' },
-                    { name: 'Tip Burn', description: 'Brown edges. Maintain consistent moisture.' }
+                    { name: 'Downy Mildew', description: 'Yellow spots on leaves.',
+                        medicine: 'Fungicide (Metalaxyl)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Tip Burn', description: 'Brown edges on leaves.', medicine: 'Calcium nitrate',
+                        fertilizer: 'Maintain consistent moisture, apply calcium', pesticide: 'None' }
                 ],
                 care: [
                     'Water regularly to keep soil moist.',
@@ -2096,8 +2217,10 @@
                 soil: 'Rich, moist loam',
                 fertilizer: 'High nitrogen (15-5-5) every 2 weeks',
                 diseases: [
-                    { name: 'Leaf Spot', description: 'Brown spots. Remove infected leaves.' },
-                    { name: 'Root Rot', description: 'Avoid waterlogging.' }
+                    { name: 'Leaf Spot', description: 'Brown spots on leaves.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Improve drainage, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Keep soil consistently moist.',
@@ -2124,8 +2247,11 @@
                 soil: 'Well-draining loam',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 weeks',
                 diseases: [
-                    { name: 'Leaf Spot', description: 'Brown spots. Apply fungicide.' },
-                    { name: 'Aphids', description: 'Use insecticidal soap.' }
+                    { name: 'Leaf Spot', description: 'Brown spots on leaves.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Aphids', description: 'Sticky residue and curled leaves.',
+                        medicine: 'Insecticidal soap', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Imidacloprid or insecticidal soap' }
                 ],
                 care: [
                     'Water regularly, keep soil moist.',
@@ -2152,8 +2278,10 @@
                 soil: 'Well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 weeks',
                 diseases: [
-                    { name: 'Root Rot', description: 'Avoid overwatering.' },
-                    { name: 'Leaf Spot', description: 'Brown spots. Apply fungicide.' }
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' },
+                    { name: 'Leaf Spot', description: 'Brown spots on leaves.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water regularly, but do not overwater.',
@@ -2180,8 +2308,11 @@
                 soil: 'Well-draining loam',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 weeks',
                 diseases: [
-                    { name: 'Leaf Spot', description: 'Brown spots. Remove infected leaves.' },
-                    { name: 'Aphids', description: 'Use insecticidal soap.' }
+                    { name: 'Leaf Spot', description: 'Brown spots on leaves.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Aphids', description: 'Sticky residue and curled leaves.',
+                        medicine: 'Insecticidal soap', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Imidacloprid or insecticidal soap' }
                 ],
                 care: [
                     'Water regularly, keep soil moist.',
@@ -2208,8 +2339,10 @@
                 soil: 'Well-draining sandy loam, pH 6.0-7.0',
                 fertilizer: 'Organic compost, low nitrogen',
                 diseases: [
-                    { name: 'Root Rot', description: 'Avoid overwatering.' },
-                    { name: 'Leaf Spot', description: 'Brown spots. Remove infected leaves.' }
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply organic matter', pesticide: 'None' },
+                    { name: 'Leaf Spot', description: 'Brown spots on leaves.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water moderately, allow soil to dry between watering.',
@@ -2236,8 +2369,10 @@
                 soil: 'Moist, rich soil',
                 fertilizer: 'Organic compost',
                 diseases: [
-                    { name: 'Leaf Blight', description: 'Brown spots. Remove infected fronds.' },
-                    { name: 'Root Rot', description: 'Avoid waterlogging.' }
+                    { name: 'Leaf Blight', description: 'Brown spots on fronds.',
+                        medicine: 'Copper-based fungicide', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Improve drainage, apply organic matter', pesticide: 'None' }
                 ],
                 care: [
                     'Keep soil consistently moist.',
@@ -2264,8 +2399,10 @@
                 soil: 'Moist, well-draining loam',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 months',
                 diseases: [
-                    { name: 'Bamboo Mosaic', description: 'Mottled leaves. Control aphids.' },
-                    { name: 'Root Rot', description: 'Improve drainage.' }
+                    { name: 'Bamboo Mosaic', description: 'Mottled leaves.', medicine: 'None (vector control)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'Insecticide for aphids' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Improve drainage, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Maintain consistent moisture.',
@@ -2292,8 +2429,11 @@
                 soil: 'Well-draining loam, pH 6.0-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every month',
                 diseases: [
-                    { name: 'Powdery Mildew', description: 'White spots. Apply sulfur.' },
-                    { name: 'Aphids', description: 'Use insecticidal soap.' }
+                    { name: 'Powdery Mildew', description: 'White spots on leaves.',
+                        medicine: 'Fungicide (Sulfur)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Aphids', description: 'Sticky residue and curled leaves.',
+                        medicine: 'Insecticidal soap', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Imidacloprid or insecticidal soap' }
                 ],
                 care: [
                     'Water consistently, especially during flowering.',
@@ -2320,8 +2460,11 @@
                 soil: 'Well-draining loam, pH 6.0-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every month',
                 diseases: [
-                    { name: 'Bean Rust', description: 'Brown spots. Apply sulfur.' },
-                    { name: 'Aphids', description: 'Use insecticidal soap.' }
+                    { name: 'Bean Rust', description: 'Brown spots on leaves.', medicine: 'Fungicide (Sulfur)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Aphids', description: 'Sticky residue and curled leaves.',
+                        medicine: 'Insecticidal soap', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Imidacloprid or insecticidal soap' }
                 ],
                 care: [
                     'Water moderately, avoid waterlogging.',
@@ -2348,8 +2491,11 @@
                 soil: 'Well-draining loam, pH 6.0-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every month',
                 diseases: [
-                    { name: 'Root Rot', description: 'Avoid overwatering.' },
-                    { name: 'Aphids', description: 'Use insecticidal soap.' }
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' },
+                    { name: 'Aphids', description: 'Sticky residue and curled leaves.',
+                        medicine: 'Insecticidal soap', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Imidacloprid or insecticidal soap' }
                 ],
                 care: [
                     'Water moderately.',
@@ -2376,8 +2522,10 @@
                 soil: 'Rich, well-draining loam, pH 5.5-6.5',
                 fertilizer: 'Organic compost, low nitrogen',
                 diseases: [
-                    { name: 'Bacterial Wilt', description: 'Yellowing and wilting. Remove infected plants.' },
-                    { name: 'Rhizome Rot', description: 'Soft rhizomes. Improve drainage.' }
+                    { name: 'Bacterial Wilt', description: 'Yellowing and wilting.',
+                        medicine: 'Bio-fungicide (Trichoderma)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Rhizome Rot', description: 'Soft rhizomes.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Improve drainage, apply organic matter', pesticide: 'None' }
                 ],
                 care: [
                     'Water regularly but avoid waterlogging.',
@@ -2404,8 +2552,11 @@
                 soil: 'Well-draining sandy loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) at planting',
                 diseases: [
-                    { name: 'White Rot', description: 'White fluffy growth on bulbs. Avoid planting in infected soil.' },
-                    { name: 'Rust', description: 'Orange spots. Apply fungicide.' }
+                    { name: 'White Rot', description: 'White fluffy growth on bulbs.',
+                        medicine: 'None (Sclerotium cepivorum)', fertilizer: 'Apply balanced NPK, long rotation',
+                        pesticide: 'None' },
+                    { name: 'Rust', description: 'Orange spots on leaves.', medicine: 'Fungicide (Mancozeb/Sulfur)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water moderately, reduce before harvest.',
@@ -2432,8 +2583,10 @@
                 soil: 'Well-draining sandy loam, pH 6.0-6.8',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 weeks',
                 diseases: [
-                    { name: 'Downy Mildew', description: 'Yellow spots. Improve air circulation.' },
-                    { name: 'Bulb Rot', description: 'Soft bulbs. Avoid overwatering.' }
+                    { name: 'Downy Mildew', description: 'Yellow spots on leaves.',
+                        medicine: 'Fungicide (Metalaxyl)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Bulb Rot', description: 'Soft bulbs.', medicine: 'Fungicide (Iprodione)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply but infrequently.',
@@ -2460,8 +2613,10 @@
                 soil: 'Well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Rust', description: 'Orange pustules. Apply fungicide.' },
-                    { name: 'Leaf Blight', description: 'Brown spots. Remove infected leaves.' }
+                    { name: 'Rust', description: 'Orange pustules on leaves.', medicine: 'Fungicide (Mancozeb/Sulfur)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Leaf Blight', description: 'Brown spots on leaves.',
+                        medicine: 'Copper-based fungicide', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water regularly, but do not overwater.',
@@ -2488,8 +2643,11 @@
                 soil: 'Well-draining sandy loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Root Rot', description: 'Avoid overwatering.' },
-                    { name: 'Aphids', description: 'Use insecticidal soap.' }
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' },
+                    { name: 'Aphids', description: 'Sticky residue and curled leaves.',
+                        medicine: 'Insecticidal soap', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Imidacloprid or insecticidal soap' }
                 ],
                 care: [
                     'Water moderately, allow soil to dry between watering.',
@@ -2516,8 +2674,10 @@
                 soil: 'Well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 weeks',
                 diseases: [
-                    { name: 'Fusarium Wilt', description: 'Yellowing and wilting. Use resistant varieties.' },
-                    { name: 'Downy Mildew', description: 'Yellow spots. Avoid overhead watering.' }
+                    { name: 'Fusarium Wilt', description: 'Yellowing and wilting.',
+                        medicine: 'Bio-fungicide (Trichoderma)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Downy Mildew', description: 'Yellow spots on leaves.',
+                        medicine: 'Fungicide (Metalaxyl)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water regularly, keep soil moist.',
@@ -2544,8 +2704,10 @@
                 soil: 'Moist, well-draining loam',
                 fertilizer: 'Balanced NPK (10-10-10) every 4 weeks',
                 diseases: [
-                    { name: 'Rust', description: 'Orange spots. Apply fungicide.' },
-                    { name: 'Powdery Mildew', description: 'White spots. Improve air circulation.' }
+                    { name: 'Rust', description: 'Orange spots on leaves.', medicine: 'Fungicide (Mancozeb/Sulfur)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Powdery Mildew', description: 'White spots on leaves.',
+                        medicine: 'Fungicide (Sulfur)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water regularly to keep soil moist.',
@@ -2572,8 +2734,11 @@
                 soil: 'Rich, well-draining loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (14-14-14) every 2 months',
                 diseases: [
-                    { name: 'Panama Disease', description: 'Yellowing and wilting. Use resistant varieties.' },
-                    { name: 'Black Sigatoka', description: 'Dark spots on leaves. Apply fungicide.' }
+                    { name: 'Panama Disease', description: 'Yellowing and wilting (Fusarium oxysporum).',
+                        medicine: 'None (use resistant varieties)', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'None' },
+                    { name: 'Black Sigatoka', description: 'Dark spots on leaves.',
+                        medicine: 'Fungicide (Propiconazole)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply, especially during dry spells.',
@@ -2600,8 +2765,10 @@
                 soil: 'Well-draining sandy loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) before flowering',
                 diseases: [
-                    { name: 'Anthracnose', description: 'Dark spots on fruit. Apply fungicide.' },
-                    { name: 'Powdery Mildew', description: 'White spots. Apply sulfur.' }
+                    { name: 'Anthracnose', description: 'Dark spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Powdery Mildew', description: 'White spots on leaves and flowers.',
+                        medicine: 'Fungicide (Sulfur)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water during dry periods, especially before flowering.',
@@ -2628,8 +2795,10 @@
                 soil: 'Well-draining sandy loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Root Rot', description: 'Avoid waterlogging.' },
-                    { name: 'Mealybug Wilt', description: 'Wilting and yellowing. Control mealybugs.' }
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid waterlogging, apply balanced NPK', pesticide: 'None' },
+                    { name: 'Mealybug Wilt', description: 'Wilting and yellowing.', medicine: 'Insecticide for mealybugs',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'Imidacloprid' }
                 ],
                 care: [
                     'Water moderately, allow soil to dry between watering.',
@@ -2656,8 +2825,11 @@
                 soil: 'Well-draining sandy loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Papaya Ring Spot', description: 'Mottled leaves. Control aphids and use resistant varieties.' },
-                    { name: 'Root Rot', description: 'Avoid overwatering.' }
+                    { name: 'Papaya Ring Spot', description: 'Mottled leaves. Spread by aphids.',
+                        medicine: 'None (vector control)', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Insecticide (Imidacloprid)' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water regularly, keep soil moist.',
@@ -2684,8 +2856,10 @@
                 soil: 'Well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' },
-                    { name: 'Fruit Fly', description: 'Larvae in fruit. Use baited traps.' }
+                    { name: 'Anthracnose', description: 'Dark spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Fruit Fly', description: 'Larvae in fruit.', medicine: 'Protein bait + insecticide',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'Spinosad' }
                 ],
                 care: [
                     'Water regularly during dry periods.',
@@ -2712,8 +2886,10 @@
                 soil: 'Well-draining sandy loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Root Rot', description: 'Avoid overwatering.' },
-                    { name: 'Leaf Spot', description: 'Brown spots. Apply fungicide.' }
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' },
+                    { name: 'Leaf Spot', description: 'Brown spots on leaves.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water moderately, allow soil to dry between watering.',
@@ -2740,8 +2916,10 @@
                 soil: 'Well-draining loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Avoid overwatering.' }
+                    { name: 'Anthracnose', description: 'Dark spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water regularly, keep soil moist.',
@@ -2768,8 +2946,10 @@
                 soil: 'Rich, well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 months',
                 diseases: [
-                    { name: 'Fruit Rot', description: 'Brown spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Improve drainage.' }
+                    { name: 'Fruit Rot', description: 'Brown spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Improve drainage, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply, especially during fruiting.',
@@ -2796,8 +2976,10 @@
                 soil: 'Rich, well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 months',
                 diseases: [
-                    { name: 'Fruit Rot', description: 'Brown spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Avoid overwatering.' }
+                    { name: 'Fruit Rot', description: 'Brown spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply, especially during fruiting.',
@@ -2824,8 +3006,10 @@
                 soil: 'Rich, well-draining loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 months',
                 diseases: [
-                    { name: 'Fruit Rot', description: 'Brown spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Improve drainage.' }
+                    { name: 'Fruit Rot', description: 'Brown spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Improve drainage, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply, especially during flowering and fruiting.',
@@ -2852,8 +3036,10 @@
                 soil: 'Rich, well-draining loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 months',
                 diseases: [
-                    { name: 'Fruit Rot', description: 'Brown spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Improve drainage.' }
+                    { name: 'Fruit Rot', description: 'Brown spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Improve drainage, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply, especially during fruiting.',
@@ -2880,8 +3066,10 @@
                 soil: 'Well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 3 months',
                 diseases: [
-                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Avoid overwatering.' }
+                    { name: 'Anthracnose', description: 'Dark spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply, especially during flowering and fruiting.',
@@ -2908,8 +3096,10 @@
                 soil: 'Well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' },
-                    { name: 'Fruit Fly', description: 'Use baited traps.' }
+                    { name: 'Anthracnose', description: 'Dark spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Fruit Fly', description: 'Larvae in fruit.', medicine: 'Protein bait + insecticide',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'Spinosad' }
                 ],
                 care: [
                     'Water deeply during dry spells.',
@@ -2936,8 +3126,10 @@
                 soil: 'Well-draining sandy loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Avoid overwatering.' }
+                    { name: 'Anthracnose', description: 'Dark spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water moderately.',
@@ -2964,8 +3156,10 @@
                 soil: 'Well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Fruit Fly', description: 'Use baited traps.' },
-                    { name: 'Leaf Spot', description: 'Brown spots. Apply fungicide.' }
+                    { name: 'Fruit Fly', description: 'Larvae in fruit.', medicine: 'Protein bait + insecticide',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'Spinosad' },
+                    { name: 'Leaf Spot', description: 'Brown spots on leaves.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply during dry periods.',
@@ -2992,8 +3186,10 @@
                 soil: 'Well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' },
-                    { name: 'Fruit Fly', description: 'Use baited traps.' }
+                    { name: 'Anthracnose', description: 'Dark spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Fruit Fly', description: 'Larvae in fruit.', medicine: 'Protein bait + insecticide',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'Spinosad' }
                 ],
                 care: [
                     'Water moderately, especially during dry periods.',
@@ -3020,8 +3216,11 @@
                 soil: 'Well-draining loam, pH 6.0-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Root Rot', description: 'Avoid overwatering.' },
-                    { name: 'Anthracnose', description: 'Dark spots. Apply fungicide.' }
+                    { name: 'Root Rot', description: 'Wilting and yellowing (Phytophthora).',
+                        medicine: 'Fungicide (Fosetyl-Al)', fertilizer: 'Improve drainage, apply balanced NPK',
+                        pesticide: 'None' },
+                    { name: 'Anthracnose', description: 'Dark spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water deeply, especially during dry periods.',
@@ -3048,8 +3247,10 @@
                 soil: 'Well-draining loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Fruit Rot', description: 'Brown spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Avoid overwatering.' }
+                    { name: 'Fruit Rot', description: 'Brown spots on fruit.', medicine: 'Fungicide (Mancozeb)',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water regularly, keep soil moist.',
@@ -3076,8 +3277,10 @@
                 soil: 'Well-draining sandy loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Fruit Fly', description: 'Use baited traps.' },
-                    { name: 'Leaf Spot', description: 'Brown spots. Apply fungicide.' }
+                    { name: 'Fruit Fly', description: 'Larvae in fruit.', medicine: 'Protein bait + insecticide',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'Spinosad' },
+                    { name: 'Leaf Spot', description: 'Brown spots on leaves.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water moderately.',
@@ -3104,8 +3307,11 @@
                 soil: 'Well-draining sandy loam, pH 5.5-6.5',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Citrus Canker', description: 'Lesions on leaves. Use resistant varieties.' },
-                    { name: 'Aphids', description: 'Use insecticidal soap.' }
+                    { name: 'Citrus Canker', description: 'Lesions on leaves and fruit.',
+                        medicine: 'Copper-based bactericide', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Aphids', description: 'Sticky residue and curled leaves.',
+                        medicine: 'Insecticidal soap', fertilizer: 'Apply balanced NPK',
+                        pesticide: 'Imidacloprid or insecticidal soap' }
                 ],
                 care: [
                     'Water regularly, keep soil moist.',
@@ -3132,8 +3338,10 @@
                 soil: 'Well-draining sandy loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Citrus Canker', description: 'Lesions on leaves. Use resistant varieties.' },
-                    { name: 'Fruit Fly', description: 'Use baited traps.' }
+                    { name: 'Citrus Canker', description: 'Lesions on leaves and fruit.',
+                        medicine: 'Copper-based bactericide', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Fruit Fly', description: 'Larvae in fruit.', medicine: 'Protein bait + insecticide',
+                        fertilizer: 'Apply balanced NPK', pesticide: 'Spinosad' }
                 ],
                 care: [
                     'Water deeply, especially during fruit development.',
@@ -3160,8 +3368,10 @@
                 soil: 'Well-draining sandy loam, pH 6.0-7.0',
                 fertilizer: 'Balanced NPK (10-10-10) every 2 months',
                 diseases: [
-                    { name: 'Leaf Spot', description: 'Brown spots. Apply fungicide.' },
-                    { name: 'Root Rot', description: 'Avoid overwatering.' }
+                    { name: 'Leaf Spot', description: 'Brown spots on leaves.',
+                        medicine: 'Fungicide (Chlorothalonil)', fertilizer: 'Apply balanced NPK', pesticide: 'None' },
+                    { name: 'Root Rot', description: 'Wilting and yellowing.', medicine: 'Fungicide (Fosetyl-Al)',
+                        fertilizer: 'Avoid overwatering, apply balanced NPK', pesticide: 'None' }
                 ],
                 care: [
                     'Water moderately.',
@@ -3268,28 +3478,39 @@
 
             // ─── DISEASE HELPERS ──────────────────────────────────────
             function getDiseaseData() {
-                // Aggregate diseases from all plants
                 const diseaseMap = {};
-                const plantDiseases = [];
                 PLANTS.forEach(plant => {
                     plant.diseases.forEach(d => {
                         const key = d.name;
                         if (!diseaseMap[key]) {
-                            diseaseMap[key] = { name: d.name, count: 0, treatments: new Set() };
+                            diseaseMap[key] = {
+                                name: d.name,
+                                count: 0,
+                                affectedPlants: new Set(),
+                                medicines: new Set(),
+                                fertilizers: new Set(),
+                                pesticides: new Set(),
+                                descriptions: new Set()
+                            };
                         }
                         diseaseMap[key].count += 1;
-                        diseaseMap[key].treatments.add(d.description);
-                    });
-                    plantDiseases.push({
-                        plantId: plant.id,
-                        plantName: plant.name,
-                        icon: plant.icon,
-                        diseases: plant.diseases
+                        diseaseMap[key].affectedPlants.add(plant.name);
+                        if (d.medicine) diseaseMap[key].medicines.add(d.medicine);
+                        if (d.fertilizer) diseaseMap[key].fertilizers.add(d.fertilizer);
+                        if (d.pesticide) diseaseMap[key].pesticides.add(d.pesticide);
+                        if (d.description) diseaseMap[key].descriptions.add(d.description);
                     });
                 });
-                // Sort by count descending
                 const sorted = Object.values(diseaseMap).sort((a, b) => b.count - a.count);
                 const top10 = sorted.slice(0, 10);
+
+                const plantDiseases = PLANTS.map(plant => ({
+                    plantId: plant.id,
+                    plantName: plant.name,
+                    icon: plant.icon,
+                    diseases: plant.diseases
+                }));
+
                 return { top10, allPlants: plantDiseases };
             }
 
@@ -3297,24 +3518,45 @@
                 const data = getDiseaseData();
                 const today = new Date();
                 const dateStr = today.toDateString();
-                // Store last update in localStorage
                 let lastUpdate = localStorage.getItem(DISEASE_UPDATE_KEY);
                 if (!lastUpdate || new Date(lastUpdate).toDateString() !== dateStr) {
                     localStorage.setItem(DISEASE_UPDATE_KEY, today.toISOString());
                     lastUpdate = today.toISOString();
                 }
-                diseaseUpdateTime.textContent = `Updated ${formatTime(new Date(lastUpdate))} · ${new Date(lastUpdate).toLocaleDateString()}`;
+                diseaseUpdateTime.textContent =
+                    `Updated ${formatTime(new Date(lastUpdate))} · ${new Date(lastUpdate).toLocaleDateString()}`;
 
                 let html = `<div style="margin-bottom:16px;"><strong>🩺 Top 10 Most Common Diseases</strong> (across all plants)</div>`;
+
                 data.top10.forEach((d, index) => {
-                    const treatment = Array.from(d.treatments).join('; ');
+                    const affectedList = Array.from(d.affectedPlants).join(', ');
+                    const medicine = Array.from(d.medicines).join('; ') || 'None specified';
+                    const fertilizer = Array.from(d.fertilizers).join('; ') || 'Apply balanced NPK';
+                    const pesticide = Array.from(d.pesticides).join('; ') || 'None';
+
                     html += `
                         <div class="disease-card">
-                            <div>
+                            <div class="header">
                                 <span class="name">#${index+1} ${d.name}</span>
                                 <span class="count">${d.count} plant(s)</span>
                             </div>
-                            <div class="treatment">💊 ${treatment}</div>
+                            <div class="affected-plants">
+                                <strong>Affected Plants:</strong> ${affectedList}
+                            </div>
+                            <div class="remedies">
+                                <div class="item">
+                                    <div class="label">💊 Medicine</div>
+                                    <div class="value">${medicine}</div>
+                                </div>
+                                <div class="item">
+                                    <div class="label">🌱 Fertilizer</div>
+                                    <div class="value">${fertilizer}</div>
+                                </div>
+                                <div class="item">
+                                    <div class="label">🧪 Pesticide</div>
+                                    <div class="value">${pesticide}</div>
+                                </div>
+                            </div>
                         </div>
                     `;
                 });
@@ -3517,7 +3759,7 @@
                         garden: 'My Garden',
                         plants: 'All Plants',
                         calendar: 'Planting Calendar',
-                        diseases: 'Sakit & Bulong',
+                        diseases: 'Diseases & Remedies',
                         about: 'About'
                     };
                     pageTitle.textContent = titles[page] || 'PlantAdvisor';
@@ -3727,13 +3969,13 @@
                             <div class="value">${plant.description}</div>
                         </div>
                         <div class="detail-section">
-                            <div class="label"><i class="fa-solid fa-bug"></i> Diseases & Treatment (Sakit & Bulong)</div>
+                            <div class="label"><i class="fa-solid fa-bug"></i> Diseases & Treatment</div>
                             <div class="value">
                                 ${plant.diseases.map(d => `<span class="disease-tag">${d.name}</span> ${d.description}<br>`).join('')}
                             </div>
                         </div>
                         <div class="detail-section">
-                            <div class="label"><i class="fa-solid fa-hand-holding-heart"></i> How to Care (Pano e Alaga)</div>
+                            <div class="label"><i class="fa-solid fa-hand-holding-heart"></i> How to Care</div>
                             <div class="value">
                                 ${plant.care.map(c => `• ${c}<br>`).join('')}
                             </div>
