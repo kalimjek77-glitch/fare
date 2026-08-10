@@ -1021,6 +1021,73 @@
             align-items: center;
             gap: 6px;
         }
+
+        /* ─── DISEASE PAGE SPECIFIC ─── */
+        .disease-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .disease-card .name {
+            font-weight: 500;
+        }
+        .disease-card .count {
+            background: rgba(76, 175, 80, 0.1);
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            color: #81c784;
+        }
+        .disease-card .treatment {
+            font-size: 13px;
+            opacity: 0.7;
+            width: 100%;
+            margin-top: 4px;
+        }
+        .plant-disease-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+        .plant-disease-item {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 14px;
+            padding: 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .plant-disease-item .plant-icon {
+            font-size: 28px;
+        }
+        .plant-disease-item .plant-name {
+            font-weight: 500;
+            flex: 1;
+        }
+        .plant-disease-item .disease-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .plant-disease-item .disease-list .disease-tag {
+            font-size: 11px;
+        }
+        .update-badge {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffd54f;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            border: 1px solid rgba(255, 193, 7, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -1040,6 +1107,7 @@
             <a href="#garden" data-page="garden"><span class="icon"><i class="fa-solid fa-seedling"></i></span> My Garden</a>
             <a href="#plants" data-page="plants"><span class="icon"><i class="fa-solid fa-leaf"></i></span> All Plants</a>
             <a href="#calendar" data-page="calendar"><span class="icon"><i class="fa-solid fa-calendar-days"></i></span> Planting Calendar</a>
+            <a href="#diseases" data-page="diseases"><span class="icon"><i class="fa-solid fa-bug"></i></span> Sakit & Bulong</a>
             <a href="#about" data-page="about"><span class="icon"><i class="fa-solid fa-circle-info"></i></span> About</a>
         </nav>
         <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 12px; opacity:0.3;">
@@ -1177,6 +1245,23 @@
             </div>
         </div>
 
+        <!-- Diseases & Remedies (Sakit & Bulong) -->
+        <div class="page" id="page-diseases">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title"><i class="fa-solid fa-bug icon"></i> Sakit & Bulong</span>
+                    <span style="font-size:12px; opacity:0.4;" id="diseaseUpdateTime">Loading…</span>
+                </div>
+                <div style="margin-bottom:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                    <span class="update-badge"><i class="fa-regular fa-calendar"></i> Daily Update</span>
+                    <button id="diseaseRefreshBtn" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.06); color:#fff; padding:4px 14px; border-radius:30px; font-size:12px; cursor:pointer;"><i class="fa-solid fa-rotate"></i> Refresh</button>
+                </div>
+                <div id="diseaseContent">
+                    <!-- rendered by JS -->
+                </div>
+            </div>
+        </div>
+
         <!-- About -->
         <div class="page" id="page-about">
             <div class="card">
@@ -1210,7 +1295,8 @@
         (function() {
             'use strict';
 
-            // ─── EXPANDED PLANT DATABASE with emoji stickers ───────────
+            // ─── EXPANDED PLANT DATABASE with UNIQUE emoji stickers ───
+            // Each plant has a distinct emoji (no duplicates)
             const PLANTS = [{
                 id: 'palay',
                 name: 'Palay (Rice)',
@@ -1243,7 +1329,7 @@
                 id: 'tubo',
                 name: 'Tubo (Sugarcane)',
                 sci: 'Saccharum officinarum',
-                icon: '🌿',
+                icon: '🎋',
                 category: 'grain',
                 idealTempMin: 25,
                 idealTempMax: 38,
@@ -1327,7 +1413,7 @@
                 id: 'munggo',
                 name: 'Munggo (Mungbean)',
                 sci: 'Vigna radiata',
-                icon: '🌱',
+                icon: '🫘',
                 category: 'grain',
                 idealTempMin: 20,
                 idealTempMax: 35,
@@ -1439,7 +1525,7 @@
                 id: 'ube',
                 name: 'Ube (Purple Yam)',
                 sci: 'Dioscorea alata',
-                icon: '🍠',
+                icon: '🍆', // unique
                 category: 'root',
                 idealTempMin: 22,
                 idealTempMax: 32,
@@ -1467,7 +1553,7 @@
                 id: 'singkamas',
                 name: 'Singkamas (Jicama)',
                 sci: 'Pachyrhizus erosus',
-                icon: '🍠',
+                icon: '🥕',
                 category: 'root',
                 idealTempMin: 20,
                 idealTempMax: 32,
@@ -1775,7 +1861,7 @@
                 id: 'patola',
                 name: 'Patola (Sponge Gourd)',
                 sci: 'Luffa aegyptiaca',
-                icon: '🥒',
+                icon: '🫘', // unique
                 category: 'vegetable',
                 idealTempMin: 22,
                 idealTempMax: 35,
@@ -1943,7 +2029,7 @@
                 id: 'mustasa',
                 name: 'Mustasa (Mustard)',
                 sci: 'Brassica juncea',
-                icon: '🥬',
+                icon: '🥗',
                 category: 'leafy',
                 idealTempMin: 15,
                 idealTempMax: 28,
@@ -2027,7 +2113,7 @@
                 id: 'talinum',
                 name: 'Talinum (Waterleaf)',
                 sci: 'Talinum fruticosum',
-                icon: '🌿',
+                icon: '🌱',
                 category: 'leafy',
                 idealTempMin: 20,
                 idealTempMax: 32,
@@ -2055,7 +2141,7 @@
                 id: 'saluyot',
                 name: 'Saluyot (Jute Leaves)',
                 sci: 'Corchorus olitorius',
-                icon: '🌿',
+                icon: '🍃',
                 category: 'leafy',
                 idealTempMin: 22,
                 idealTempMax: 35,
@@ -2139,7 +2225,7 @@
                 id: 'pako',
                 name: 'Pako (Fern)',
                 sci: 'Diplazium esculentum',
-                icon: '🌿',
+                icon: '🍃',
                 category: 'leafy',
                 idealTempMin: 20,
                 idealTempMax: 30,
@@ -2559,7 +2645,7 @@
                 id: 'papaya',
                 name: 'Papaya',
                 sci: 'Carica papaya',
-                icon: '🥭', // papaya emoji not available, using mango as close
+                icon: '🥭',
                 category: 'fruit',
                 idealTempMin: 22,
                 idealTempMax: 32,
@@ -3132,6 +3218,10 @@
             const modalDesc = $('modalDesc');
             const modalCancel = $('modalCancel');
             const modalConfirm = $('modalConfirm');
+            // Disease page elements
+            const diseaseContent = $('diseaseContent');
+            const diseaseUpdateTime = $('diseaseUpdateTime');
+            const diseaseRefreshBtn = $('diseaseRefreshBtn');
 
             // ─── STATE ──────────────────────────────────────────────────
             let currentLat = null;
@@ -3150,6 +3240,7 @@
 
             // ─── LOCAL STORAGE ──────────────────────────────────────────
             const STORAGE_KEY = 'plantadvisor_garden';
+            const DISEASE_UPDATE_KEY = 'plantadvisor_disease_last_update';
 
             function loadGarden() {
                 try {
@@ -3173,6 +3264,77 @@
                 try {
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(gardenPlants));
                 } catch (e) { console.warn('Save failed:', e); }
+            }
+
+            // ─── DISEASE HELPERS ──────────────────────────────────────
+            function getDiseaseData() {
+                // Aggregate diseases from all plants
+                const diseaseMap = {};
+                const plantDiseases = [];
+                PLANTS.forEach(plant => {
+                    plant.diseases.forEach(d => {
+                        const key = d.name;
+                        if (!diseaseMap[key]) {
+                            diseaseMap[key] = { name: d.name, count: 0, treatments: new Set() };
+                        }
+                        diseaseMap[key].count += 1;
+                        diseaseMap[key].treatments.add(d.description);
+                    });
+                    plantDiseases.push({
+                        plantId: plant.id,
+                        plantName: plant.name,
+                        icon: plant.icon,
+                        diseases: plant.diseases
+                    });
+                });
+                // Sort by count descending
+                const sorted = Object.values(diseaseMap).sort((a, b) => b.count - a.count);
+                const top10 = sorted.slice(0, 10);
+                return { top10, allPlants: plantDiseases };
+            }
+
+            function renderDiseasePage() {
+                const data = getDiseaseData();
+                const today = new Date();
+                const dateStr = today.toDateString();
+                // Store last update in localStorage
+                let lastUpdate = localStorage.getItem(DISEASE_UPDATE_KEY);
+                if (!lastUpdate || new Date(lastUpdate).toDateString() !== dateStr) {
+                    localStorage.setItem(DISEASE_UPDATE_KEY, today.toISOString());
+                    lastUpdate = today.toISOString();
+                }
+                diseaseUpdateTime.textContent = `Updated ${formatTime(new Date(lastUpdate))} · ${new Date(lastUpdate).toLocaleDateString()}`;
+
+                let html = `<div style="margin-bottom:16px;"><strong>🩺 Top 10 Most Common Diseases</strong> (across all plants)</div>`;
+                data.top10.forEach((d, index) => {
+                    const treatment = Array.from(d.treatments).join('; ');
+                    html += `
+                        <div class="disease-card">
+                            <div>
+                                <span class="name">#${index+1} ${d.name}</span>
+                                <span class="count">${d.count} plant(s)</span>
+                            </div>
+                            <div class="treatment">💊 ${treatment}</div>
+                        </div>
+                    `;
+                });
+
+                html += `<div style="margin-top:24px; margin-bottom:12px;"><strong>🌿 All Plants & Their Diseases</strong></div>`;
+                html += `<div class="plant-disease-list">`;
+                data.allPlants.forEach(p => {
+                    if (p.diseases.length === 0) return;
+                    html += `
+                        <div class="plant-disease-item">
+                            <span class="plant-icon">${p.icon}</span>
+                            <span class="plant-name">${p.plantName}</span>
+                            <div class="disease-list">
+                                ${p.diseases.map(d => `<span class="disease-tag">${d.name}</span>`).join(' ')}
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                diseaseContent.innerHTML = html;
             }
 
             // ─── HELPERS ────────────────────────────────────────────────
@@ -3355,6 +3517,7 @@
                         garden: 'My Garden',
                         plants: 'All Plants',
                         calendar: 'Planting Calendar',
+                        diseases: 'Sakit & Bulong',
                         about: 'About'
                     };
                     pageTitle.textContent = titles[page] || 'PlantAdvisor';
@@ -3362,6 +3525,7 @@
                     if (page === 'garden') renderGarden();
                     if (page === 'plants') renderAllPlants();
                     if (page === 'calendar') renderCalendar();
+                    if (page === 'diseases') renderDiseasePage();
                     if (page === 'about') {}
                 }
                 if (window.innerWidth < 768) closeSidebarPanel();
@@ -3929,6 +4093,7 @@
                     if (currentPage === 'plants') renderAllPlants();
                     if (currentPage === 'plant-detail' && selectedPlantId) renderPlantDetail(selectedPlantId);
                     if (currentPage === 'calendar') renderCalendar();
+                    if (currentPage === 'diseases') renderDiseasePage();
                     hideError();
                     showToast('✅ Weather & location updated!', 1500);
                 } catch (err) {
@@ -3990,6 +4155,11 @@
                     this.innerHTML = '<i class="fa-solid fa-rotate"></i> Refresh';
                     this.disabled = false;
                 });
+            });
+
+            diseaseRefreshBtn.addEventListener('click', function() {
+                renderDiseasePage();
+                showToast('🔄 Disease data refreshed!', 1500);
             });
 
             // ─── SEARCH & FILTER ──────────────────────────────────────
