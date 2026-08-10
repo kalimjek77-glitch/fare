@@ -6,13 +6,12 @@
     <title>🌱 PlantAdvisor · Smart Planting PH</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <style>
-        /* ─── RESET & BASE ─── */
+        /* ─── RESET & BASE (same as before) ─── */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #0f1219;
@@ -40,11 +39,9 @@
             overflow-y: auto;
             box-shadow: 4px 0 40px rgba(0, 0, 0, 0.5);
         }
-
         .sidebar.open {
             transform: translateX(0);
         }
-
         .sidebar-header {
             display: flex;
             align-items: center;
@@ -53,7 +50,6 @@
             padding-bottom: 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
-
         .sidebar-header .logo-icon {
             font-size: 26px;
             color: #81c784;
@@ -71,13 +67,11 @@
             display: block;
             font-weight: 300;
         }
-
         .sidebar-nav {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
-
         .sidebar-nav a {
             color: rgba(255, 255, 255, 0.6);
             text-decoration: none;
@@ -91,24 +85,20 @@
             transition: all 0.25s ease;
             border: 1px solid transparent;
         }
-
         .sidebar-nav a:hover {
             background: rgba(255, 255, 255, 0.04);
             color: #fff;
         }
-
         .sidebar-nav a.active {
             background: rgba(76, 175, 80, 0.12);
             color: #81c784;
             border-color: rgba(76, 175, 80, 0.15);
         }
-
         .sidebar-nav a .icon {
             font-size: 18px;
             width: 28px;
             text-align: center;
         }
-
         .sidebar-close {
             display: none;
             background: none;
@@ -118,8 +108,6 @@
             cursor: pointer;
             margin-left: auto;
         }
-
-        /* ─── OVERLAY ─── */
         .sidebar-overlay {
             position: fixed;
             inset: 0;
@@ -152,7 +140,6 @@
             margin-bottom: 18px;
             padding: 6px 0;
         }
-
         .hamburger {
             background: none;
             border: none;
@@ -166,11 +153,9 @@
             align-items: center;
             justify-content: center;
         }
-
         .hamburger:hover {
             background: rgba(255, 255, 255, 0.05);
         }
-
         .topbar-title {
             font-size: 18px;
             font-weight: 600;
@@ -179,7 +164,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
         .topbar-weather {
             display: flex;
             align-items: center;
@@ -191,7 +175,6 @@
             border: 1px solid rgba(255, 255, 255, 0.04);
             white-space: nowrap;
         }
-
         .topbar-weather .temp {
             font-weight: 600;
         }
@@ -205,23 +188,15 @@
             display: none;
             animation: fadeIn 0.3s ease;
         }
-
         .page.active {
             display: block;
         }
-
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ─── CARDS & ELEMENTS (reused) ─── */
+        /* ─── CARDS & ELEMENTS ─── */
         .card {
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(12px);
@@ -232,14 +207,12 @@
             box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
             margin-bottom: 16px;
         }
-
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
-
         .card-title {
             font-size: 16px;
             font-weight: 600;
@@ -250,12 +223,6 @@
         .card-title .icon {
             font-size: 18px;
             opacity: 0.8;
-        }
-
-        .plant-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 12px;
         }
 
         /* ─── PLANT IMAGE WRAPPER ─── */
@@ -272,14 +239,12 @@
             overflow: hidden;
             flex-shrink: 0;
         }
-
         .plant-image-wrapper img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             border-radius: 50%;
         }
-
         .plant-image-wrapper .plant-image-fallback {
             position: absolute;
             top: 50%;
@@ -287,49 +252,34 @@
             transform: translate(-50%, -50%);
             font-size: 32px;
             display: none;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
-
-        .plant-image-wrapper img.error + .plant-image-fallback {
-            display: block;
-        }
-        .plant-image-wrapper img.error {
-            opacity: 0;
-        }
-        .plant-image-wrapper .plant-image-fallback {
-            display: none;
-        }
-        .plant-image-wrapper img.error + .plant-image-fallback {
-            display: block;
-        }
-        .plant-image-wrapper img.error {
-            opacity: 0;
-        }
+        .plant-image-wrapper img.error + .plant-image-fallback { display: block; }
+        .plant-image-wrapper img.error { opacity: 0; }
+        .plant-image-wrapper .plant-image-fallback { display: none; }
+        .plant-image-wrapper img.error + .plant-image-fallback { display: block; }
+        .plant-image-wrapper img.error { opacity: 0; }
 
         .plant-mini-card .plant-image-wrapper {
             width: 60px;
             height: 60px;
             margin: 0 auto 6px;
         }
-
         .plant-detail-header .plant-image-wrapper {
             width: 90px;
             height: 90px;
         }
-
         .garden-plant-card .plant-info .plant-image-wrapper {
             width: 50px;
             height: 50px;
         }
-
         .seasonal-list .item .plant .plant-image-wrapper {
             width: 30px;
             height: 30px;
         }
-
         .plant-image-wrapper:hover {
             transform: scale(1.05) rotate(-3deg);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.4);
         }
 
         .plant-mini-card {
@@ -341,12 +291,10 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-
         .plant-mini-card:hover {
             background: rgba(255, 255, 255, 0.07);
             transform: translateY(-2px);
         }
-
         .plant-mini-card .name {
             font-size: 13px;
             font-weight: 500;
@@ -357,14 +305,8 @@
             opacity: 0.5;
             margin-top: 2px;
         }
-        .plant-mini-card .match.good {
-            color: #81c784;
-            opacity: 1;
-        }
-        .plant-mini-card .match.ok {
-            color: #ffd54f;
-            opacity: 1;
-        }
+        .plant-mini-card .match.good { color: #81c784; opacity: 1; }
+        .plant-mini-card .match.ok { color: #ffd54f; opacity: 1; }
 
         /* ─── PLANT DETAIL ─── */
         .plant-detail-header {
@@ -384,13 +326,13 @@
         }
         .plant-detail-header .name-group .reason {
             font-size: 14px;
-            background: rgba(76, 175, 80, 0.08);
+            background: rgba(76,175,80,0.08);
             padding: 4px 14px;
             border-radius: 30px;
             display: inline-block;
             margin-top: 4px;
             color: #81c784;
-            border: 1px solid rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76,175,80,0.1);
         }
 
         .detail-section {
@@ -407,23 +349,18 @@
             align-items: center;
             gap: 6px;
         }
-        .detail-section .label .icon {
-            font-size: 13px;
-        }
-        .detail-section .value {
-            font-size: 14px;
-            line-height: 1.6;
-        }
+        .detail-section .label .icon { font-size: 13px; }
+        .detail-section .value { font-size: 14px; line-height: 1.6; }
         .detail-grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 12px;
         }
         .detail-grid-2 .item {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255,255,255,0.02);
             padding: 10px 12px;
             border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255,255,255,0.03);
         }
         .detail-grid-2 .item .label {
             font-size: 11px;
@@ -440,19 +377,19 @@
 
         .disease-tag {
             display: inline-block;
-            background: rgba(244, 67, 54, 0.1);
+            background: rgba(244,67,54,0.1);
             color: #ef9a9a;
             padding: 2px 12px;
             border-radius: 30px;
             font-size: 12px;
             margin: 2px 4px 2px 0;
-            border: 1px solid rgba(244, 67, 54, 0.08);
+            border: 1px solid rgba(244,67,54,0.08);
         }
 
         .back-btn {
             background: none;
             border: none;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255,255,255,0.5);
             font-size: 14px;
             cursor: pointer;
             display: flex;
@@ -461,9 +398,7 @@
             padding: 6px 0;
             margin-bottom: 12px;
         }
-        .back-btn:hover {
-            color: #fff;
-        }
+        .back-btn:hover { color: #fff; }
 
         /* ─── CALENDAR PAGE ─── */
         .calendar-month-grid {
@@ -484,29 +419,29 @@
             font-size: 13px;
             padding: 6px 0;
             border-radius: 30px;
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255,255,255,0.02);
             transition: all 0.2s;
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255,255,255,0.4);
         }
         .calendar-month-grid .day.active {
-            background: rgba(76, 175, 80, 0.15);
+            background: rgba(76,175,80,0.15);
             color: #81c784;
             font-weight: 500;
         }
         .calendar-month-grid .day.planting {
-            background: rgba(255, 193, 7, 0.1);
+            background: rgba(255,193,7,0.1);
             color: #ffd54f;
         }
         .calendar-month-grid .day.harvest {
-            background: rgba(33, 150, 243, 0.1);
+            background: rgba(33,150,243,0.1);
             color: #64b5f6;
         }
         .calendar-month-grid .day.water {
-            background: rgba(0, 188, 212, 0.08);
+            background: rgba(0,188,212,0.08);
             color: #4dd0e1;
         }
         .calendar-month-grid .day.today {
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255,255,255,0.2);
         }
         .calendar-legend {
             display: flex;
@@ -516,29 +451,17 @@
             font-size: 11px;
             opacity: 0.6;
         }
-        .calendar-legend span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .calendar-legend span { display: flex; align-items: center; gap: 4px; }
         .calendar-legend .dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
             display: inline-block;
         }
-        .dot.green {
-            background: #81c784;
-        }
-        .dot.yellow {
-            background: #ffd54f;
-        }
-        .dot.blue {
-            background: #64b5f6;
-        }
-        .dot.cyan {
-            background: #4dd0e1;
-        }
+        .dot.green { background: #81c784; }
+        .dot.yellow { background: #ffd54f; }
+        .dot.blue { background: #64b5f6; }
+        .dot.cyan { background: #4dd0e1; }
 
         .seasonal-list {
             margin-top: 12px;
@@ -547,7 +470,7 @@
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
             font-size: 14px;
         }
         .seasonal-list .item .plant {
@@ -556,33 +479,23 @@
             align-items: center;
             gap: 6px;
         }
-        .seasonal-list .item .plant .plant-image-wrapper {
-            width: 30px;
-            height: 30px;
-        }
-        .seasonal-list .item .months {
-            opacity: 0.5;
-        }
+        .seasonal-list .item .months { opacity: 0.5; }
 
         /* ─── SEARCH / FILTER ─── */
         .search-box {
             width: 100%;
             padding: 12px 16px;
             border-radius: 30px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
             color: #fff;
             font-size: 14px;
             outline: none;
             transition: border 0.3s;
             margin-bottom: 14px;
         }
-        .search-box::placeholder {
-            color: rgba(255, 255, 255, 0.2);
-        }
-        .search-box:focus {
-            border-color: rgba(76, 175, 80, 0.3);
-        }
+        .search-box::placeholder { color: rgba(255,255,255,0.2); }
+        .search-box:focus { border-color: rgba(76,175,80,0.3); }
 
         .filter-tabs {
             display: flex;
@@ -591,9 +504,9 @@
             margin-bottom: 14px;
         }
         .filter-tabs button {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            color: rgba(255, 255, 255, 0.5);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.5);
             padding: 6px 16px;
             border-radius: 30px;
             font-size: 12px;
@@ -601,29 +514,25 @@
             transition: all 0.2s;
         }
         .filter-tabs button.active {
-            background: rgba(76, 175, 80, 0.12);
+            background: rgba(76,175,80,0.12);
             color: #81c784;
-            border-color: rgba(76, 175, 80, 0.2);
+            border-color: rgba(76,175,80,0.2);
         }
-        .filter-tabs button:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
+        .filter-tabs button:hover { background: rgba(255,255,255,0.08); }
 
         /* ─── GARDEN SPECIFIC ─── */
         .garden-plant-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255,255,255,0.03);
             border-radius: 18px;
             padding: 14px 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.05);
             margin-bottom: 12px;
             display: flex;
             flex-direction: column;
             gap: 8px;
             transition: background 0.2s;
         }
-        .garden-plant-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-        }
+        .garden-plant-card:hover { background: rgba(255,255,255,0.06); }
         .garden-plant-card .row {
             display: flex;
             justify-content: space-between;
@@ -646,17 +555,17 @@
         }
         .garden-plant-card .status-badge {
             font-size: 12px;
-            background: rgba(76, 175, 80, 0.15);
+            background: rgba(76,175,80,0.15);
             color: #81c784;
             padding: 2px 12px;
             border-radius: 30px;
-            border: 1px solid rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76,175,80,0.1);
             white-space: nowrap;
         }
         .garden-plant-card .status-badge.harvested {
-            background: rgba(33, 150, 243, 0.12);
+            background: rgba(33,150,243,0.12);
             color: #64b5f6;
-            border-color: rgba(33, 150, 243, 0.1);
+            border-color: rgba(33,150,243,0.1);
         }
         .garden-plant-card .actions {
             display: flex;
@@ -664,8 +573,8 @@
             flex-wrap: wrap;
         }
         .garden-plant-card .actions button {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.06);
             color: #e8edf5;
             padding: 4px 14px;
             border-radius: 30px;
@@ -676,16 +585,12 @@
             align-items: center;
             gap: 4px;
         }
-        .garden-plant-card .actions button:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
+        .garden-plant-card .actions button:hover { background: rgba(255,255,255,0.1); }
         .garden-plant-card .actions button.danger {
             color: #ef9a9a;
-            border-color: rgba(244, 67, 54, 0.2);
+            border-color: rgba(244,67,54,0.2);
         }
-        .garden-plant-card .actions button.danger:hover {
-            background: rgba(244, 67, 54, 0.1);
-        }
+        .garden-plant-card .actions button.danger:hover { background: rgba(244,67,54,0.1); }
         .garden-plant-card .progress {
             margin-top: 4px;
             display: flex;
@@ -697,7 +602,7 @@
         .garden-plant-card .progress .bar {
             flex: 1;
             height: 4px;
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255,255,255,0.08);
             border-radius: 10px;
             overflow: hidden;
         }
@@ -724,8 +629,18 @@
             opacity: 1;
             color: #81c784;
         }
-        .garden-plant-card .checklist .item .icon {
-            font-size: 14px;
+        .garden-plant-card .checklist .item .icon { font-size: 14px; }
+        .garden-plant-card .reminder {
+            background: rgba(255,193,7,0.08);
+            border: 1px solid rgba(255,193,7,0.1);
+            border-radius: 12px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: #ffd54f;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .add-plant-section {
@@ -736,8 +651,8 @@
             align-items: center;
         }
         .add-plant-section select {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
             color: #e8edf5;
             padding: 8px 14px;
             border-radius: 30px;
@@ -746,12 +661,10 @@
             flex: 1;
             min-width: 160px;
         }
-        .add-plant-section select option {
-            background: #1a1f2b;
-        }
+        .add-plant-section select option { background: #1a1f2b; }
         .add-plant-section button {
-            background: rgba(76, 175, 80, 0.15);
-            border: 1px solid rgba(76, 175, 80, 0.2);
+            background: rgba(76,175,80,0.15);
+            border: 1px solid rgba(76,175,80,0.2);
             color: #81c784;
             padding: 8px 20px;
             border-radius: 30px;
@@ -762,9 +675,7 @@
             align-items: center;
             gap: 6px;
         }
-        .add-plant-section button:hover {
-            background: rgba(76, 175, 80, 0.25);
-        }
+        .add-plant-section button:hover { background: rgba(76,175,80,0.25); }
         .add-plant-section .hint {
             font-size: 12px;
             opacity: 0.3;
@@ -777,120 +688,187 @@
             opacity: 0.5;
         }
 
+        /* ─── HISTORY MODAL ─── */
+        .history-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .history-modal-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .history-modal-box {
+            background: #1a1f2b;
+            border-radius: 28px;
+            padding: 24px 20px;
+            max-width: 480px;
+            width: 92%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+        .history-modal-box .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .history-modal-box .modal-header .plant-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .history-modal-box .modal-header .plant-info .plant-image-wrapper {
+            width: 40px;
+            height: 40px;
+        }
+        .history-modal-box .modal-header .plant-info .name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .history-modal-box .close-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .history-modal-box .close-btn:hover { color: #fff; }
+        .history-modal-box .history-calendar {
+            margin-top: 8px;
+        }
+        .history-modal-box .history-calendar .month-label {
+            font-size: 14px;
+            opacity: 0.6;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        .history-modal-box .history-calendar .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+            text-align: center;
+        }
+        .history-modal-box .history-calendar .grid .day-name {
+            font-size: 10px;
+            text-transform: uppercase;
+            opacity: 0.3;
+            padding: 4px 0;
+        }
+        .history-modal-box .history-calendar .grid .day-cell {
+            font-size: 13px;
+            padding: 5px 0;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.02);
+            transition: all 0.2s;
+            color: rgba(255,255,255,0.4);
+            position: relative;
+        }
+        .history-modal-box .history-calendar .grid .day-cell.today {
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .history-modal-box .history-calendar .grid .day-cell.has-water {
+            background: rgba(0,188,212,0.15);
+            color: #4dd0e1;
+        }
+        .history-modal-box .history-calendar .grid .day-cell.has-fertilize {
+            background: rgba(76,175,80,0.15);
+            color: #81c784;
+        }
+        .history-modal-box .history-calendar .grid .day-cell.has-both {
+            background: rgba(255,193,7,0.15);
+            color: #ffd54f;
+        }
+        .history-modal-box .event-list {
+            margin-top: 14px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            padding-top: 12px;
+            max-height: 160px;
+            overflow-y: auto;
+        }
+        .history-modal-box .event-list .event-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+        }
+        .history-modal-box .event-list .event-item .type {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .history-modal-box .event-list .event-item .date {
+            opacity: 0.5;
+        }
+
+        .reminder-badge {
+            background: rgba(255,193,7,0.12);
+            color: #ffd54f;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            border: 1px solid rgba(255,193,7,0.1);
+        }
+
         /* ─── RESPONSIVE ─── */
         @media (min-width: 768px) {
             .sidebar {
                 transform: translateX(0);
                 width: 280px;
             }
-            .sidebar-overlay {
-                display: none;
-            }
+            .sidebar-overlay { display: none; }
             .main-content {
                 margin-left: 280px;
                 padding: 24px 32px 80px;
                 max-width: calc(100% - 280px);
             }
-            .hamburger {
-                display: none;
-            }
-            .sidebar-close {
-                display: none !important;
-            }
+            .hamburger { display: none; }
+            .sidebar-close { display: none !important; }
         }
-
         @media (max-width: 767px) {
-            .sidebar {
-                width: 280px;
-            }
-            .sidebar-close {
-                display: block;
-            }
-            .plant-grid {
-                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            }
-            .detail-grid-2 {
-                grid-template-columns: 1fr;
-            }
-            .topbar-weather .cond {
-                display: none;
-            }
-            .plant-image-wrapper {
-                width: 55px;
-                height: 55px;
-            }
-            .plant-mini-card .plant-image-wrapper {
-                width: 50px;
-                height: 50px;
-            }
-            .plant-detail-header .plant-image-wrapper {
-                width: 70px;
-                height: 70px;
-            }
+            .sidebar { width: 280px; }
+            .sidebar-close { display: block; }
+            .plant-grid { grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); }
+            .detail-grid-2 { grid-template-columns: 1fr; }
+            .topbar-weather .cond { display: none; }
+            .plant-image-wrapper { width: 55px; height: 55px; }
+            .plant-mini-card .plant-image-wrapper { width: 50px; height: 50px; }
+            .plant-detail-header .plant-image-wrapper { width: 70px; height: 70px; }
+            .history-modal-box { max-width: 100%; margin: 10px; }
         }
-
         @media (max-width: 400px) {
-            .plant-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .plant-detail-header .icon {
-                width: 50px;
-            }
-            .plant-detail-header .name-group .name {
-                font-size: 20px;
-            }
-            .garden-plant-card .row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .add-plant-section {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .add-plant-section select {
-                min-width: unset;
-            }
-            .plant-image-wrapper {
-                width: 45px;
-                height: 45px;
-            }
-            .plant-mini-card .plant-image-wrapper {
-                width: 42px;
-                height: 42px;
-            }
+            .plant-grid { grid-template-columns: repeat(2,1fr); }
+            .plant-detail-header .icon { width: 50px; }
+            .plant-detail-header .name-group .name { font-size: 20px; }
+            .garden-plant-card .row { flex-direction: column; align-items: stretch; }
+            .add-plant-section { flex-direction: column; align-items: stretch; }
+            .add-plant-section select { min-width: unset; }
+            .plant-image-wrapper { width: 45px; height: 45px; }
+            .plant-mini-card .plant-image-wrapper { width: 42px; height: 42px; }
         }
 
         /* ─── UTILITIES ─── */
-        .hidden {
-            display: none !important;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .mt-1 {
-            margin-top: 8px;
-        }
-        .gap-1 {
-            gap: 6px;
-        }
-        .flex {
-            display: flex;
-        }
-        .flex-wrap {
-            flex-wrap: wrap;
-        }
-        .items-center {
-            align-items: center;
-        }
-        .w-full {
-            width: 100%;
-        }
-        .op-5 {
-            opacity: 0.5;
-        }
-        .mb-1 {
-            margin-bottom: 8px;
-        }
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 8px; }
+        .gap-1 { gap: 6px; }
+        .flex { display: flex; }
+        .flex-wrap { flex-wrap: wrap; }
+        .items-center { align-items: center; }
+        .w-full { width: 100%; }
+        .op-5 { opacity: 0.5; }
+        .mb-1 { margin-bottom: 8px; }
 
         /* ─── TOAST ─── */
         .toast {
@@ -898,38 +876,26 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0,0,0,0.7);
             backdrop-filter: blur(16px);
             color: #e8edf5;
             padding: 10px 22px;
             border-radius: 40px;
             font-size: 13px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
             z-index: 9999;
             opacity: 0;
             transition: opacity 0.4s ease;
             pointer-events: none;
             max-width: 90%;
         }
-        .toast.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .toast.visible { opacity: 1; pointer-events: auto; }
 
-        /* ─── SCROLLBAR ─── */
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
 
-        /* ─── LOADING ─── */
         .loading-spinner {
             text-align: center;
             padding: 40px 20px;
@@ -940,32 +906,21 @@
             animation: spin 1.2s linear infinite;
             font-size: 32px;
         }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ─── LOCATION DISPLAY ─── */
         .location-full {
             font-size: 14px;
             line-height: 1.6;
             opacity: 0.8;
         }
-        .location-full .highlight {
-            color: #81c784;
-            font-weight: 500;
-        }
-        .location-full .sep {
-            opacity: 0.3;
-            margin: 0 4px;
-        }
+        .location-full .highlight { color: #81c784; font-weight: 500; }
+        .location-full .sep { opacity: 0.3; margin: 0 4px; }
 
-        /* ─── MODAL OVERLAY ─── */
+        /* ─── MODAL OVERLAY (general) ─── */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0,0,0,0.6);
             backdrop-filter: blur(4px);
             display: flex;
             justify-content: center;
@@ -985,8 +940,8 @@
             padding: 28px 24px;
             max-width: 380px;
             width: 90%;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
         }
         .modal-box .title {
             font-size: 18px;
@@ -1015,49 +970,33 @@
             transition: all 0.2s;
         }
         .modal-box .actions .btn-cancel {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255,255,255,0.05);
             color: #e8edf5;
         }
-        .modal-box .actions .btn-cancel:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
+        .modal-box .actions .btn-cancel:hover { background: rgba(255,255,255,0.1); }
         .modal-box .actions .btn-danger {
-            background: rgba(244, 67, 54, 0.15);
+            background: rgba(244,67,54,0.15);
             color: #ef9a9a;
-            border: 1px solid rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244,67,54,0.2);
         }
-        .modal-box .actions .btn-danger:hover {
-            background: rgba(244, 67, 54, 0.25);
-        }
+        .modal-box .actions .btn-danger:hover { background: rgba(244,67,54,0.25); }
         .modal-box .actions .btn-confirm {
-            background: rgba(76, 175, 80, 0.15);
+            background: rgba(76,175,80,0.15);
             color: #81c784;
-            border: 1px solid rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76,175,80,0.2);
         }
-        .modal-box .actions .btn-confirm:hover {
-            background: rgba(76, 175, 80, 0.25);
-        }
+        .modal-box .actions .btn-confirm:hover { background: rgba(76,175,80,0.25); }
 
-        .weather-icon-lg {
-            font-size: 18px;
-        }
-        .refresh-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .sidebar-location-text {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .weather-icon-lg { font-size: 18px; }
+        .refresh-btn { display: flex; align-items: center; gap: 6px; }
+        .sidebar-location-text { display: flex; align-items: center; gap: 6px; }
 
-        /* ─── DISEASE PAGE SPECIFIC ─── */
+        /* ─── DISEASE PAGE ─── */
         .disease-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255,255,255,0.03);
             border-radius: 16px;
             padding: 12px 16px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255,255,255,0.04);
             margin-bottom: 10px;
         }
         .disease-card .header {
@@ -1067,12 +1006,9 @@
             flex-wrap: wrap;
             gap: 4px;
         }
-        .disease-card .name {
-            font-weight: 600;
-            font-size: 15px;
-        }
+        .disease-card .name { font-weight: 600; font-size: 15px; }
         .disease-card .count {
-            background: rgba(76, 175, 80, 0.1);
+            background: rgba(76,175,80,0.1);
             padding: 2px 12px;
             border-radius: 30px;
             font-size: 11px;
@@ -1084,14 +1020,11 @@
             opacity: 0.6;
             margin: 4px 0 6px 0;
             padding: 4px 8px;
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255,255,255,0.02);
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255,255,255,0.02);
         }
-        .disease-card .affected-plants strong {
-            opacity: 0.8;
-            font-weight: 500;
-        }
+        .disease-card .affected-plants strong { opacity: 0.8; font-weight: 500; }
         .disease-card .remedies {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -1100,10 +1033,10 @@
             font-size: 12px;
         }
         .disease-card .remedies .item {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255,255,255,0.02);
             padding: 4px 8px;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255,255,255,0.02);
             text-align: center;
         }
         .disease-card .remedies .item .label {
@@ -1124,10 +1057,10 @@
             margin-top: 8px;
         }
         .plant-disease-item {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(255,255,255,0.02);
             border-radius: 14px;
             padding: 10px 14px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255,255,255,0.03);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -1149,37 +1082,28 @@
             gap: 4px;
             justify-content: flex-end;
         }
-        .plant-disease-item .disease-list .disease-tag {
-            font-size: 11px;
-        }
+        .plant-disease-item .disease-list .disease-tag { font-size: 11px; }
         .update-badge {
-            background: rgba(255, 193, 7, 0.1);
+            background: rgba(255,193,7,0.1);
             color: #ffd54f;
             padding: 2px 12px;
             border-radius: 30px;
             font-size: 12px;
-            border: 1px solid rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255,193,7,0.1);
         }
         @media (max-width: 600px) {
-            .disease-card .remedies {
-                grid-template-columns: 1fr;
-            }
-            .plant-disease-item {
-                flex-wrap: wrap;
-            }
+            .disease-card .remedies { grid-template-columns: 1fr; }
+            .plant-disease-item { flex-wrap: wrap; }
             .plant-disease-item .disease-list {
                 width: 100%;
                 justify-content: flex-start;
                 padding-left: 38px;
             }
         }
-
         .plant-image-wrapper img {
             transition: opacity 0.3s ease;
         }
-        .plant-image-wrapper img.loading {
-            opacity: 0.3;
-        }
+        .plant-image-wrapper img.loading { opacity: 0.3; }
     </style>
 </head>
 <body>
@@ -1188,10 +1112,7 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <i class="fa-solid fa-seedling logo-icon"></i>
-            <div>
-                <div class="title">PlantAdvisor</div>
-                <span class="sub">Smart Planting · PH</span>
-            </div>
+            <div><div class="title">PlantAdvisor</div><span class="sub">Smart Planting · PH</span></div>
             <button class="sidebar-close" id="sidebarClose"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <nav class="sidebar-nav">
@@ -1281,7 +1202,8 @@
                     <button id="addPlantBtn"><i class="fa-solid fa-plus"></i> Add to Garden</button>
                     <span class="hint">(today as planting day)</span>
                 </div>
-                <div id="gardenList" style="margin-top:12px;">
+                <div id="gardenReminders" style="margin: 10px 0 6px 0; display: flex; flex-wrap: wrap; gap: 6px;"></div>
+                <div id="gardenList" style="margin-top:6px;">
                     <!-- rendered by JS -->
                 </div>
             </div>
@@ -1304,18 +1226,14 @@
                     <button data-filter="herb">Herbs</button>
                     <button data-filter="leafy">Leafy Greens</button>
                 </div>
-                <div class="plant-grid" id="allPlantsGrid">
-                    <!-- rendered by JS -->
-                </div>
+                <div class="plant-grid" id="allPlantsGrid"><!-- rendered by JS --></div>
             </div>
         </div>
 
         <!-- Plant Detail (hidden, shown via JS) -->
         <div class="page" id="page-plant-detail">
             <button class="back-btn" id="backFromDetail"><i class="fa-solid fa-arrow-left"></i> Back to Plants</button>
-            <div id="plantDetailContainer">
-                <!-- rendered by JS -->
-            </div>
+            <div id="plantDetailContainer"><!-- rendered by JS --></div>
         </div>
 
         <!-- Calendar -->
@@ -1325,15 +1243,11 @@
                     <span class="card-title"><i class="fa-solid fa-calendar-days icon"></i> Planting Calendar</span>
                     <span style="font-size:12px; opacity:0.4;" id="calendarMonthLabel">Loading…</span>
                 </div>
-                <div id="calendarContainer">
-                    <!-- rendered by JS -->
-                </div>
+                <div id="calendarContainer"><!-- rendered by JS --></div>
             </div>
             <div class="card">
                 <div class="card-title" style="font-size:14px; margin-bottom:8px;"><i class="fa-solid fa-seedling"></i> What to plant this month</div>
-                <div id="seasonalPlantsList" class="seasonal-list">
-                    <!-- rendered by JS -->
-                </div>
+                <div id="seasonalPlantsList" class="seasonal-list"><!-- rendered by JS --></div>
             </div>
         </div>
 
@@ -1348,9 +1262,7 @@
                     <span class="update-badge"><i class="fa-regular fa-calendar"></i> Daily Update</span>
                     <button id="diseaseRefreshBtn" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.06); color:#fff; padding:4px 14px; border-radius:30px; font-size:12px; cursor:pointer;"><i class="fa-solid fa-rotate"></i> Refresh</button>
                 </div>
-                <div id="diseaseContent">
-                    <!-- rendered by JS -->
-                </div>
+                <div id="diseaseContent"><!-- rendered by JS --></div>
             </div>
         </div>
 
@@ -1368,7 +1280,7 @@
         </div>
     </div>
 
-    <!-- ─── MODAL ─── -->
+    <!-- ─── MODAL (general) ─── -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box">
             <div class="title" id="modalTitle"><i class="fa-solid fa-triangle-exclamation"></i> Confirm</div>
@@ -1380,6 +1292,24 @@
         </div>
     </div>
 
+    <!-- ─── HISTORY MODAL ─── -->
+    <div class="history-modal-overlay" id="historyModalOverlay">
+        <div class="history-modal-box">
+            <div class="modal-header">
+                <div class="plant-info">
+                    <div class="plant-image-wrapper" id="historyPlantIcon"><img src="" alt="" id="historyPlantImg" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" /><span class="plant-image-fallback" id="historyPlantFallback"></span></div>
+                    <span class="name" id="historyPlantName">Plant</span>
+                </div>
+                <button class="close-btn" id="historyModalClose"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="history-calendar">
+                <div class="month-label" id="historyMonthLabel">Month Year</div>
+                <div class="grid" id="historyCalendarGrid"></div>
+            </div>
+            <div class="event-list" id="historyEventList"></div>
+        </div>
+    </div>
+
     <!-- ─── TOAST ─── -->
     <div class="toast" id="toast"></div>
 
@@ -1387,7 +1317,7 @@
         (function() {
             'use strict';
 
-            // ─── PLANT DATABASE (same as before) ──────────────────────
+            // ─── PLANT DATABASE (same as before, shortened for brevity) ──
             const PLANTS = [{
                 id: 'palay',
                 name: 'Palay (Rice)',
@@ -3425,7 +3355,6 @@
             }];
 
             // ─── Helper: fetch real plant image from Wikimedia Commons ──
-            // Use scientific name for better accuracy
             function getPlantImageUrl(plantId, plantName, sciName) {
                 return new Promise((resolve) => {
                     const cacheKey = 'plant_image_' + plantId;
@@ -3434,7 +3363,6 @@
                         resolve(cached);
                         return;
                     }
-                    // Use scientific name for search
                     const searchTerm = encodeURIComponent(sciName);
                     const url =
                         `https://commons.wikimedia.org/w/api.php?action=query&prop=pageimages&format=json&titles=${searchTerm}&pithumbsize=300&origin=*`;
@@ -3453,7 +3381,6 @@
                                     }
                                 }
                             }
-                            // Fallback: try with common name
                             const fallbackSearch = encodeURIComponent(plantName);
                             const fallbackUrl =
                                 `https://commons.wikimedia.org/w/api.php?action=query&prop=pageimages&format=json&titles=${fallbackSearch}&pithumbsize=300&origin=*`;
@@ -3472,7 +3399,6 @@
                                             }
                                         }
                                     }
-                                    // Final fallback: use a placeholder with the emoji
                                     localStorage.setItem(cacheKey, '');
                                     resolve('');
                                 })
@@ -3524,6 +3450,7 @@
             const sidebarLocation = $('sidebarLocation');
             const gardenList = $('gardenList');
             const gardenCount = $('gardenCount');
+            const gardenReminders = $('gardenReminders');
             const addPlantSelect = $('addPlantSelect');
             const addPlantBtn = $('addPlantBtn');
             const modalOverlay = $('modalOverlay');
@@ -3534,6 +3461,15 @@
             const diseaseContent = $('diseaseContent');
             const diseaseUpdateTime = $('diseaseUpdateTime');
             const diseaseRefreshBtn = $('diseaseRefreshBtn');
+            // History modal
+            const historyModalOverlay = $('historyModalOverlay');
+            const historyPlantName = $('historyPlantName');
+            const historyPlantImg = $('historyPlantImg');
+            const historyPlantFallback = $('historyPlantFallback');
+            const historyMonthLabel = $('historyMonthLabel');
+            const historyCalendarGrid = $('historyCalendarGrid');
+            const historyEventList = $('historyEventList');
+            const historyModalClose = $('historyModalClose');
 
             // ─── STATE ──────────────────────────────────────────────────
             let currentLat = null;
@@ -3549,7 +3485,7 @@
             let selectedPlantId = null;
             let gardenPlants = [];
             let modalCallback = null;
-            let imageCache = {};
+            let gardenUpdateInterval = null;
 
             // ─── LOCAL STORAGE ──────────────────────────────────────────
             const STORAGE_KEY = 'plantadvisor_garden';
@@ -3606,14 +3542,12 @@
                 });
                 const sorted = Object.values(diseaseMap).sort((a, b) => b.count - a.count);
                 const top10 = sorted.slice(0, 10);
-
                 const plantDiseases = PLANTS.map(plant => ({
                     plantId: plant.id,
                     plantName: plant.name,
                     icon: plant.icon,
                     diseases: plant.diseases
                 }));
-
                 return { top10, allPlants: plantDiseases };
             }
 
@@ -3630,13 +3564,11 @@
                     `Updated ${formatTime(new Date(lastUpdate))} · ${new Date(lastUpdate).toLocaleDateString()}`;
 
                 let html = `<div style="margin-bottom:16px;"><strong>🩺 Top 10 Most Common Diseases</strong> (across all plants)</div>`;
-
                 data.top10.forEach((d, index) => {
                     const affectedList = Array.from(d.affectedPlants).join(', ');
                     const medicine = Array.from(d.medicines).join('; ') || 'None specified';
                     const fertilizer = Array.from(d.fertilizers).join('; ') || 'Apply balanced NPK';
                     const pesticide = Array.from(d.pesticides).join('; ') || 'None';
-
                     html += `
                         <div class="disease-card">
                             <div class="header">
@@ -3647,23 +3579,13 @@
                                 <strong>Affected Plants:</strong> ${affectedList}
                             </div>
                             <div class="remedies">
-                                <div class="item">
-                                    <div class="label">💊 Medicine</div>
-                                    <div class="value">${medicine}</div>
-                                </div>
-                                <div class="item">
-                                    <div class="label">🌱 Fertilizer</div>
-                                    <div class="value">${fertilizer}</div>
-                                </div>
-                                <div class="item">
-                                    <div class="label">🧪 Pesticide</div>
-                                    <div class="value">${pesticide}</div>
-                                </div>
+                                <div class="item"><div class="label">💊 Medicine</div><div class="value">${medicine}</div></div>
+                                <div class="item"><div class="label">🌱 Fertilizer</div><div class="value">${fertilizer}</div></div>
+                                <div class="item"><div class="label">🧪 Pesticide</div><div class="value">${pesticide}</div></div>
                             </div>
                         </div>
                     `;
                 });
-
                 html += `<div style="margin-top:24px; margin-bottom:12px;"><strong>🌿 All Plants & Their Diseases</strong></div>`;
                 html += `<div class="plant-disease-list">`;
                 data.allPlants.forEach(p => {
@@ -3823,11 +3745,9 @@
                 if (temp >= plant.idealTempMin && temp <= plant.idealTempMax) score += 40;
                 else if (temp >= plant.idealTempMin - 3 && temp <= plant.idealTempMax + 3) score += 20;
                 else if (temp >= plant.idealTempMin - 6 && temp <= plant.idealTempMax + 6) score += 8;
-
                 if (humidity >= plant.idealHumidityMin && humidity <= plant.idealHumidityMax) score += 30;
                 else if (humidity >= plant.idealHumidityMin - 10 && humidity <= plant.idealHumidityMax + 10) score += 15;
                 else if (humidity >= plant.idealHumidityMin - 20 && humidity <= plant.idealHumidityMax + 20) score += 5;
-
                 const month = new Date().getMonth() + 1;
                 if (plant.plantingMonths.includes(month)) score += 20;
                 return Math.min(100, score);
@@ -3852,9 +3772,7 @@
                 document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
                 const link = document.querySelector(`.sidebar-nav a[data-page="${page}"]`);
                 if (link) link.classList.add('active');
-
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-
                 if (page === 'plant-detail' && param) {
                     selectedPlantId = param;
                     const detailPage = $('page-plant-detail');
@@ -3976,14 +3894,12 @@
                     `;
                 }
                 topPlantsGrid.innerHTML = html;
-
                 topPlantsGrid.querySelectorAll('.plant-mini-card').forEach(el => {
                     el.addEventListener('click', function() {
                         const id = this.dataset.id;
                         navigateTo('plant-detail', id);
                     });
                 });
-
                 topWeatherIcon.className = `fa-solid ${getWeatherIcon(code)}`;
                 topTemp.textContent = `${temp}°`;
                 topCond.textContent = getWeatherDesc(code);
@@ -4004,7 +3920,6 @@
                 }
                 const temp = Math.round(weatherData.current.temperature_2m);
                 const hum = Math.round(weatherData.current.relative_humidity_2m);
-
                 let filtered = PLANTS.filter(p => {
                     if (currentFilter !== 'all' && p.category !== currentFilter) return false;
                     if (searchQuery) {
@@ -4013,10 +3928,8 @@
                     }
                     return true;
                 });
-
                 const scored = filtered.map(p => ({ ...p, score: scorePlant(p, temp, hum) }));
                 scored.sort((a, b) => b.score - a.score);
-
                 let html = '';
                 for (const p of scored) {
                     const matchClass = p.score >= 60 ? 'good' : 'ok';
@@ -4035,7 +3948,6 @@
                 allPlantsGrid.innerHTML = html ||
                 '<div style="opacity:0.5; text-align:center; padding:20px;">No plants match your filter.</div>';
                 plantCount.textContent = `${scored.length}`;
-
                 allPlantsGrid.querySelectorAll('.plant-mini-card').forEach(el => {
                     el.addEventListener('click', function() {
                         const id = this.dataset.id;
@@ -4123,7 +4035,6 @@
                 const plantingMonths = plant.plantingMonths;
                 const isPlantingMonth = plantingMonths.includes(month + 1);
                 const daysToHarvest = plant.daysToHarvest;
-
                 let html =
                     `<div style="font-size:13px; opacity:0.6; margin-bottom:6px;">${now.toLocaleString('default', { month: 'long' })} ${year}</div>`;
                 html += '<div class="calendar-month-grid">';
@@ -4166,11 +4077,9 @@
                 const month = now.getMonth();
                 const monthName = now.toLocaleString('default', { month: 'long' });
                 calendarMonthLabel.textContent = `${monthName} ${year}`;
-
                 const firstDay = new Date(year, month, 1).getDay();
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
                 const today = now.getDate();
-
                 let plantingDays = new Set();
                 let harvestDays = new Set();
                 for (const plant of PLANTS) {
@@ -4183,7 +4092,6 @@
                         harvestDays.add(harvestDate.getDate());
                     }
                 }
-
                 let html = '<div class="calendar-month-grid">';
                 const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
                 for (const dn of dayNames) html += `<div class="day-name">${dn}</div>`;
@@ -4204,7 +4112,6 @@
                             <span><span class="dot blue"></span> Estimated harvest</span>
                         </div>`;
                 calendarContainer.innerHTML = html;
-
                 const inSeason = PLANTS.filter(p => p.plantingMonths.includes(month + 1));
                 let listHtml = '';
                 for (const p of inSeason) {
@@ -4231,6 +4138,7 @@
                     gardenList.innerHTML =
                         `<div class="loading-spinner"><i class="fa-solid fa-seedling spin"></i><br>Loading weather for garden…</div>`;
                     gardenCount.textContent = '0 plants';
+                    gardenReminders.innerHTML = '';
                     return;
                 }
 
@@ -4253,6 +4161,7 @@
                         </div>
                     `;
                     gardenCount.textContent = '0 plants';
+                    gardenReminders.innerHTML = '';
                     return;
                 }
 
@@ -4260,18 +4169,22 @@
                 const temp = Math.round(weatherData.current.temperature_2m);
                 const hum = Math.round(weatherData.current.relative_humidity_2m);
                 const precip = weatherData.current.precipitation || 0;
+                const now = new Date();
+                const todayStr = now.toDateString();
+
+                // Reminders
+                let reminders = [];
 
                 for (const gPlant of gardenPlants) {
                     const plant = PLANTS.find(p => p.id === gPlant.plantId);
                     if (!plant) continue;
                     const plantingDate = new Date(gPlant.plantingDate);
-                    const now = new Date();
                     const daysSince = Math.max(0, daysBetween(plantingDate, now));
                     const daysToHarvest = Math.max(0, plant.daysToHarvest - daysSince);
                     const progress = Math.min(100, (daysSince / plant.daysToHarvest) * 100);
                     const isHarvested = gPlant.harvested || false;
-                    const imgUrl = getCachedImage(plant.id) || '';
 
+                    // Water needs based on weather
                     let waterNeeded = plant.waterPerDay;
                     if (precip > 0) {
                         const reduction = Math.min(0.8, precip * 0.2);
@@ -4279,15 +4192,30 @@
                     }
                     waterNeeded = Math.max(0, waterNeeded);
 
-                    const todayStr = now.toDateString();
-                    const wateredToday = gPlant.wateredDates && gPlant.wateredDates.some(d => new Date(d).toDateString() ===
-                        todayStr);
+                    // Check if watered today
+                    const wateredToday = gPlant.wateredDates.some(d => new Date(d).toDateString() === todayStr);
+
+                    // Fertilizer interval: 14 days (can be customized per plant later)
                     const fertInterval = 14;
-                    const lastFert = gPlant.fertilizedDates && gPlant.fertilizedDates.length > 0 ?
+                    const lastFert = gPlant.fertilizedDates.length > 0 ?
                         new Date(gPlant.fertilizedDates[gPlant.fertilizedDates.length - 1]) :
                         plantingDate;
                     const daysSinceFert = daysBetween(lastFert, now);
                     const fertDue = daysSinceFert >= fertInterval;
+                    const fertDueDate = new Date(lastFert);
+                    fertDueDate.setDate(fertDueDate.getDate() + fertInterval);
+
+                    // Reminders
+                    if (!isHarvested) {
+                        if (!wateredToday) {
+                            reminders.push(`💧 ${plant.name} needs water today (${waterNeeded} mL)`);
+                        }
+                        if (fertDue) {
+                            reminders.push(`🧪 ${plant.name} needs fertilizer today (last: ${formatDate(lastFert)})`);
+                        }
+                    }
+
+                    const imgUrl = getCachedImage(plant.id) || '';
 
                     html += `
                         <div class="garden-plant-card" data-garden-id="${gPlant.id}">
@@ -4315,6 +4243,7 @@
                             <div class="checklist">
                                 <span class="item ${wateredToday ? 'done' : ''}">
                                     <i class="fa-solid fa-droplet icon"></i> Water ${wateredToday ? '<i class="fa-solid fa-check"></i>' : '<i class="fa-solid fa-xmark"></i>'} (${waterNeeded} mL)
+                                    ${wateredToday ? '' : `<span style="font-size:10px; opacity:0.5;">(due today)</span>`}
                                 </span>
                                 <span class="item ${fertDue ? 'done' : ''}">
                                     <i class="fa-solid fa-flask icon"></i> Fertilizer ${fertDue ? '<i class="fa-solid fa-check"></i> due' : '⏳ in ' + (fertInterval - daysSinceFert) + ' days'}
@@ -4332,6 +4261,7 @@
                                 <button class="fertilize-btn" data-id="${gPlant.id}"><i class="fa-solid fa-flask"></i> Fertilize</button>
                                 <button class="harvest-btn" data-id="${gPlant.id}"><i class="fa-solid fa-scissors"></i> Harvest</button>
                                 ` : ''}
+                                <button class="history-btn" data-id="${gPlant.id}"><i class="fa-solid fa-calendar-days"></i> History</button>
                                 <button class="danger delete-btn" data-id="${gPlant.id}"><i class="fa-solid fa-trash-can"></i> Delete</button>
                             </div>
                         </div>
@@ -4340,6 +4270,17 @@
                 gardenList.innerHTML = html;
                 gardenCount.textContent = `${gardenPlants.length} plants`;
 
+                // Show reminders
+                if (reminders.length > 0) {
+                    gardenReminders.innerHTML = `<div style="display:flex; flex-wrap:wrap; gap:6px;">` +
+                        reminders.map(r => `<span class="reminder-badge">${r}</span>`).join('') +
+                        `</div>`;
+                } else {
+                    gardenReminders.innerHTML =
+                        `<span style="font-size:13px; opacity:0.5;">✅ All plants are up to date! No pending reminders.</span>`;
+                }
+
+                // Attach event listeners
                 gardenList.querySelectorAll('.water-btn').forEach(btn => {
                     btn.addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -4368,8 +4309,105 @@
                         deletePlant(id);
                     });
                 });
+                gardenList.querySelectorAll('.history-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = this.dataset.id;
+                        openHistory(id);
+                    });
+                });
             }
 
+            // ─── HISTORY MODAL ──────────────────────────────────────────
+            function openHistory(gardenId) {
+                const gPlant = gardenPlants.find(p => p.id === gardenId);
+                if (!gPlant) return;
+                const plant = PLANTS.find(p => p.id === gPlant.plantId);
+                if (!plant) return;
+                // Set plant info
+                historyPlantName.textContent = plant.name;
+                const imgUrl = getCachedImage(plant.id) || '';
+                historyPlantImg.src = imgUrl;
+                historyPlantImg.onerror = function() { this.style.display = 'none';
+                    historyPlantFallback.textContent = plant.icon;
+                    historyPlantFallback.style.display = 'block'; };
+                historyPlantFallback.textContent = plant.icon;
+
+                // Build calendar for current month
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = now.getMonth();
+                historyMonthLabel.textContent = `${now.toLocaleString('default', { month: 'long' })} ${year}`;
+
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const today = now.getDate();
+
+                let gridHtml = '';
+                const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+                for (const dn of dayNames) {
+                    gridHtml += `<div class="day-name">${dn}</div>`;
+                }
+                for (let i = 0; i < firstDay; i++) {
+                    gridHtml += `<div class="day-cell"></div>`;
+                }
+
+                // Gather events: water and fertilize
+                const waterSet = new Set(gPlant.wateredDates.map(d => new Date(d).toDateString()));
+                const fertSet = new Set(gPlant.fertilizedDates.map(d => new Date(d).toDateString()));
+
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const dateObj = new Date(year, month, d);
+                    const dateStr = dateObj.toDateString();
+                    let cls = 'day-cell';
+                    if (d === today) cls += ' today';
+                    let hasWater = waterSet.has(dateStr);
+                    let hasFert = fertSet.has(dateStr);
+                    if (hasWater && hasFert) cls += ' has-both';
+                    else if (hasWater) cls += ' has-water';
+                    else if (hasFert) cls += ' has-fertilize';
+                    gridHtml += `<div class="${cls}">${d}</div>`;
+                }
+                historyCalendarGrid.innerHTML = gridHtml;
+
+                // Event list
+                let events = [];
+                // Combine watered and fertilized dates
+                gPlant.wateredDates.forEach(d => {
+                    events.push({ date: new Date(d), type: 'water' });
+                });
+                gPlant.fertilizedDates.forEach(d => {
+                    events.push({ date: new Date(d), type: 'fertilize' });
+                });
+                events.sort((a, b) => b.date - a.date); // newest first
+                let eventHtml = '';
+                if (events.length === 0) {
+                    eventHtml = '<div style="opacity:0.4; text-align:center; padding:10px;">No events recorded yet.</div>';
+                } else {
+                    eventHtml = events.slice(0, 20).map(e => {
+                        const typeLabel = e.type === 'water' ? '💧 Watered' : '🧪 Fertilized';
+                        return `<div class="event-item">
+                                    <span class="type">${typeLabel}</span>
+                                    <span class="date">${formatDate(e.date)}</span>
+                                </div>`;
+                    }).join('');
+                }
+                historyEventList.innerHTML = eventHtml;
+
+                // Show modal
+                historyModalOverlay.classList.add('visible');
+            }
+
+            function closeHistory() {
+                historyModalOverlay.classList.remove('visible');
+            }
+
+            historyModalClose.addEventListener('click', closeHistory);
+            historyModalOverlay.addEventListener('click', function(e) {
+                if (e.target === this) closeHistory();
+            });
+
+            // ─── GARDEN ACTIONS ──────────────────────────────────────────
             function addPlantToGarden(plantId) {
                 if (!plantId) {
                     showToast('Please select a plant.', 2000);
@@ -4377,7 +4415,6 @@
                 }
                 const plant = PLANTS.find(p => p.id === plantId);
                 if (!plant) return;
-
                 const now = new Date();
                 const newPlant = {
                     id: Date.now() + '_' + Math.random().toString(36).substr(2, 4),
@@ -4594,7 +4631,7 @@
                     return getPlantImageUrl(plant.id, plant.name, plant.sci).catch(() => {});
                 });
                 await Promise.all(promises);
-                // Re-render current page after cache is populated
+                // Re-render
                 if (currentPage === 'dashboard') updateDashboard();
                 else if (currentPage === 'plants') renderAllPlants();
                 else if (currentPage === 'plant-detail' && selectedPlantId) renderPlantDetail(selectedPlantId);
@@ -4612,6 +4649,14 @@
                     if (!isRefreshing) refreshWeather(false);
                 }, 300000);
 
+                // Garden auto-update every minute (for real-time progress)
+                if (gardenUpdateInterval) clearInterval(gardenUpdateInterval);
+                gardenUpdateInterval = setInterval(() => {
+                    if (currentPage === 'garden' && !isRefreshing) {
+                        renderGarden();
+                    }
+                }, 60000);
+
                 const hash = location.hash.slice(1) || 'dashboard';
                 if (hash.startsWith('plant/')) {
                     const id = hash.split('/')[1];
@@ -4625,7 +4670,6 @@
                     if (!document.hidden && !isRefreshing) refreshWeather(false);
                 });
 
-                // Pre-fetch images after initial load
                 setTimeout(preFetchImages, 1500);
             }
 
