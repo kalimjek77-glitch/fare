@@ -1406,6 +1406,17 @@
             font-size: 12px;
             border: 1px solid rgba(255, 193, 7, 0.1);
         }
+        .ph-real-time-badge {
+            background: rgba(33, 150, 243, 0.1);
+            color: #64b5f6;
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            border: 1px solid rgba(33, 150, 243, 0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
         @media (max-width: 600px) {
             .disease-card .remedies {
                 grid-template-columns: 1fr;
@@ -1434,39 +1445,28 @@
             border-radius: 18px;
             padding: 18px 20px;
             margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
         }
         .contact-card .contact-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            opacity: 0.5;
+            font-size: 14px;
             font-weight: 500;
-        }
-        .contact-card .contact-value {
-            font-size: 20px;
-            font-weight: 600;
-            margin-top: 2px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
+            gap: 8px;
         }
-        .contact-card .contact-value a {
+        .contact-card .contact-label i {
             color: #81c784;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .contact-card .contact-value a:hover {
-            color: #a5d6a7;
-            text-decoration: underline;
         }
         .contact-card .contact-value .call-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             background: rgba(76, 175, 80, 0.15);
-            border: 1px solid rgba(76, 175, 80, 0.2);
-            padding: 6px 18px;
+            border: 1px solid rgba(76, 175, 80, 0.25);
+            padding: 8px 20px;
             border-radius: 30px;
             font-size: 14px;
             font-weight: 500;
@@ -1480,12 +1480,45 @@
             transform: scale(1.02);
         }
         .contact-card .contact-value .call-btn i {
-            font-size: 16px;
+            font-size: 18px;
         }
         .contact-card .contact-note {
-            font-size: 13px;
-            opacity: 0.5;
+            font-size: 12px;
+            opacity: 0.4;
+            width: 100%;
             margin-top: 6px;
+        }
+        .api-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .api-info-grid .api-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 12px 14px;
+        }
+        .api-info-grid .api-item .api-name {
+            font-weight: 600;
+            color: #81c784;
+            font-size: 14px;
+        }
+        .api-info-grid .api-item .api-desc {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+        @media (max-width: 600px) {
+            .api-info-grid {
+                grid-template-columns: 1fr;
+            }
+            .contact-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
         }
 
         /* ─── NAME INPUT MODAL ─── */
@@ -1665,7 +1698,7 @@
         </div>
 
         <!-- ─── PAGES ─── -->
-        <!-- Dashboard (now Plant Advisor) -->
+        <!-- Dashboard -->
         <div class="page active" id="page-dashboard">
             <div class="card">
                 <div class="card-header">
@@ -1798,6 +1831,7 @@
                     <span style="font-size:12px; opacity:0.4;" id="diseaseUpdateTime">Loading…</span>
                 </div>
                 <div style="margin-bottom:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                    <span class="ph-real-time-badge"><i class="fa-regular fa-clock"></i> 🇵🇭 Real-time PH Data</span>
                     <span class="update-badge"><i class="fa-regular fa-calendar"></i> Daily Update</span>
                     <button id="diseaseRefreshBtn" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.06); color:#fff; padding:4px 14px; border-radius:30px; font-size:12px; cursor:pointer;"><i class="fa-solid fa-rotate"></i> Refresh</button>
                 </div>
@@ -1811,24 +1845,41 @@
         <div class="page" id="page-about">
             <div class="card">
                 <div class="card-title" style="font-size:18px;"><i class="fa-solid fa-circle-info"></i> About PlantAdvisor PH</div>
-                <div style="margin-top:12px; line-height:1.7; opacity:0.7; font-size:14px;">
-                    <p>PlantAdvisor uses your real-time location and current weather to recommend the best crops to grow in the Philippines.</p>
-                    <p style="margin-top:8px;">It considers temperature, humidity, rainfall, soil preferences, drought tolerance, and the planting season for each crop.</p>
-                    <p style="margin-top:8px;">Data is fetched from Open-Meteo for weather and OpenStreetMap for location names.</p>
-                    <p style="margin-top:8px; opacity:0.4; font-size:12px;">Made with <i class="fa-solid fa-heart" style="color:#ef9a9a;"></i> for Filipino gardeners.</p>
+                <div style="margin-top:12px; line-height:1.7; opacity:0.8; font-size:14px;">
+                    <p><strong>How It Works</strong><br>
+                    PlantAdvisor uses your phone's GPS to get your exact location. It then fetches real-time weather data (temperature, humidity, rainfall, wind) from the <strong>Open-Meteo API</strong>, which is a professional-grade weather service used by researchers worldwide. Your location name (barangay, city, province) is provided by the <strong>Nominatim (OpenStreetMap) API</strong>.</p>
+                    
+                    <div style="margin: 14px 0;">
+                        <strong>🌱 The Science Behind Plant Scores</strong>
+                        <p style="margin-top:4px;">Every plant in our database has an "ideal" temperature range (e.g., Rice: 22–34°C) and humidity range. The app compares your current conditions against these ideals. We focus heavily on <strong>temperature</strong> because it dictates photosynthesis speed, germination, and flowering. The closer your current weather is to the plant's native tropical climate, the higher the match percentage.</p>
+                        <p style="margin-top:4px;">We also factor in <strong>rainfall thresholds</strong> (mm) and <strong>drought tolerance</strong> (Low, Medium, High, Very High) to ensure the plant won't just survive, but thrive with your current precipitation levels. The current month's planting season is also evaluated.</p>
+                    </div>
+
+                    <div class="api-info-grid">
+                        <div class="api-item">
+                            <div class="api-name">🌦️ Open-Meteo</div>
+                            <div class="api-desc">Provides real-time temperature, humidity, wind speed, precipitation, and 7-day forecasts. Updated every 5 minutes.</div>
+                        </div>
+                        <div class="api-item">
+                            <div class="api-name">📍 Nominatim (OSM)</div>
+                            <div class="api-desc">Converts your GPS coordinates into readable location names (Barangay, City, Province) for accurate local context.</div>
+                        </div>
+                    </div>
+                    <p style="opacity:0.5; font-size:12px;">Data is cached locally for 5 minutes to ensure fast loading while keeping the weather fresh and accurate.</p>
                 </div>
 
-                <!-- ─── CONTACT US ─── -->
+                <!-- ─── CONTACT US (HIDDEN NUMBER, ONLY BUTTON) ─── -->
                 <div class="contact-card">
-                    <div class="contact-label"><i class="fa-solid fa-phone"></i> Contact Us</div>
+                    <div class="contact-label">
+                        <i class="fa-solid fa-headset"></i> Need help?
+                    </div>
                     <div class="contact-value">
-                        <span>📞 <a href="tel:+639649531290">09649531290</a></span>
                         <a href="tel:+639649531290" class="call-btn">
-                            <i class="fa-solid fa-phone"></i> Call Now
+                            <i class="fa-solid fa-phone"></i> Call Support
                         </a>
                     </div>
                     <div class="contact-note">
-                        <i class="fa-regular fa-clock"></i> Available daily · Click the number or "Call Now" to auto-dial.
+                        <i class="fa-regular fa-clock"></i> Available daily · Click the button to auto-dial.
                     </div>
                 </div>
             </div>
@@ -4564,17 +4615,28 @@
                 diseaseUpdateTime.textContent =
                     `Updated ${formatTime(new Date(lastUpdate))} · ${new Date(lastUpdate).toLocaleDateString()}`;
 
-                let html = `<div style="margin-bottom:16px;"><strong>🩺 Top 10 Most Common Diseases</strong> (across all plants)</div>`;
+                let html =
+                    `<div style="margin-bottom:12px; display:flex; flex-wrap:wrap; gap:6px; align-items:center;">
+                        <span style="background:rgba(255,193,7,0.1); color:#ffd54f; padding:2px 12px; border-radius:30px; font-size:12px; border:1px solid rgba(255,193,7,0.1);">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Pest & Disease Alert (PH)
+                        </span>
+                        <span style="font-size:12px; opacity:0.5;">Real-time recommendations based on Philippine crop data.</span>
+                    </div>`;
+
+                html += `<div style="margin-bottom:16px;"><strong>🩺 Top 10 Most Common Diseases & Pests</strong> (across all plants)</div>`;
                 data.top10.forEach((d, index) => {
                     const affectedList = Array.from(d.affectedPlants).join(', ');
                     const medicine = Array.from(d.medicines).join('; ') || 'None specified';
                     const fertilizer = Array.from(d.fertilizers).join('; ') || 'Apply balanced NPK';
-                    const pesticide = Array.from(d.pesticides).join('; ') || 'None';
+                    const pesticide = Array.from(d.pesticides).join('; ') || 'None required';
+                    // Check if it has a pesticide recommendation to highlight
+                    const hasPest = pesticide !== 'None required' && pesticide !== 'None';
                     html += `
                         <div class="disease-card">
                             <div class="header">
                                 <span class="name">#${index+1} ${d.name}</span>
                                 <span class="count">${d.count} plant(s)</span>
+                                ${hasPest ? '<span style="font-size:11px; background:rgba(255,138,101,0.15); color:#ff8a65; padding:2px 10px; border-radius:30px; border:1px solid rgba(255,138,101,0.1);"><i class="fa-solid fa-bug"></i> Insect/Pest</span>' : ''}
                             </div>
                             <div class="affected-plants">
                                 <strong>Affected Plants:</strong> ${affectedList}
@@ -4584,20 +4646,24 @@
                                 <div class="item"><div class="label">🌱 Fertilizer</div><div class="value">${fertilizer}</div></div>
                                 <div class="item"><div class="label">🧪 Pesticide</div><div class="value">${pesticide}</div></div>
                             </div>
+                            ${hasPest ? `<div style="margin-top:6px; font-size:11px; color:#ffab91; border-top:1px solid rgba(255,255,255,0.04); padding-top:4px;"><i class="fa-solid fa-skull"></i> Requires pesticide application. See details above.</div>` : ''}
                         </div>
                     `;
                 });
-                html += `<div style="margin-top:24px; margin-bottom:12px;"><strong>🌿 All Plants & Their Diseases</strong></div>`;
+                html += `<div style="margin-top:24px; margin-bottom:12px;"><strong>🌿 All Plants & Their Diseases / Pests</strong></div>`;
                 html += `<div class="plant-disease-list">`;
                 data.allPlants.forEach(p => {
                     if (p.diseases.length === 0) return;
                     const imgUrl = getCachedImage(p.plantId) || '';
+                    // Check if any disease requires pesticide
+                    const hasPest = p.diseases.some(d => d.pesticide && d.pesticide !== 'None');
                     html += `
                         <div class="plant-disease-item">
                             <img src="${imgUrl}" alt="${p.plantName}" class="plant-icon" onerror="this.style.display='none'">
                             <span class="plant-name">${p.plantName}</span>
                             <div class="disease-list">
                                 ${p.diseases.map(d => `<span class="disease-tag">${d.name}</span>`).join(' ')}
+                                ${hasPest ? '<span style="font-size:10px; background:rgba(255,138,101,0.12); color:#ff8a65; padding:1px 8px; border-radius:20px; border:1px solid rgba(255,138,101,0.08); margin-left:4px;">🧪 Pesticide needed</span>' : ''}
                             </div>
                         </div>
                     `;
@@ -4802,7 +4868,7 @@
                 return map[code] || '🌤️';
             }
 
-            // ─── HEAT INDEX CALCULATION ──────────────────────────────
+            // ─── HEAT INDEX CALCULATION (NOAA - Rothfusz) ────────────
             function calculateHeatIndex(tempC, humidity) {
                 // Rothfusz formula for heat index (NOAA)
                 let T = tempC * 9 / 5 + 32; // Convert to Fahrenheit
@@ -4989,10 +5055,10 @@
                 const wind = Math.round(weatherData.current.wind_speed_10m);
                 const precip = weatherData.current.precipitation || 0;
 
-                // Calculate Heat Index
+                // Calculate Heat Index (NOAA)
                 const heatIndex = calculateHeatIndex(temp, hum);
                 if (feelsLikeDisp) {
-                    feelsLikeDisp.textContent = `Heat Index: ${heatIndex}°C`;
+                    feelsLikeDisp.textContent = `🔥 Heat Index: ${heatIndex}°C (NOAA)`;
                 }
 
                 const scored = PLANTS.map(p => ({ ...p, score: scorePlant(p, temp, hum, precip) }));
@@ -5124,7 +5190,7 @@
                         </span>
                         <span class="summary-item">
                             <span class="label">🌡️ Heat Index:</span>
-                            <span class="value" style="color:#ffab91;">${calculateHeatIndex(Math.round(weatherData.current.temperature_2m), Math.round(weatherData.current.relative_humidity_2m))}°C</span>
+                            <span class="value" style="color:#ffab91;">${calculateHeatIndex(Math.round(weatherData.current.temperature_2m), Math.round(weatherData.current.relative_humidity_2m))}°C (NOAA)</span>
                         </span>
                         <span class="summary-item">
                             <span class="label">☔ Rain:</span>
