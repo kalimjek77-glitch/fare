@@ -624,10 +624,25 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            transition: background 0.2s;
+            transition: background 0.2s, border-color 0.3s, box-shadow 0.3s;
+            position: relative;
         }
         .garden-plant-card:hover {
             background: rgba(255, 255, 255, 0.06);
+        }
+        /* ─── HARVEST-READY: YELLOW BOX ─── */
+        .garden-plant-card.harvest-ready {
+            background: rgba(255, 193, 7, 0.08);
+            border-color: rgba(255, 193, 7, 0.35);
+            box-shadow: 0 0 30px rgba(255, 193, 7, 0.06);
+        }
+        .garden-plant-card.harvest-ready .status-badge {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffd54f;
+            border-color: rgba(255, 193, 7, 0.25);
+        }
+        .garden-plant-card.harvest-ready .progress .fill {
+            background: #ffd54f;
         }
         .garden-plant-card .row {
             display: flex;
@@ -698,6 +713,13 @@
         .garden-plant-card .actions button.history-btn:hover {
             background: rgba(33, 150, 243, 0.1);
         }
+        .garden-plant-card .actions button.pesticide-btn {
+            color: #ff8a65;
+            border-color: rgba(255, 138, 101, 0.15);
+        }
+        .garden-plant-card .actions button.pesticide-btn:hover {
+            background: rgba(255, 138, 101, 0.1);
+        }
         .garden-plant-card .progress {
             margin-top: 4px;
             display: flex;
@@ -750,6 +772,36 @@
             align-items: center;
             gap: 6px;
             flex-wrap: wrap;
+        }
+        .garden-plant-card .applied-log {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 4px;
+            font-size: 12px;
+        }
+        .garden-plant-card .applied-log .tag {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 2px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            opacity: 0.8;
+        }
+        .garden-plant-card .applied-log .tag.fert {
+            color: #81c784;
+            border-color: rgba(76, 175, 80, 0.15);
+        }
+        .garden-plant-card .applied-log .tag.pest {
+            color: #ff8a65;
+            border-color: rgba(255, 138, 101, 0.15);
+        }
+        .garden-plant-card .applied-log .tag .label {
+            opacity: 0.4;
+            font-size: 10px;
+            text-transform: uppercase;
         }
 
         .add-plant-section {
@@ -1402,6 +1454,28 @@
             opacity: 0.5;
             margin-top: 6px;
         }
+
+        /* ─── NAME INPUT MODAL ─── */
+        .name-input-modal .modal-box .input-group {
+            margin: 12px 0 18px 0;
+        }
+        .name-input-modal .modal-box .input-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #e8edf5;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .name-input-modal .modal-box .input-group input:focus {
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+        .name-input-modal .modal-box .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -1613,6 +1687,21 @@
             <div class="actions">
                 <button class="btn-cancel" id="modalCancel">Cancel</button>
                 <button class="btn-danger" id="modalConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── NAME INPUT MODAL (for fertilizer / pesticide) ─── -->
+    <div class="modal-overlay name-input-modal" id="nameInputModal">
+        <div class="modal-box">
+            <div class="title" id="nameModalTitle"><i class="fa-solid fa-flask"></i> Enter Name</div>
+            <div class="desc" id="nameModalDesc">Please enter the name of the product you're applying:</div>
+            <div class="input-group">
+                <input type="text" id="nameInputField" placeholder="e.g. Urea 46-0-0" autofocus>
+            </div>
+            <div class="actions">
+                <button class="btn-cancel" id="nameModalCancel">Cancel</button>
+                <button class="btn-confirm" id="nameModalConfirm">Apply</button>
             </div>
         </div>
     </div>
@@ -3784,6 +3873,13 @@
             const diseaseContent = $('diseaseContent');
             const diseaseUpdateTime = $('diseaseUpdateTime');
             const diseaseRefreshBtn = $('diseaseRefreshBtn');
+            // Name input modal
+            const nameInputModal = $('nameInputModal');
+            const nameModalTitle = $('nameModalTitle');
+            const nameModalDesc = $('nameModalDesc');
+            const nameInputField = $('nameInputField');
+            const nameModalCancel = $('nameModalCancel');
+            const nameModalConfirm = $('nameModalConfirm');
             // History modal
             const historyModalOverlay = $('historyModalOverlay');
             const historyPlantName = $('historyPlantName');
@@ -3809,6 +3905,7 @@
             let gardenPlants = [];
             let modalCallback = null;
             let gardenUpdateInterval = null;
+            let nameModalCallback = null;
 
             // ─── LOCAL STORAGE ──────────────────────────────────────────
             const STORAGE_KEY = 'plantadvisor_garden';
@@ -3821,7 +3918,27 @@
                         gardenPlants = JSON.parse(data);
                         gardenPlants = gardenPlants.map(p => {
                             if (!p.wateredDates) p.wateredDates = [];
+                            // Migrate fertilizedDates: if strings -> convert to {date, name}
+                            if (p.fertilizedDates && p.fertilizedDates.length > 0 && typeof p.fertilizedDates[0] ===
+                                'string') {
+                                p.fertilizedDates = p.fertilizedDates.map(d => ({ date: d, name: '' }));
+                            }
                             if (!p.fertilizedDates) p.fertilizedDates = [];
+                            if (!p.pesticideLog) p.pesticideLog = [];
+                            if (!p.fertilizerLog) p.fertilizerLog = [];
+                            // Migrate old fertilizedDates to fertilizerLog
+                            if (p.fertilizedDates && p.fertilizedDates.length > 0) {
+                                p.fertilizedDates.forEach(item => {
+                                    const dateStr = typeof item === 'string' ? item : item.date;
+                                    const name = typeof item === 'string' ? '' : (item.name || '');
+                                    if (dateStr) {
+                                        const exists = p.fertilizerLog.some(f => f.date === dateStr);
+                                        if (!exists) {
+                                            p.fertilizerLog.push({ date: dateStr, name: name || '' });
+                                        }
+                                    }
+                                });
+                            }
                             return p;
                         });
                     } else {
@@ -3993,6 +4110,40 @@
                 if (e.target === modalOverlay) hideModal();
             });
 
+            // ─── NAME INPUT MODAL ──────────────────────────────────────
+            function showNameInputModal(title, desc, placeholder, callback) {
+                nameModalTitle.textContent = title;
+                nameModalDesc.textContent = desc;
+                nameInputField.placeholder = placeholder || 'Enter name...';
+                nameInputField.value = '';
+                nameModalCallback = callback;
+                nameInputModal.classList.add('visible');
+                setTimeout(() => nameInputField.focus(), 100);
+            }
+
+            function hideNameInputModal() {
+                nameInputModal.classList.remove('visible');
+                nameModalCallback = null;
+            }
+
+            nameModalCancel.addEventListener('click', hideNameInputModal);
+            nameModalConfirm.addEventListener('click', function() {
+                const val = nameInputField.value.trim();
+                if (nameModalCallback) nameModalCallback(val || 'Unnamed');
+                hideNameInputModal();
+            });
+            nameInputField.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    nameModalConfirm.click();
+                }
+                if (e.key === 'Escape') {
+                    nameModalCancel.click();
+                }
+            });
+            nameInputModal.addEventListener('click', function(e) {
+                if (e.target === nameInputModal) hideNameInputModal();
+            });
+
             // ─── WEATHER HELPERS ─────────────────────────────────────────
             function getWeatherIcon(code) {
                 const map = {
@@ -4065,7 +4216,6 @@
             // ─── ACCURATE SCORING ──────────────────────────────────────
             function scorePlant(plant, temp, humidity) {
                 let score = 0;
-                // Temperature: max 40
                 if (temp >= plant.idealTempMin && temp <= plant.idealTempMax) {
                     score += 40;
                 } else if (temp >= plant.idealTempMin - 3 && temp <= plant.idealTempMax + 3) {
@@ -4073,8 +4223,6 @@
                 } else if (temp >= plant.idealTempMin - 6 && temp <= plant.idealTempMax + 6) {
                     score += 8;
                 }
-
-                // Humidity: max 40
                 if (humidity >= plant.idealHumidityMin && humidity <= plant.idealHumidityMax) {
                     score += 40;
                 } else if (humidity >= plant.idealHumidityMin - 10 && humidity <= plant.idealHumidityMax + 10) {
@@ -4082,8 +4230,6 @@
                 } else if (humidity >= plant.idealHumidityMin - 20 && humidity <= plant.idealHumidityMax + 20) {
                     score += 10;
                 }
-
-                // Season: max 20
                 const month = new Date().getMonth() + 1;
                 if (plant.plantingMonths.includes(month)) {
                     score += 20;
@@ -4528,6 +4674,7 @@
                     const daysToHarvest = Math.max(0, plant.daysToHarvest - daysSince);
                     const progress = Math.min(100, (daysSince / plant.daysToHarvest) * 100);
                     const isHarvested = gPlant.harvested || false;
+                    const isHarvestReady = progress >= 100 && !isHarvested;
 
                     let waterNeeded = plant.waterPerDay;
                     if (temp > 30) waterNeeded = Math.round(waterNeeded * 1.2);
@@ -4541,8 +4688,8 @@
                     const wateredToday = gPlant.wateredDates.some(d => new Date(d).toDateString() === todayStr);
 
                     const fertInterval = 14;
-                    const lastFert = gPlant.fertilizedDates.length > 0 ?
-                        new Date(gPlant.fertilizedDates[gPlant.fertilizedDates.length - 1]) :
+                    const lastFert = gPlant.fertilizerLog && gPlant.fertilizerLog.length > 0 ?
+                        new Date(gPlant.fertilizerLog[gPlant.fertilizerLog.length - 1].date) :
                         plantingDate;
                     const daysSinceFert = daysBetween(lastFert, now);
                     const fertDue = daysSinceFert >= fertInterval;
@@ -4558,8 +4705,31 @@
 
                     const imgUrl = getCachedImage(plant.id) || '';
 
+                    // Build applied log
+                    let appliedLogHtml = '';
+                    const fertLog = gPlant.fertilizerLog || [];
+                    const pestLog = gPlant.pesticideLog || [];
+                    const allLogs = [...fertLog.map(f => ({ ...f, type: 'fert' })), ...pestLog.map(p => ({ ...p,
+                        type: 'pest' }))];
+                    allLogs.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    const recentLogs = allLogs.slice(0, 3);
+                    if (recentLogs.length > 0) {
+                        appliedLogHtml = `<div class="applied-log">`;
+                        recentLogs.forEach(log => {
+                            const cls = log.type === 'fert' ? 'fert' : 'pest';
+                            const icon = log.type === 'fert' ? '🌱' : '🧪';
+                            const label = log.type === 'fert' ? 'Fert' : 'Pest';
+                            const name = log.name || 'Unnamed';
+                            appliedLogHtml +=
+                                `<span class="tag ${cls}"><span class="label">${label}</span> ${icon} ${name} <span style="opacity:0.3;font-size:10px;">${formatDate(log.date)}</span></span>`;
+                        });
+                        appliedLogHtml += `</div>`;
+                    }
+
+                    const cardClass = isHarvestReady ? 'garden-plant-card harvest-ready' : 'garden-plant-card';
+
                     html += `
-                        <div class="garden-plant-card" data-garden-id="${gPlant.id}">
+                        <div class="${cardClass}" data-garden-id="${gPlant.id}">
                             <div class="row">
                                 <div class="plant-info">
                                     <div class="plant-image-wrapper">
@@ -4572,7 +4742,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <span class="status-badge ${isHarvested ? 'harvested' : ''}">${isHarvested ? '<i class="fa-solid fa-check"></i> Harvested' : '<i class="fa-solid fa-seedling"></i> Growing'}</span>
+                                    <span class="status-badge ${isHarvested ? 'harvested' : (isHarvestReady ? 'harvest-ready' : '')}">${isHarvested ? '<i class="fa-solid fa-check"></i> Harvested' : (isHarvestReady ? '🌾 Ready to Harvest!' : '<i class="fa-solid fa-seedling"></i> Growing')}</span>
                                 </div>
                             </div>
                             ${!isHarvested ? `
@@ -4593,6 +4763,7 @@
                                     <i class="fa-solid fa-temperature-high icon"></i> ${temp}°C / ${hum}% humidity
                                 </span>
                             </div>
+                            ${appliedLogHtml}
                             ` : `
                             <div style="font-size:13px; opacity:0.6;"><i class="fa-regular fa-calendar-check"></i> Harvested on ${formatDate(gPlant.harvestDate)}</div>
                             `}
@@ -4600,6 +4771,7 @@
                                 ${!isHarvested ? `
                                 <button class="water-btn" data-id="${gPlant.id}"><i class="fa-solid fa-droplet"></i> Water</button>
                                 <button class="fertilize-btn" data-id="${gPlant.id}"><i class="fa-solid fa-flask"></i> Fertilize</button>
+                                <button class="pesticide-btn" data-id="${gPlant.id}"><i class="fa-solid fa-bug"></i> Pesticide</button>
                                 <button class="harvest-btn" data-id="${gPlant.id}"><i class="fa-solid fa-scissors"></i> Harvest</button>
                                 ` : ''}
                                 <button class="history-btn" data-id="${gPlant.id}"><i class="fa-solid fa-calendar-days"></i> History</button>
@@ -4632,6 +4804,13 @@
                         e.stopPropagation();
                         const id = this.dataset.id;
                         fertilizePlant(id);
+                    });
+                });
+                gardenList.querySelectorAll('.pesticide-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const id = this.dataset.id;
+                        applyPesticide(id);
                     });
                 });
                 gardenList.querySelectorAll('.harvest-btn').forEach(btn => {
@@ -4690,7 +4869,7 @@
                 }
 
                 const waterSet = new Set(gPlant.wateredDates.map(d => new Date(d).toDateString()));
-                const fertSet = new Set(gPlant.fertilizedDates.map(d => new Date(d).toDateString()));
+                const fertSet = new Set((gPlant.fertilizerLog || []).map(d => new Date(d.date).toDateString()));
 
                 for (let d = 1; d <= daysInMonth; d++) {
                     const dateObj = new Date(year, month, d);
@@ -4708,20 +4887,22 @@
 
                 let events = [];
                 gPlant.wateredDates.forEach(d => {
-                    events.push({ date: new Date(d), type: 'water' });
+                    events.push({ date: new Date(d), type: 'water', label: '💧 Watered' });
                 });
-                gPlant.fertilizedDates.forEach(d => {
-                    events.push({ date: new Date(d), type: 'fertilize' });
+                (gPlant.fertilizerLog || []).forEach(item => {
+                    events.push({ date: new Date(item.date), type: 'fertilize', label: `🌱 Fertilized: ${item.name || 'Unnamed'}` });
+                });
+                (gPlant.pesticideLog || []).forEach(item => {
+                    events.push({ date: new Date(item.date), type: 'pesticide', label: `🧪 Pesticide: ${item.name || 'Unnamed'}` });
                 });
                 events.sort((a, b) => b.date - a.date);
                 let eventHtml = '';
                 if (events.length === 0) {
                     eventHtml = '<div style="opacity:0.4; text-align:center; padding:10px;">No events recorded yet.</div>';
                 } else {
-                    eventHtml = events.slice(0, 20).map(e => {
-                        const typeLabel = e.type === 'water' ? '💧 Watered' : '🧪 Fertilized';
+                    eventHtml = events.slice(0, 30).map(e => {
                         return `<div class="event-item">
-                                    <span class="type">${typeLabel}</span>
+                                    <span class="type">${e.label}</span>
                                     <span class="date">${formatDate(e.date)}</span>
                                 </div>`;
                     }).join('');
@@ -4754,7 +4935,8 @@
                     plantId: plantId,
                     plantingDate: now.toISOString(),
                     wateredDates: [],
-                    fertilizedDates: [],
+                    fertilizerLog: [],
+                    pesticideLog: [],
                     harvested: false,
                     harvestDate: null
                 };
@@ -4782,11 +4964,39 @@
             function fertilizePlant(gardenId) {
                 const gPlant = gardenPlants.find(p => p.id === gardenId);
                 if (!gPlant) return;
-                const now = new Date();
-                gPlant.fertilizedDates.push(now.toISOString());
-                saveGarden();
-                renderGarden();
-                showToast('🧪 Fertilized!', 1000);
+                const plant = PLANTS.find(p => p.id === gPlant.plantId);
+                showNameInputModal(
+                    '🌱 Fertilizer Application',
+                    `Enter the name of the fertilizer for "${plant ? plant.name : 'plant'}":`,
+                    'e.g. Urea 46-0-0, 14-14-14, Compost',
+                    function(name) {
+                        const now = new Date();
+                        if (!gPlant.fertilizerLog) gPlant.fertilizerLog = [];
+                        gPlant.fertilizerLog.push({ date: now.toISOString(), name: name || 'Unnamed' });
+                        saveGarden();
+                        renderGarden();
+                        showToast(`🌱 Fertilized with "${name || 'Unnamed'}"!`, 1500);
+                    }
+                );
+            }
+
+            function applyPesticide(gardenId) {
+                const gPlant = gardenPlants.find(p => p.id === gardenId);
+                if (!gPlant) return;
+                const plant = PLANTS.find(p => p.id === gPlant.plantId);
+                showNameInputModal(
+                    '🧪 Pesticide Application',
+                    `Enter the name of the pesticide for "${plant ? plant.name : 'plant'}":`,
+                    'e.g. Cypermethrin, Imidacloprid, Neem oil',
+                    function(name) {
+                        const now = new Date();
+                        if (!gPlant.pesticideLog) gPlant.pesticideLog = [];
+                        gPlant.pesticideLog.push({ date: now.toISOString(), name: name || 'Unnamed' });
+                        saveGarden();
+                        renderGarden();
+                        showToast(`🧪 Pesticide applied: "${name || 'Unnamed'}"!`, 1500);
+                    }
+                );
             }
 
             function harvestPlant(gardenId) {
