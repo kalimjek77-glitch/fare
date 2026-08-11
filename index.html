@@ -4802,6 +4802,37 @@
                 return map[code] || '🌤️';
             }
 
+            // ─── HEAT INDEX CALCULATION ──────────────────────────────
+            function calculateHeatIndex(tempC, humidity) {
+                // Rothfusz formula for heat index (NOAA)
+                let T = tempC * 9 / 5 + 32; // Convert to Fahrenheit
+                let RH = humidity;
+                // If temperature is below 80°F (26.7°C), heat index is not officially defined.
+                // Use a simple approximation for lower temps.
+                if (T < 80) {
+                    // Simple adjustment: feels warmer with high humidity
+                    let adjustment = (RH - 40) * 0.3;
+                    if (adjustment < 0) adjustment = 0;
+                    return Math.round(tempC + adjustment * 0.5);
+                }
+                let HI = -42.379 + 2.04901523 * T + 10.14333127 * RH
+                    - 0.22475541 * T * RH - 0.00683783 * T * T - 0.05481717 * RH * RH
+                    + 0.00122874 * T * T * RH + 0.00085282 * T * RH * RH
+                    - 0.00000199 * T * T * RH * RH;
+                // If humidity is < 13% and temp between 80-112, adjust
+                if (RH < 13 && T >= 80 && T <= 112) {
+                    let adjustment = (13 - RH) / 4 * Math.sqrt((17 - Math.abs(T - 95)) / 17);
+                    HI = HI - adjustment;
+                }
+                // If humidity > 85% and temp between 80-87, adjust
+                if (RH > 85 && T >= 80 && T <= 87) {
+                    let adjustment = (RH - 85) / 10 * (87 - T) / 5;
+                    HI = HI + adjustment;
+                }
+                let HI_C = (HI - 32) * 5 / 9;
+                return Math.round(HI_C);
+            }
+
             // ─── ACCURATE SCORING (includes rainfall & soil match) ──
             function scorePlant(plant, temp, humidity, precip) {
                 let score = 0;
@@ -4955,12 +4986,13 @@
                 const temp = Math.round(weatherData.current.temperature_2m);
                 const hum = Math.round(weatherData.current.relative_humidity_2m);
                 const code = weatherData.current.weather_code;
-                const feelsLike = Math.round(weatherData.current.apparent_temperature);
                 const wind = Math.round(weatherData.current.wind_speed_10m);
                 const precip = weatherData.current.precipitation || 0;
 
+                // Calculate Heat Index
+                const heatIndex = calculateHeatIndex(temp, hum);
                 if (feelsLikeDisp) {
-                    feelsLikeDisp.textContent = `Feels like ${feelsLike}°C`;
+                    feelsLikeDisp.textContent = `Heat Index: ${heatIndex}°C`;
                 }
 
                 const scored = PLANTS.map(p => ({ ...p, score: scorePlant(p, temp, hum, precip) }));
@@ -5091,8 +5123,8 @@
                             <span class="value">${Math.round(weatherData.current.wind_speed_10m)} km/h</span>
                         </span>
                         <span class="summary-item">
-                            <span class="label">🌡️ Feels like:</span>
-                            <span class="value">${Math.round(weatherData.current.apparent_temperature)}°C</span>
+                            <span class="label">🌡️ Heat Index:</span>
+                            <span class="value" style="color:#ffab91;">${calculateHeatIndex(Math.round(weatherData.current.temperature_2m), Math.round(weatherData.current.relative_humidity_2m))}°C</span>
                         </span>
                         <span class="summary-item">
                             <span class="label">☔ Rain:</span>
