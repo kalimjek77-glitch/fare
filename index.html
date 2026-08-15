@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>🌱 PlantAdvisor · Smart Planting PH</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <!-- ─── PWA ADDITIONS ─── -->
+    <!-- ─── PWA META TAGS ─── -->
     <meta name="theme-color" content="#0f1219">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
-    <!-- ─── END PWA ADDITIONS ─── -->
     <style>
         /* ─── RESET & BASE ─── */
         * {
@@ -125,10 +124,9 @@
             margin-left: auto;
         }
 
-        /* ─── NEW INSTALL BUTTON ─── */
+        /* ─── NEW: Install Button & Soil Inputs ─── */
         .sidebar-install-btn {
-            margin-top: 16px;
-            margin-bottom: 12px;
+            margin-top: 20px;
             width: 100%;
             padding: 12px;
             border-radius: 30px;
@@ -139,15 +137,52 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
         }
-        .sidebar-install-btn:hover {
-            background: rgba(76, 175, 80, 0.25);
+        .sidebar-install-btn:hover { background: rgba(76, 175, 80, 0.25); }
+
+        .sidebar-soil-input {
+            margin-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 16px;
         }
-        /* ─── END NEW INSTALL BUTTON ─── */
+        .sidebar-soil-input label {
+            font-size: 12px;
+            opacity: 0.6;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .sidebar-soil-input input, .sidebar-soil-input select {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: #e8edf5;
+            font-size: 13px;
+            outline: none;
+            margin-bottom: 8px;
+        }
+        .sidebar-soil-input input:focus, .sidebar-soil-input select:focus {
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+
+        /* ─── HEAT ALERT ─── */
+        .heat-alert {
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .heat-alert.danger { background: rgba(244,67,54,0.15); color: #ef9a9a; border: 1px solid rgba(244,67,54,0.15); }
+        .heat-alert.caution { background: rgba(255,193,7,0.12); color: #ffd54f; border: 1px solid rgba(255,193,7,0.12); }
+        .heat-alert.safe { background: rgba(76,175,80,0.1); color: #81c784; border: 1px solid rgba(76,175,80,0.1); }
 
         /* ─── OVERLAY ─── */
         .sidebar-overlay {
@@ -1706,11 +1741,24 @@
             <a href="#diseases" data-page="diseases"><span class="icon"><i class="fa-solid fa-bug"></i></span> Diseases & Remedies</a>
             <a href="#about" data-page="about"><span class="icon"><i class="fa-solid fa-circle-info"></i></span> About</a>
         </nav>
-
-        <!-- ─── NEW: INSTALL BUTTON ─── -->
-        <button class="sidebar-install-btn" id="installBtn"><i class="fa-solid fa-download"></i> Install App</button>
-        <!-- ─── END NEW INSTALL BUTTON ─── -->
-
+        <!-- ─── NEW: Install Button ─── -->
+        <button class="sidebar-install-btn" id="installBtn" style="display:none;"><i class="fa-solid fa-download"></i> Install App</button>
+        <!-- ─── NEW: Soil Inputs ─── -->
+        <div class="sidebar-soil-input">
+            <label><i class="fa-solid fa-flask"></i> Soil pH</label>
+            <input type="number" id="soilPHInput" placeholder="e.g. 6.5" step="0.1" min="0" max="14" value="">
+            <label><i class="fa-solid fa-earth-americas"></i> Soil Type</label>
+            <select id="soilTypeInput">
+                <option value="">Auto-detect</option>
+                <option value="Sandy loam">Sandy loam</option>
+                <option value="Loam">Loam</option>
+                <option value="Clay loam">Clay loam</option>
+                <option value="Sandy">Sandy</option>
+                <option value="Clay">Clay</option>
+                <option value="Loamy sand">Loamy sand</option>
+            </select>
+            <button id="saveSoilBtn" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.06); color:#e8edf5; padding:6px 14px; border-radius:30px; font-size:12px; cursor:pointer; width:100%;">Save Soil Settings</button>
+        </div>
         <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 12px; opacity:0.3;">
             <span id="sidebarLocation" class="sidebar-location-text"><i class="fa-solid fa-location-dot"></i> Detecting…</span>
         </div>
@@ -1748,10 +1796,12 @@
                 </div>
                 <div style="margin-top:8px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;">
                     <span style="font-size:14px; opacity:0.6;">
-                        <span id="weatherDesc">--</span> · <i class="fa-solid fa-droplet"></i> <span id="humidityDisp">--%</span> · <i class="fa-solid fa-wind"></i> <span id="windDisp">-- km/h</span> · <span id="feelsLikeDisp" style="opacity:0.6;"></span>
+                        <span id="weatherDesc">--</span> · <i class="fa-solid fa-droplet"></i> <span id="humidityDisp">--%</span> · <i class="fa-solid fa-wind"></i> <span id="windDisp">-- km/h</span> · <span id="feelsLikeDisp" style="opacity:0.8;"></span>
                     </span>
                     <button class="refresh-btn" id="refreshBtn" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.06); color:#fff; padding:6px 18px; border-radius:30px; font-size:13px; cursor:pointer;"><i class="fa-solid fa-rotate"></i> Refresh</button>
                 </div>
+                <!-- ─── NEW: Heat Index Display ─── -->
+                <div id="heatIndexDisplay" style="margin-top:6px;"></div>
                 <div class="error-msg" id="errorMsg" style="background:rgba(244,67,54,0.12); border:1px solid rgba(244,67,54,0.2); border-radius:14px; padding:10px 14px; font-size:13px; color:#ff8a80; margin-top:10px; display:none;">
                     <i class="fa-solid fa-triangle-exclamation"></i> <span id="errorText">Unable to load data.</span>
                 </div>
@@ -1781,7 +1831,7 @@
             <div class="card" style="background:rgba(255,255,255,0.02);">
                 <div class="card-title" style="font-size:14px; opacity:0.6;"><i class="fa-solid fa-wheat-awn"></i> Why these plants?</div>
                 <div style="font-size:13px; opacity:0.7; line-height:1.6; margin-top:6px;">
-                    Each plant is scored based on your current temperature, humidity, rainfall, and the current month's planting season.
+                    Each plant is scored based on your current temperature, humidity, rainfall, soil pH, and the current month's planting season.
                     The higher the match, the better it will thrive in your location right now.
                 </div>
             </div>
@@ -1903,7 +1953,7 @@
                     <p style="opacity:0.5; font-size:12px;">Data is cached locally for 5 minutes to ensure fast loading while keeping the weather fresh and accurate.</p>
                 </div>
 
-                <!-- ─── CONTACT US (HIDDEN NUMBER, ONLY BUTTON) ─── -->
+                <!-- ─── CONTACT US ─── -->
                 <div class="contact-card">
                     <div class="contact-label">
                         <i class="fa-solid fa-headset"></i> Need help?
@@ -4557,6 +4607,7 @@
             // ─── LOCAL STORAGE ──────────────────────────────────────────
             const STORAGE_KEY = 'plantadvisor_garden';
             const DISEASE_UPDATE_KEY = 'plantadvisor_disease_last_update';
+            const SOIL_KEY = 'plantadvisor_soil';
 
             function loadGarden() {
                 try {
@@ -4905,13 +4956,9 @@
 
             // ─── HEAT INDEX CALCULATION (NOAA - Rothfusz) ────────────
             function calculateHeatIndex(tempC, humidity) {
-                // Rothfusz formula for heat index (NOAA)
-                let T = tempC * 9 / 5 + 32; // Convert to Fahrenheit
+                let T = tempC * 9 / 5 + 32;
                 let RH = humidity;
-                // If temperature is below 80°F (26.7°C), heat index is not officially defined.
-                // Use a simple approximation for lower temps.
                 if (T < 80) {
-                    // Simple adjustment: feels warmer with high humidity
                     let adjustment = (RH - 40) * 0.3;
                     if (adjustment < 0) adjustment = 0;
                     return Math.round(tempC + adjustment * 0.5);
@@ -4920,12 +4967,10 @@
                     - 0.22475541 * T * RH - 0.00683783 * T * T - 0.05481717 * RH * RH
                     + 0.00122874 * T * T * RH + 0.00085282 * T * RH * RH
                     - 0.00000199 * T * T * RH * RH;
-                // If humidity is < 13% and temp between 80-112, adjust
                 if (RH < 13 && T >= 80 && T <= 112) {
                     let adjustment = (13 - RH) / 4 * Math.sqrt((17 - Math.abs(T - 95)) / 17);
                     HI = HI - adjustment;
                 }
-                // If humidity > 85% and temp between 80-87, adjust
                 if (RH > 85 && T >= 80 && T <= 87) {
                     let adjustment = (RH - 85) / 10 * (87 - T) / 5;
                     HI = HI + adjustment;
@@ -4934,42 +4979,75 @@
                 return Math.round(HI_C);
             }
 
-            // ─── ACCURATE SCORING (includes rainfall & soil match) ──
+            function getHeatAlert(hi) {
+                if (hi >= 41) return { text: '⚠️ Danger! Heat index above 41°C – high risk of heat stroke', cls: 'danger' };
+                if (hi >= 35) return { text: '⚠️ Caution: Heat index 35–40°C – possible heat exhaustion', cls: 'caution' };
+                return { text: '✅ Safe: Heat index below 35°C – comfortable', cls: 'safe' };
+            }
+
+            // ─── ENHANCED SCORING (includes soil) ─────────────────────
+            let userSoilPH = null;
+            let userSoilType = '';
+
+            function loadSoilSettings() {
+                try {
+                    const data = JSON.parse(localStorage.getItem(SOIL_KEY));
+                    if (data) {
+                        userSoilPH = data.ph;
+                        userSoilType = data.type || '';
+                        if (userSoilPH) document.getElementById('soilPHInput').value = userSoilPH;
+                        if (userSoilType) document.getElementById('soilTypeInput').value = userSoilType;
+                    }
+                } catch(e) {}
+            }
+
+            function saveSoilSettings() {
+                const ph = parseFloat(document.getElementById('soilPHInput').value);
+                const type = document.getElementById('soilTypeInput').value;
+                if (!isNaN(ph)) userSoilPH = ph;
+                else userSoilPH = null;
+                userSoilType = type;
+                localStorage.setItem(SOIL_KEY, JSON.stringify({ ph: userSoilPH, type: userSoilType }));
+                showToast('🌱 Soil settings saved!', 1500);
+                if (currentPage === 'dashboard') updateDashboard();
+                if (currentPage === 'plants') renderAllPlants();
+                if (currentPage === 'plant-detail' && selectedPlantId) renderPlantDetail(selectedPlantId);
+            }
+            document.getElementById('saveSoilBtn').addEventListener('click', saveSoilSettings);
+
             function scorePlant(plant, temp, humidity, precip) {
                 let score = 0;
-                // Temperature: max 35
-                if (temp >= plant.idealTempMin && temp <= plant.idealTempMax) {
-                    score += 35;
-                } else if (temp >= plant.idealTempMin - 3 && temp <= plant.idealTempMax + 3) {
-                    score += 18;
-                } else if (temp >= plant.idealTempMin - 6 && temp <= plant.idealTempMax + 6) {
-                    score += 8;
+                // Temperature (35)
+                if (temp >= plant.idealTempMin && temp <= plant.idealTempMax) score += 35;
+                else if (temp >= plant.idealTempMin-3 && temp <= plant.idealTempMax+3) score += 18;
+                else if (temp >= plant.idealTempMin-6 && temp <= plant.idealTempMax+6) score += 8;
+
+                // Humidity (35)
+                if (humidity >= plant.idealHumidityMin && humidity <= plant.idealHumidityMax) score += 35;
+                else if (humidity >= plant.idealHumidityMin-10 && humidity <= plant.idealHumidityMax+10) score += 18;
+                else if (humidity >= plant.idealHumidityMin-20 && humidity <= plant.idealHumidityMax+20) score += 8;
+
+                // Season (20)
+                const month = new Date().getMonth()+1;
+                if (plant.plantingMonths.includes(month)) score += 20;
+
+                // Rainfall (10)
+                if (precip !== undefined && !isNaN(precip)) {
+                    if (precip >= plant.rainfallMin && precip <= plant.rainfallMax) score += 10;
+                    else if (precip >= plant.rainfallMin-20 && precip <= plant.rainfallMax+20) score += 5;
+                } else { score += 5; }
+
+                // Soil (bonus up to 5)
+                if (userSoilPH !== null && !isNaN(userSoilPH)) {
+                    if (userSoilPH >= plant.soilPHMin && userSoilPH <= plant.soilPHMax) score += 5;
+                    else if (userSoilPH >= plant.soilPHMin-0.5 && userSoilPH <= plant.soilPHMax+0.5) score += 2;
                 }
-                // Humidity: max 35
-                if (humidity >= plant.idealHumidityMin && humidity <= plant.idealHumidityMax) {
-                    score += 35;
-                } else if (humidity >= plant.idealHumidityMin - 10 && humidity <= plant.idealHumidityMax + 10) {
-                    score += 18;
-                } else if (humidity >= plant.idealHumidityMin - 20 && humidity <= plant.idealHumidityMax + 20) {
-                    score += 8;
+                if (userSoilType) {
+                    const pSoil = plant.soilType.toLowerCase();
+                    const uSoil = userSoilType.toLowerCase();
+                    if (pSoil.includes(uSoil) || uSoil.includes(pSoil)) score += 3;
                 }
-                // Season: max 20
-                const month = new Date().getMonth() + 1;
-                if (plant.plantingMonths.includes(month)) {
-                    score += 20;
-                }
-                // Rainfall: max 10 (if precip available)
-                if (precip !== undefined && precip !== null && !isNaN(precip)) {
-                    const dailyRain = precip; // mm
-                    if (dailyRain >= plant.rainfallMin && dailyRain <= plant.rainfallMax) {
-                        score += 10;
-                    } else if (dailyRain >= plant.rainfallMin - 20 && dailyRain <= plant.rainfallMax + 20) {
-                        score += 5;
-                    }
-                } else {
-                    // If no precip data, assume ideal (neutral)
-                    score += 5;
-                }
+
                 return Math.min(100, score);
             }
 
@@ -5090,10 +5168,15 @@
                 const wind = Math.round(weatherData.current.wind_speed_10m);
                 const precip = weatherData.current.precipitation || 0;
 
-                // Calculate Heat Index (NOAA)
+                // Heat Index
                 const heatIndex = calculateHeatIndex(temp, hum);
+                const alert = getHeatAlert(heatIndex);
                 if (feelsLikeDisp) {
-                    feelsLikeDisp.textContent = `🔥 Heat Index: ${heatIndex}°C (NOAA)`;
+                    feelsLikeDisp.textContent = `Feels like ${heatIndex}°C (Heat Index)`;
+                }
+                const heatDiv = document.getElementById('heatIndexDisplay');
+                if (heatDiv) {
+                    heatDiv.innerHTML = `<span class="heat-alert ${alert.cls}"><i class="fa-solid fa-temperature-high"></i> ${alert.text} (${heatIndex}°C)</span>`;
                 }
 
                 const scored = PLANTS.map(p => ({ ...p, score: scorePlant(p, temp, hum, precip) }));
@@ -6022,11 +6105,35 @@
                 });
             });
 
-            // ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ───
-            // ─── PWA INSTALL FEATURE (ADDED) ──────────────
-            // ─── ─── ─── ─── ─── ─── ─── ─── ─── ─── ───
+            // ─── PWA INSTALL ──────────────────────────────────────────
+            let deferredPrompt = null;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                document.getElementById('installBtn').style.display = 'flex';
+            });
+            window.addEventListener('appinstalled', () => {
+                showToast('✅ App installed!', 3000);
+                document.getElementById('installBtn').style.display = 'none';
+            });
 
-            // 1. Register Service Worker (inline)
+            document.getElementById('installBtn').addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const result = await deferredPrompt.userChoice;
+                    if (result.outcome === 'accepted') {
+                        showToast('✅ App installed!', 3000);
+                        document.getElementById('installBtn').style.display = 'none';
+                    } else {
+                        showToast('Installation cancelled.', 1500);
+                    }
+                    deferredPrompt = null;
+                } else {
+                    showToast('Open this page in Chrome or Edge and use "Add to Home Screen".', 3000);
+                }
+            });
+
+            // ─── SERVICE WORKER ──────────────────────────────────────────
             function registerSW() {
                 try {
                     const swCode = `
@@ -6055,68 +6162,6 @@
                 } catch(e) {}
             }
 
-            // 2. Generate & inject Web App Manifest
-            function injectManifest() {
-                const manifest = {
-                    name: 'PlantAdvisor PH',
-                    short_name: 'PlantAdvisor',
-                    description: 'Smart planting recommendations based on real-time weather in the Philippines.',
-                    start_url: '/',
-                    display: 'standalone',
-                    background_color: '#0f1219',
-                    theme_color: '#0f1219',
-                    orientation: 'portrait',
-                    icons: [
-                        {
-                            src: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌱</text></svg>',
-                            sizes: '512x512',
-                            type: 'image/svg+xml',
-                            purpose: 'any maskable'
-                        }
-                    ]
-                };
-                const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-                const manifestURL = URL.createObjectURL(manifestBlob);
-                const link = document.createElement('link');
-                link.rel = 'manifest';
-                link.href = manifestURL;
-                document.head.appendChild(link);
-            }
-
-            // 3. Handle install prompt
-            let deferredPrompt = null;
-            const installBtn = document.getElementById('installBtn');
-
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                if (installBtn) installBtn.style.display = 'flex';
-            });
-
-            window.addEventListener('appinstalled', () => {
-                showToast('✅ App installed successfully!', 3000);
-                if (installBtn) installBtn.style.display = 'none';
-            });
-
-            if (installBtn) {
-                installBtn.addEventListener('click', async () => {
-                    if (deferredPrompt) {
-                        deferredPrompt.prompt();
-                        const result = await deferredPrompt.userChoice;
-                        if (result.outcome === 'accepted') {
-                            showToast('✅ App installed!', 3000);
-                            installBtn.style.display = 'none';
-                        } else {
-                            showToast('Installation cancelled.', 1500);
-                        }
-                        deferredPrompt = null;
-                    } else {
-                        // Fallback for iOS / browsers that don't support the prompt
-                        showToast('Tap "Share" then "Add to Home Screen" to install.', 3000);
-                    }
-                });
-            }
-
             // ─── IMAGE PRE-FETCH ───────────────────────────────────────
             async function preFetchImages() {
                 const promises = PLANTS.map(plant => {
@@ -6134,11 +6179,9 @@
             // ─── INIT ──────────────────────────────────────────────────
             function init() {
                 loadGarden();
+                loadSoilSettings();
                 getLocation();
-                // ─── PWA INIT ───
-                injectManifest();
                 registerSW();
-                // ────────────────
 
                 if (autoRefreshInterval) clearInterval(autoRefreshInterval);
                 autoRefreshInterval = setInterval(() => {
